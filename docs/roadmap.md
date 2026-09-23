@@ -1,0 +1,56 @@
+# Flowstate: experiment engine first
+
+Flowstate's contribution is a reproducible scientific investigation system: generate experiments, execute numerical or learned models, preserve fields and provenance, query failures, and use that evidence to choose the next experiment. The first deliverable is a small working CPU engine that makes this loop inspectable.
+
+## First milestone boundary
+
+The current implementation effort covers periodic viscous Burgers in one dimension and unforced incompressible Navier–Stokes in two dimensions; a local experiment lake using Zarr, Parquet, and DuckDB; parameter sweeps; completed-run reuse; and explicit parent lineage. Numerical checks and limits are specified in [scientific-validation.md](scientific-validation.md).
+
+The larger system below is a proposed 15-day sequence, not a claim that all components exist. Each phase has an exit criterion. If a scientific or reproducibility criterion fails, carry it forward before broadening the system; dataset scale and machine-learning scope depend on measured compute and storage budgets.
+
+| Days | Deliverable | Exit criterion |
+| --- | --- | --- |
+| 1–3 | CPU reference engine, configuration schema, deterministic initial conditions, CLI, and Burgers/2D Navier–Stokes smoke experiments | Known solutions and conservation/incompressibility checks pass; invalid inputs and unstable timesteps fail intelligibly. |
+| 4–5 | Local lake, provenance, sweep generation, queryable metrics, failure records, and lineage | An interrupted sweep can be rerun without overwriting complete results; a query retrieves experiments and opens the corresponding fields. |
+| 6 | Numerical validation report and resource accounting | Spatial/time refinement, runtime, memory, and storage results are recorded; practical grid/sweep limits are stated. |
+| 7–8 | One small Burgers FNO baseline with training, checkpointing, and evaluation | A trajectory-disjoint split, training-only normalization, and paired numerical-reference metrics reproduce from a manifest. This gates expansion to Navier–Stokes learning. |
+| 9 | Darcy adapter and PDEBench import contract | One elliptic Darcy case passes a manufactured-solution or validated-reference check; imported datasets retain license, version, units, splits, and source provenance. |
+| 10 | A small PINN comparison, conditional on baseline readiness | Its boundary conditions, training budget, residual sampling, reference, and generalization setting are explicit. Postpone if the FNO baseline is not trustworthy. |
+| 11 | Storage and execution scale experiment | Measure local chunk access, bounded-memory output, process concurrency, and one object-storage backend before declaring distributed support. No credentials enter artifacts. |
+| 12 | Research object and relation schema | Equation, Solver, Experiment, InitialCondition, BoundaryCondition, Dataset, Model, Checkpoint, Metric, Anomaly, Hypothesis, and Finding have stable identities and documented links. |
+| 13 | Evidence-based next-experiment proposals | A deterministic policy proposes a bounded sweep near observed failures or uncertainty, citing the run IDs and objective behind each suggestion. |
+| 14 | Independent scientific review and targeted repair | Review checks leakage, solver assumptions, reference quality, failure handling, and reproduction on a clean environment. Open issues are recorded as limitations. |
+| 15 | Reproducible demonstration and release notes | From a clean checkout: run a small sweep, query an anomaly, inspect lineage, evaluate the available baseline, and generate an auditable next-step proposal. |
+
+## Investigation model
+
+The initial parent-experiment link is the seed of a research graph. Extend it with typed, versioned relations rather than overloading free-form notes:
+
+```text
+Experiment --solves--> Equation
+Experiment --uses--> Solver
+Experiment --starts-from--> InitialCondition
+Experiment --has-boundary--> BoundaryCondition
+Experiment --produces--> Dataset
+Experiment --derived-from--> Experiment
+Model --trained-on--> Dataset
+Checkpoint --belongs-to--> Model
+Metric --measures--> Experiment
+Anomaly --observed-in--> Experiment
+Finding --cites--> Experiment
+Finding --supports/contradicts--> Hypothesis
+```
+
+A changed timestep and a changed viscosity are different relations with different scientific implications. Store the parameter delta and rationale. An anomaly's detection rule, threshold, physical time, and evidence belong in its record. Supporting or contradicting a hypothesis requires a stated test and interpretation, not just a graph edge inferred by an agent.
+
+This object-and-link approach is inspired by the documented [Palantir Ontology concepts](https://www.palantir.com/docs/foundry/ontology/core-concepts), which map datasets and models into objects, properties, links, and actions. Flowstate applies the pattern to scientific evidence; no Palantir dependency is required.
+
+## Scale, automation, and what comes later
+
+Start by measuring one run. For example, 10,000 runs × 1,000 saved frames × 512² cells × one float32 scalar is approximately 10.49 TB before compression and overhead. Three scalar fields need approximately 31.46 TB. Saving fewer frames, choosing chunks around access patterns, streaming output, and retaining selected derived quantities are experimental-design decisions, not substitutes for validation. Integrator timesteps and saved frames are separate counts.
+
+Object storage, remote workers, mid-trajectory checkpoints, distributed scheduling, a graph database, a visual dashboard, and an LLM research planner are later capabilities. A local directory and process pool do not establish any of these. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
+
+Begin the autonomous researcher with an auditable policy: choose a metric, find an uncertain or failing region, propose a bounded parameter change, and attach the supporting experiments. A later language-model planner can formulate hypotheses and explanations, but execution remains constrained by explicit budgets and validation gates. Repeated observations should earn confidence through independently reproducible evidence.
+
+The [PDEBench benchmark](https://arxiv.org/abs/2210.07182) and [Fourier Neural Operator paper](https://arxiv.org/abs/2010.08895) provide established tasks and methods to integrate and compare. Flowstate's intended novelty is the orchestration, data lineage, queryable evidence, and experiment-selection workflow around those methods.
