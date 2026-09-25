@@ -25,12 +25,12 @@ outside the project's claims. We measure computational evidence, including failu
 | Step | Deliverable | Status at this entry |
 | --- | --- | --- |
 | 1 | Local environment, solvers, experiment lake, catalog | Complete in `717de85` |
-| 2 | Darcy adapter and numerical/resource validation report | Implemented; focused tests pass |
-| 3 | Dataset ETL, PDEBench HDF5 import, S3 artifact mirror | Implemented; fixture/emulator tests pass |
-| 4 | Burgers FNO, checkpoint/evaluation, physics-informed baseline | Implemented; training/resume tests pass |
-| 5 | Streaming saved fields and research graph | Implemented; identity/integrity tests pass |
-| 6 | Bounded proposal/execution loop with evidence links | Implemented; budget tests pass |
-| 7 | Integrated demonstration, scientific review, documentation, CI | 148 local tests pass; complete study and CI next |
+| 2 | Darcy adapter and numerical/resource validation report | Complete locally; six studies pass |
+| 3 | Dataset ETL, PDEBench HDF5 import, S3 artifact mirror | Complete locally; fixture/emulator tests pass |
+| 4 | Burgers FNO, checkpoint/evaluation, physics-informed baseline | Complete locally; measured results in section 12 |
+| 5 | Streaming saved fields and research graph | Complete locally; fields agree and graph builds |
+| 6 | Bounded proposal/execution loop with evidence links | Complete locally; two refinements executed |
+| 7 | Integrated demonstration, scientific review, documentation, CI | 148 local tests and complete study pass; CI runs on Windows/Linux |
 
 Later entries update this ledger with commands and measured results. A local S3
 emulator can validate the storage protocol; it does not establish that a user's
@@ -317,7 +317,7 @@ in the instructions specify the necessary extra or use the prepared environment.
 - Complete prototype suite: 140 tests passed in 90.55 seconds on local Windows.
 - Ruff passed; `uv build` produced the version 0.2.0 wheel and source archive.
 - Full integrated counts and measured ML/storage results are recorded below after
-  the end-to-end run, not inferred from code completion.
+  the end-to-end run, not inferred from code completion; see section 12.
 
 ## 11. Review-driven corrections and storage measurement
 
@@ -380,3 +380,136 @@ to experiment, dataset, model, research-entity, and downloaded-S3 artifact publi
 After this repair, all 148 tests passed in 75.45 seconds on local Windows. Ruff and
 the source/wheel build also passed. The final study uses a new directory and a clean
 commit containing this repair; no artifacts from the interrupted run are overwritten.
+
+## 12. Measured complete study and release evidence
+
+The complete study ran on September 24, 2026 in New York (September 25 UTC), from
+clean commit `0259a3262bebb7e9c0f98a6d067c69e3d4ab694c`. It began at
+03:19:41 UTC and completed at 03:20:20 UTC, approximately 39.2 seconds. The environment
+was Windows 11, Python 3.12.9, and CPU PyTorch 2.14.0. The machine-readable
+[prototype report](docs/reports/prototype-0.2.json) retains exact measurements,
+source fingerprint, dependency versions, configuration, run IDs, and report hashes.
+Later documentation-only commits do not change the measured implementation.
+
+```sh
+uv sync --locked --all-extras --group dev --python 3.12
+uv run --no-sync ruff check .
+uv run --no-sync pytest -q
+uv build
+uv run --no-sync flowstate demo outputs/research-20260924-verified --epochs 20 --pinn-epochs 200
+uv run --no-sync flowstate storage-benchmark outputs/storage-20260924-64 --grid-size 64 --steps 32
+```
+
+Choose new output names when reproducing the study. The raw study artifacts remain
+under ignored `outputs/`; the compact report and this explanation are committed.
+Local validation passed 148 tests. Ruff passed, and both wheel and source archives
+built successfully. After execution, all sixteen experiment manifests, the curated
+dataset, and both training bundles passed integrity verification. GitHub's
+[Tests workflow](https://github.com/Yogendra-sodha/flowstate/actions/workflows/ci.yml)
+repeats the locked environment setup, lint, and tests on Windows and Linux.
+
+### Numerical accuracy before learning
+
+Nineteen solver cases formed six studies; all passed their stated checks:
+
+| Study | Measured evidence |
+| --- | --- |
+| Burgers spatial refinement | Orders 1.987 and 1.997, consistent with second order |
+| Burgers temporal refinement | Orders 4.096 and 4.047 against a fine-step reference |
+| Taylor–Green spatial check | Velocity RMS errors around 3.2e-15; no spatial order inferred from a single resolved Fourier mode |
+| Taylor–Green temporal refinement | Orders 4.039 and 4.019 |
+| Constant-permeability Darcy | Spatial orders 2.002 and 2.001 |
+| Smooth-permeability Darcy | Spatial orders 2.004 and 2.001 |
+
+These serial studies took 8.35 seconds including reference calculations and artifact
+persistence before report writing. Their NPZ artifacts used 144,509 bytes. Maximum
+traced solver allocations for one case were 1,177,450 bytes. This is a bounded
+manufactured/known-solution check, not a proof for arbitrary turbulent flows.
+
+### Dataset and learning results, including the weaker baseline
+
+Twelve Burgers trajectories produced a `[12, 11, 32]` dataset: twelve initial-value
+problems, eleven saved times, and thirty-two periodic grid points. Repeating the
+sweep reused all twelve verified experiments. Family assignment produced eight
+training trajectories, two validation trajectories, and two test trajectories.
+Normalization used only the 2,816 training values. Viscosity was 0.1, integration
+step 0.002, saved-time interval 0.02, and final physical time 0.2.
+
+FNO trained for twenty epochs; validation selected epoch twenty. The model used
+width sixteen, eight Fourier modes, three blocks, batch size sixteen, learning
+rate 0.001, and seed zero. Training took 1.66 seconds in this run. Error below is
+physical-velocity RMSE against the stored finite-difference trajectories:
+
+| Evaluation | Learned model | Persistence baseline |
+| --- | ---: | ---: |
+| FNO one saved step, two test trajectories | 0.0002723 | 0.0022445 |
+| FNO rollout through ten future frames | 0.0016054 | 0.0141163 |
+| PINN future trajectory, one test initial condition | 0.0767211 | 0.0116183 |
+
+Persistence means copying the previous reference field for a one-step prediction,
+or retaining the initial field throughout a rollout. FNO reduced the field error
+in this small study. Its rollout mean-velocity RMSE was nevertheless 0.0002223,
+compared with about 1.45e-9 for persistence: lower field error does not imply exact
+mass conservation. This FNO does not enforce conservation by construction.
+
+The PINN used width thirty-two, three hidden layers, 128 sampled collocation points
+per epoch, and 200 epochs, taking 2.31 seconds. Its fresh-point physical PDE residual
+RMS was 0.47149, and its trajectory error exceeded persistence. This short training
+budget did not produce a competitive solution. That negative result is retained;
+it is not hidden behind the fact that the training command completed. FNO and PINN
+also solve different learning tasks, so these are not equal-budget rankings.
+
+Two FNO test trajectories and one PINN instance are too few for broad claims about
+generalization. A next learning study should use more independent families, finer
+numerical references, declared budgets, and validation-based tuning without looking
+at test outcomes to select settings.
+
+### Streaming trades time for lower retained memory in this run
+
+The separate local storage study used a 64×64 Navier–Stokes grid with thirty-two
+integration steps and thirty-three saved frames. It ran the same configuration
+serially in both modes:
+
+| Measurement | Buffered | Streamed |
+| --- | ---: | ---: |
+| Peak traced allocation bytes | 7,867,179 | 1,555,890 |
+| Solve plus Zarr-write seconds | 0.720 | 1.551 |
+| Stored bytes | 3,108,310 | 3,108,310 |
+| Warm 32×32 tile read, average seconds | 0.000918 | 0.003199 |
+
+The three saved field arrays had identical hashes in both modes. Streaming reduced
+traced peak allocations by approximately 80% here while increasing elapsed write
+time. Python tracing is not whole-process RSS; native libraries and OS caches may
+allocate untraced memory. These are single local measurements without confidence
+intervals. They do not establish cold-cloud latency or concurrent-worker throughput.
+
+### Evidence-driven follow-up completed
+
+The final lake contained fourteen completed Burgers experiments, one deliberately
+failed Burgers experiment, and one completed Darcy experiment. The researcher used
+two runs and 208 integration steps within its declared 500-step budget. First it
+halved the failed case's timestep from 0.08 to 0.04 while preserving final time;
+the refined case completed. It also refined one stable trajectory from timestep
+0.002 to 0.001. Both outcomes have parent links, proposal records, and cited findings.
+
+The resulting graph has 309 nodes and 341 links, including datasets, models,
+checkpoints, metrics, anomalies, hypotheses, proposals, and findings. Completing a
+refinement is an observation; no edge automatically declares a hypothesis proved.
+
+## 13. What remains after this prototype
+
+The next infrastructure steps, in execution order, are:
+
+1. Measure concurrent local execution and storage with representative workloads;
+   choose scheduling and retention policies from those results.
+2. Validate the existing S3 protocol against an actual configured bucket, including
+   permissions, interruptions, network behavior, and storage costs.
+3. Import a declared public PDEBench dataset and run larger, reproducible learning
+   studies with stronger numerical references and explicit compute budgets.
+4. Add durable distributed work queues, remote workers, cancellation, and
+   mid-trajectory solver recovery before attempting very large sweeps.
+5. Build a dashboard for the existing evidence and a constrained LLM planner whose
+   proposals still pass the engine's validation and budget checks.
+
+These are future capabilities and measurements. The delivered work establishes the
+local experiment-to-dataset-to-model-to-evidence loop and documents its current limits.

@@ -1,0 +1,373 @@
+{
+  "schema_version": 1,
+  "scope": "Small local CPU systems demonstration; not a published scientific benchmark",
+  "code_provenance": {
+    "git_commit": "0259a3262bebb7e9c0f98a6d067c69e3d4ab694c",
+    "git_dirty": false,
+    "source_sha256": "4601a9f913fa25a699d43f5e16aec6b3d646f263e1dd67b68b4bfe83e93a15ab",
+    "python": "3.12.9",
+    "dependencies": {
+      "numpy": "2.5.3",
+      "zarr": "3.4.0",
+      "duckdb": "1.5.5",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "flowstate-research": "0.2.0"
+    },
+    "hardware": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "machine": "AMD64",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+      "logical_cpu_count": 8
+    },
+    "precision": "float64"
+  },
+  "study_start_utc": "2026-09-25T03:19:41.249160+00:00",
+  "study_completed_utc": "2026-09-25T03:20:20.447000+00:00",
+  "commands": [
+    "uv sync --locked --all-extras --group dev --python 3.12",
+    "uv run --no-sync ruff check .",
+    "uv run --no-sync pytest -q",
+    "uv build",
+    "uv run --no-sync flowstate demo outputs/research-20260924-verified --epochs 20 --pinn-epochs 200",
+    "uv run --no-sync flowstate storage-benchmark outputs/storage-20260924-64 --grid-size 64 --steps 32"
+  ],
+  "local_checks": {
+    "tests_passed": 148,
+    "test_seconds": 75.45,
+    "ruff": "passed",
+    "source_and_wheel_build": "passed",
+    "verified_experiments": 16,
+    "verified_datasets": 1,
+    "verified_training_bundles": 2
+  },
+  "validation": {
+    "passed": true,
+    "studies": {
+      "burgers_spatial": {
+        "cases": [
+          "burgers-spatial-24",
+          "burgers-spatial-48",
+          "burgers-spatial-96"
+        ],
+        "errors": [
+          9.411033891026902e-05,
+          2.3747960455807996e-05,
+          5.9508396690678275e-06
+        ],
+        "error_convention": "spatial_RMS_except_Darcy_uses_physical_grid_L2",
+        "expected_order": 2,
+        "observed_orders": [
+          1.986549609446369,
+          1.9966384623789946
+        ],
+        "reference": "Cole-Hopf heat solution on 1536 periodic points at t=0.1",
+        "passed": true
+      },
+      "burgers_temporal": {
+        "cases": [
+          "burgers-temporal-0.08",
+          "burgers-temporal-0.04",
+          "burgers-temporal-0.02"
+        ],
+        "errors": [
+          3.3618482422637503e-08,
+          1.9665321330839336e-09,
+          1.1898189417887756e-10
+        ],
+        "error_convention": "spatial_RMS_except_Darcy_uses_physical_grid_L2",
+        "expected_order": 4,
+        "observed_orders": [
+          4.095528935927808,
+          4.046839803827968
+        ],
+        "reference": "Same 16-point spatial discretization with dt=0.0005 at t=0.4",
+        "passed": true
+      },
+      "taylor_green_spatial": {
+        "cases": [
+          "taylor-green-spatial-8",
+          "taylor-green-spatial-16",
+          "taylor-green-spatial-32"
+        ],
+        "errors": [
+          3.198151977008655e-15,
+          3.213576066120669e-15,
+          3.1953646502796605e-15
+        ],
+        "error_convention": "spatial_RMS_u",
+        "observed_orders": null,
+        "reference": "Exact Taylor-Green viscous decay at t=0.4",
+        "interpretation": "Single Fourier mode is resolved on every grid; no spatial order inferred",
+        "passed": true
+      },
+      "taylor_green_temporal": {
+        "cases": [
+          "taylor-green-temporal-0.08",
+          "taylor-green-temporal-0.04",
+          "taylor-green-temporal-0.02"
+        ],
+        "errors": [
+          8.567110537997907e-09,
+          5.213387979145147e-10,
+          3.215185436623635e-11
+        ],
+        "error_convention": "spatial_RMS_except_Darcy_uses_physical_grid_L2",
+        "expected_order": 4,
+        "observed_orders": [
+          4.0385155690458365,
+          4.019247376102754
+        ],
+        "reference": "Exact Taylor-Green viscous decay at t=0.4",
+        "passed": true
+      },
+      "darcy_constant_spatial": {
+        "cases": [
+          "darcy-constant-17",
+          "darcy-constant-33",
+          "darcy-constant-65"
+        ],
+        "errors": [
+          0.001609482220040061,
+          0.00040178883968733695,
+          0.00010041090485338041
+        ],
+        "error_convention": "spatial_RMS_except_Darcy_uses_physical_grid_L2",
+        "expected_order": 2,
+        "observed_orders": [
+          2.00208724281071,
+          2.0005215337488007
+        ],
+        "reference": "Manufactured sin(pi*x/L) sin(pi*y/L) pressure with analytic forcing",
+        "passed": true
+      },
+      "darcy_smooth_spatial": {
+        "cases": [
+          "darcy-smooth-17",
+          "darcy-smooth-33",
+          "darcy-smooth-65"
+        ],
+        "errors": [
+          0.0028350918192605414,
+          0.0007066117031743747,
+          0.00017651868886169958
+        ],
+        "error_convention": "spatial_RMS_except_Darcy_uses_physical_grid_L2",
+        "expected_order": 2,
+        "observed_orders": [
+          2.0044059110433547,
+          2.001096707420628
+        ],
+        "reference": "Manufactured sin(pi*x/L) sin(pi*y/L) pressure with analytic forcing",
+        "passed": true
+      }
+    },
+    "stored_output_bytes": 144509,
+    "total_wall_seconds_before_report_write": 8.354057499964256,
+    "peak_traced_allocation_bytes_max_case": 1177450,
+    "measurement_scope": {
+      "wall_time": "Each solver call, separately from NPZ persistence; total includes references",
+      "memory": "Peak allocations traced by Python tracemalloc per solver call; NOT process RSS. Native FFT/BLAS/SuperLU allocations may be omitted. Prior arrays, reference calculations, persistence, report writing and parallel workers are excluded.",
+      "stored_output_bytes": "Actual compressed NPZ artifact file sizes; excludes JSON report",
+      "scale": "Bounded serial CPU smoke studies, not a distributed throughput benchmark"
+    }
+  },
+  "dataset": {
+    "shape": [
+      12,
+      11,
+      32
+    ],
+    "split_counts": {
+      "train": 8,
+      "validation": 2,
+      "test": 2
+    },
+    "normalization": {
+      "mean": -5.2719687201633016e-11,
+      "std": 0.2987916003389875,
+      "fit_split": "train",
+      "count": 2816,
+      "constant_training_data": false
+    },
+    "manifest_sha256": "f19dabe3161bc7eb0275ebaea5f04be0c981ff523caa48d4f77d6b4bae445b3e",
+    "generated_trajectories": 12,
+    "reused_trajectories": 12
+  },
+  "fno": {
+    "config": {
+      "batch_size": 16,
+      "depth": 3,
+      "learning_rate": 0.001,
+      "modes": 8,
+      "seed": 0,
+      "width": 16
+    },
+    "epochs_completed": 20,
+    "best_epoch": 20,
+    "training_seconds": 1.657247900031507,
+    "test_trajectory_ids": [
+      "25d2621e5dfd1ca66e87cee73880f3a3",
+      "549f5e753d6536898990fe58fe3cd276"
+    ],
+    "metrics": {
+      "one_step": {
+        "rmse": 0.00027230948238726065,
+        "relative_l2": 0.0008900178793889593,
+        "max_abs_error": 0.0008942484855651855,
+        "energy_rmse": 9.498543359821017e-06,
+        "mean_velocity_rmse": 3.617939714851088e-05
+      },
+      "rollout": {
+        "rmse": 0.0016053776660552579,
+        "relative_l2": 0.005247025602762268,
+        "max_abs_error": 0.0077225565910339355,
+        "energy_rmse": 5.620966554684942e-05,
+        "mean_velocity_rmse": 0.00022233503971545536
+      },
+      "persistence_one_step": {
+        "rmse": 0.002244530410895624,
+        "relative_l2": 0.007336036112353938,
+        "max_abs_error": 0.0062507688999176025,
+        "energy_rmse": 0.00026340205155773,
+        "mean_velocity_rmse": 1.3290657757055283e-09
+      },
+      "persistence_rollout": {
+        "rmse": 0.014116252572342796,
+        "relative_l2": 0.0461376411471716,
+        "max_abs_error": 0.05660808086395264,
+        "energy_rmse": 0.001656839784168108,
+        "mean_velocity_rmse": 1.4523028076229788e-09
+      }
+    },
+    "torch_version": "2.14.0+cpu",
+    "checkpoint_sha256": "6f282f1a82bf3982aa7d1b3891718a21eef6b1c535c67d00d9998da1e2605bdc"
+  },
+  "pinn": {
+    "config": {
+      "collocation_points": 128,
+      "depth": 3,
+      "learning_rate": 0.001,
+      "seed": 0,
+      "trajectory_index": 1,
+      "width": 32
+    },
+    "epochs_completed": 200,
+    "training_seconds": 2.313505499972962,
+    "physical_residual_rms": 0.4714890420436859,
+    "trajectory_error": {
+      "rmse": 0.07672112863630867,
+      "relative_l2": 0.22008073938599526,
+      "max_abs_error": 0.19494564831256866,
+      "energy_rmse": 0.017834783680023083,
+      "mean_velocity_rmse": 0.0038096089820143816
+    },
+    "persistence_trajectory_error": {
+      "rmse": 0.011618254426681308,
+      "relative_l2": 0.03332789897708235,
+      "max_abs_error": 0.03572666645050049,
+      "energy_rmse": 0.0015486168115126998,
+      "mean_velocity_rmse": 7.447681018340398e-10
+    },
+    "torch_version": "2.14.0+cpu",
+    "checkpoint_sha256": "d29a4560bc4d0e43056f24b6548583094cbc97657edb2ac87dccbb97f38ddf5a"
+  },
+  "storage": {
+    "config": {
+      "equation": "navier_stokes2d",
+      "viscosity": 0.05,
+      "grid_size": 64,
+      "dt": 0.0005,
+      "steps": 32,
+      "save_every": 1,
+      "seed": 5,
+      "domain_length": 6.283185307179586,
+      "amplitude": 1.0,
+      "initial_condition": "random"
+    },
+    "cases": [
+      {
+        "mode": "buffered",
+        "solve_and_write_seconds": 0.7203736000228673,
+        "peak_traced_allocation_bytes": 7867179,
+        "stored_bytes": 3108310,
+        "artifact_files": 122,
+        "field_sha256": "e90f610b35eaf144d29195f7de17a45d8826b27cbd980a7699f985f95e68056b",
+        "warm_frame_tile_read_seconds": 0.0009179599990602582
+      },
+      {
+        "mode": "streamed",
+        "solve_and_write_seconds": 1.551381399971433,
+        "peak_traced_allocation_bytes": 1555890,
+        "stored_bytes": 3108310,
+        "artifact_files": 122,
+        "field_sha256": "e90f610b35eaf144d29195f7de17a45d8826b27cbd980a7699f985f95e68056b",
+        "warm_frame_tile_read_seconds": 0.0031991800002288072
+      }
+    ],
+    "field_values_identical": true,
+    "measurement_scope": {
+      "memory": "tracemalloc peak, not RSS; excludes untraced native/OS allocations",
+      "io": "serial local solve+Zarr writes; tile read is warm and includes decompression",
+      "limitations": "No concurrency/cloud latency claim; no performance threshold asserted"
+    }
+  },
+  "research": {
+    "catalog": [
+      {
+        "equation": "burgers1d",
+        "status": "completed",
+        "runs": 14
+      },
+      {
+        "equation": "burgers1d",
+        "status": "failed",
+        "runs": 1
+      },
+      {
+        "equation": "darcy2d",
+        "status": "completed",
+        "runs": 1
+      }
+    ],
+    "graph_nodes": 309,
+    "graph_edges": 341,
+    "execution": [
+      {
+        "id": "89d4b2a319abb221661aca4351e66e4e",
+        "status": "completed",
+        "resumed": false,
+        "finding_id": "finding-8395e19b673c1f8882ecf8ef"
+      },
+      {
+        "id": "1d520fe4558a9836db8daa7aa9a00858",
+        "status": "completed",
+        "resumed": false,
+        "finding_id": "finding-ad6d7fdaee0fb0e037511758"
+      }
+    ],
+    "expected_failure_id": "f3037a154b17c1f041524fb5ced1d06b",
+    "plan": {
+      "max_runs": 2,
+      "max_total_steps": 500,
+      "planned_steps": 208
+    }
+  },
+  "raw_report_sha256": {
+    "report.json": "aa831566412a3252d7fc77400a0c803282413c072ab353aa943c13c986bc42c1",
+    "validation.json": "ade5635536f84e1cdc360c4e91738edbedbb56ee1e69e93e69ae3d668d715261",
+    "fno/report.json": "2bb792325fd334744685a1be13661c6609a6d692cc337431d67bf9509f5d8c7c",
+    "pinn/report.json": "2b2626a7b9ae9dea4fcbc7ca92cf0b3bf72d005698c1d535f247a3b6b36f60f3",
+    "research_cycle.json": "5e068d9dd9d5c32db0aa9ef8feef608a078653721156f794c60af11a8ba7bad6"
+  },
+  "limitations": [
+    "Small CPU demonstration, not a reproduction of a published benchmark",
+    "FNO learns across training trajectories; PINN fits one held-out initial condition",
+    "Finite-difference trajectories are numerical references, not exact truth",
+    "S3 cloud deployment and public PDEBench downloads are separate operations",
+    "Two held-out FNO trajectories and one per-instance PINN fit are not statistical evidence of broad generalization",
+    "tracemalloc measures traced allocations, not whole-process RSS",
+    "Storage measurements are serial, local, and warm-cache; no cloud/concurrency throughput claim"
+  ]
+}
