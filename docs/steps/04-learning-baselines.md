@@ -36,10 +36,10 @@ u = z * training_std + training_mean
 
 Validation and test fields never fit the normalizer. The loader rechecks the stored statistics against the training split. Normalized windows are created separately inside each split, so adjacent frames of one trajectory cannot leak into another split.
 
-Install the learning dependency once, then use the preserved environment:
+Prepare the complete prototype environment once, then preserve it while running commands:
 
 ```sh
-uv sync --locked --extra ml
+uv sync --locked --all-extras --group dev
 uv run --no-sync flowstate dataset verify outputs/burgers-dataset
 ```
 

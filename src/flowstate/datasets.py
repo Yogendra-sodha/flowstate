@@ -6,7 +6,6 @@ import errno
 import hashlib
 import json
 import math
-import os
 import shutil
 import tempfile
 from collections.abc import Callable
@@ -17,7 +16,7 @@ from urllib.parse import urlparse
 import numpy as np
 import zarr
 
-from flowstate.lake import Lake, _sha256
+from flowstate.lake import Lake, _rename_with_retry, _sha256
 
 _SPLITS = ("train", "validation", "test")
 _CONVENTION = "u_t + u*u_x = viscosity*u_xx; viscosity is the effective diffusion coefficient"
@@ -125,7 +124,7 @@ def _publish(output: Path, writer: Callable[[Path], dict]) -> dict:
             encoding="utf-8",
         )
         try:
-            os.rename(staging, output)
+            _rename_with_retry(staging, output)
         except OSError as error:
             if error.errno in (errno.EEXIST, errno.ENOTEMPTY):
                 raise FileExistsError(f"Dataset already exists: {output}") from error

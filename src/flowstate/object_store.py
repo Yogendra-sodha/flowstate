@@ -6,14 +6,13 @@ import errno
 import hashlib
 import io
 import json
-import os
 import re
 import shutil
 import tempfile
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
-from flowstate.lake import Lake, _sha256
+from flowstate.lake import Lake, _rename_with_retry, _sha256
 
 _SHA256 = re.compile(r"[a-f0-9]{64}\Z")
 _SINGLE_PUT_LIMIT = 5 * 1024**3
@@ -244,7 +243,7 @@ def download_experiment(
         if staged_lake.load_record(experiment_id).get("id") != experiment_id:
             raise ValueError("Downloaded record ID does not match requested experiment")
         try:
-            os.rename(candidate, destination)
+            _rename_with_retry(candidate, destination)
         except OSError as error:
             if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):
                 raise

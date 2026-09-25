@@ -9,6 +9,7 @@ import os
 import re
 import shutil
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,8 @@ import zarr
 
 _SAFE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,127}\Z")
 _SAFE_ARRAY_NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]*\Z")
+_RENAME_RETRY_DELAYS = (0.01, 0.05, 0.2, 0.5, 1.0)
+_RENAME_RETRY_WINERRORS = frozenset({5, 32, 33})
 _CONFIG_COLUMNS = ("viscosity", "grid_size", "dt", "steps", "seed")
 _METRIC_COLUMNS = (
     "initial_energy",
@@ -53,6 +56,25 @@ def _sha256(path: Path) -> str:
         for block in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _rename_with_retry(source: Path, destination: Path) -> None:
+    """Retry transient Windows rename denials, preserving os.rename semantics.
+
+    Windows access/sharing/lock denials can be temporary, including on synced
+    directories. Retry only their explicit Win32 codes, for at most 1.76 seconds
+    of delay. Existing-destination and all other errors propagate immediately;
+    a persistent denial propagates unchanged after the last attempt.
+    """
+    for delay in (*_RENAME_RETRY_DELAYS, None):
+        try:
+            os.rename(source, destination)
+        except OSError as error:
+            if delay is None or getattr(error, "winerror", None) not in _RENAME_RETRY_WINERRORS:
+                raise
+            time.sleep(delay)
+        else:
+            return
 
 
 def _scalar(value: Any) -> Any:
@@ -160,7 +182,7 @@ class Lake:
             # os.rename is atomic on this same filesystem. An existing nonempty
             # final directory cannot be replaced, including concurrent writes.
             try:
-                os.rename(staging, destination)
+                _rename_with_retry(staging, destination)
             except OSError as error:
                 if error.errno in (errno.EEXIST, errno.ENOTEMPTY):
                     raise FileExistsError(

@@ -40,7 +40,7 @@ training_indices = group["splits/train"][:]
 
 The colon in a slice means "all entries along this axis." Reading one trajectory is bounded by that trajectory's size. Reading the entire fields/u array would allocate the whole dataset. Shape is part of the scientific contract: swapping the time and x axes can produce plausible-looking arrays that describe the wrong problem.
 
-All exported trajectories must share their exact physical grid, saved times, and effective viscosity. Coordinates must be finite, increasing, and uniformly spaced; the uniformity check allows relative tolerance 0.0001 and absolute tolerance 1e-10 for coordinate values originally stored as float32. Coordinates are preserved, not resampled. There must be at least two saved frames and four spatial points. A shortened final save interval is rejected. Native periodic grids must omit the repeated endpoint.
+All exported trajectories must share their exact physical grid, saved times, and effective viscosity. Coordinates must be finite, increasing, and uniformly spaced; the uniformity check allows relative tolerance 0.0001 and absolute tolerance 1e-10 for coordinate values originally stored as float32. Coordinates are preserved, not resampled. There must be at least two saved frames and four spatial points. The learning loader requires at least eight spatial points, so a valid smaller import is not training-ready. A shortened final save interval is rejected. Native periodic grids must omit the repeated endpoint.
 
 ## 2. Trace extract, transform, and load
 

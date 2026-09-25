@@ -30,7 +30,7 @@ outside the project's claims. We measure computational evidence, including failu
 | 4 | Burgers FNO, checkpoint/evaluation, physics-informed baseline | Implemented; training/resume tests pass |
 | 5 | Streaming saved fields and research graph | Implemented; identity/integrity tests pass |
 | 6 | Bounded proposal/execution loop with evidence links | Implemented; budget tests pass |
-| 7 | Integrated demonstration, scientific review, documentation, CI | 140 local tests pass; integrated study and CI next |
+| 7 | Integrated demonstration, scientific review, documentation, CI | 148 local tests pass; complete study and CI next |
 
 Later entries update this ledger with commands and measured results. A local S3
 emulator can validate the storage protocol; it does not establish that a user's
@@ -350,3 +350,33 @@ codec failure and verifies that no scientific failure record is published.
 ```sh
 uv run --no-sync flowstate storage-benchmark outputs/storage-study --grid-size 64 --steps 32
 ```
+
+### Integration exposed a Windows publication failure
+
+The first integrated study ran from clean commit `3051618`. Numerical validation,
+twelve streamed trajectories and their reuse, dataset export, FNO training, and
+PINN training completed. During the research cycle, Windows returned `WinError 5`
+while renaming a fully staged experiment directory into its final location. No
+partial experiment became visible. A separate execution of the pending refinement
+succeeded without changing its numerical configuration or the filesystem permissions.
+
+That is evidence of a transient publication failure. The workspace is on OneDrive,
+but the exact locking process was not identified. The failure is retained in the
+first study's `events.jsonl`; it is not relabeled as numerical instability or erased.
+The interrupted study is separate from the final complete demonstration.
+
+All five local artifact publishers now use one bounded rename helper. Only Windows
+access/sharing/lock errors (`winerror` 5, 32, or 33) qualify for retry. Delays of
+0.01, 0.05, 0.2, 0.5, and 1 second permit six attempts, then the original filesystem
+error propagates. Every attempt still uses the same atomic rename operation.
+Existing-destination collisions retain their original handling. Ordinary permission
+errors on other systems are not retried, and no permissions are widened.
+
+Regression tests inject transient and persistent Windows errors, non-Windows
+permission errors, and publication collisions. They check eventual publication,
+bounded exhaustion, cleanup, and preservation of existing results. The retry applies
+to experiment, dataset, model, research-entity, and downloaded-S3 artifact publication.
+
+After this repair, all 148 tests passed in 75.45 seconds on local Windows. Ruff and
+the source/wheel build also passed. The final study uses a new directory and a clean
+commit containing this repair; no artifacts from the interrupted run are overwritten.

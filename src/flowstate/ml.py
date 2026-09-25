@@ -12,7 +12,6 @@ import errno
 import hashlib
 import json
 import math
-import os
 import shutil
 import tempfile
 import time
@@ -30,6 +29,7 @@ except ImportError as exc:
     raise ImportError("Learning requires PyTorch: run uv sync --extra ml") from exc
 
 from flowstate.engine import capture_provenance
+from flowstate.lake import _rename_with_retry
 
 MAX_DATA_ELEMENTS = 16_000_000
 REFERENCE_LIMITATION = (
@@ -130,7 +130,7 @@ def _publication(output: str | Path, dataset: str | Path):
             stage / "manifest.json", {"version": 1, "algorithm": "sha256", "artifacts": artifacts}
         )
         try:
-            os.rename(stage, target)
+            _rename_with_retry(stage, target)
         except OSError as exc:
             if exc.errno in (errno.EEXIST, errno.ENOTEMPTY):
                 raise FileExistsError(f"Output already exists: {target}") from exc

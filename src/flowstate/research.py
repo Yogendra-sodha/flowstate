@@ -5,14 +5,13 @@ from __future__ import annotations
 import errno
 import hashlib
 import json
-import os
 import shutil
 import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
 from flowstate.engine import run_experiment
-from flowstate.lake import Lake
+from flowstate.lake import Lake, _rename_with_retry
 from flowstate.numerics import normalize_config
 
 ENTITY_TYPES = {
@@ -110,7 +109,7 @@ class ResearchGraph:
             (staging / "record.json").write_bytes(encoded)
             (staging / "sha256").write_text(hashlib.sha256(encoded).hexdigest(), encoding="ascii")
             try:
-                os.rename(staging, directory)
+                _rename_with_retry(staging, directory)
             except OSError as exc:
                 if exc.errno not in (errno.EEXIST, errno.ENOTEMPTY):
                     raise

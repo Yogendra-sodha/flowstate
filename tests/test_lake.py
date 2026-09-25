@@ -10,6 +10,7 @@ import numpy as np
 import pytest
 import zarr
 
+import flowstate.lake as lake_module
 from flowstate.lake import Lake
 
 
@@ -251,4 +252,94 @@ def test_noncollision_publication_error_propagates_and_cleans_staging(tmp_path, 
     monkeypatch.setattr(os, "rename", denied_rename)
     with pytest.raises(PermissionError):
         lake.write("denied", record("denied"), None)
+    assert list(lake.experiments.iterdir()) == []
+
+
+@pytest.mark.parametrize("winerror", [5, 32, 33])
+def test_windows_publication_denial_recovers_without_partial_visibility(
+    tmp_path, monkeypatch, winerror
+):
+    lake = Lake(tmp_path)
+    real_rename = os.rename
+    attempts, delays = [], []
+
+    def temporarily_denied(source, destination):
+        attempts.append((source, destination))
+        assert source.is_dir()
+        assert not destination.exists()
+        assert lake.records() == []
+        if len(attempts) <= 2:
+            error = PermissionError(errno.EACCES, "Temporary Windows publication denial")
+            error.winerror = winerror
+            raise error
+        return real_rename(source, destination)
+
+    monkeypatch.setattr(os, "rename", temporarily_denied)
+    monkeypatch.setattr(lake_module.time, "sleep", delays.append)
+    destination = lake.write("recovered", record("recovered"), None)
+    assert destination.is_dir()
+    assert len(attempts) == 3
+    assert delays == [0.01, 0.05]
+    assert lake.verify("recovered") == []
+    assert [path.name for path in lake.experiments.iterdir()] == ["recovered"]
+
+
+def test_windows_publication_exhaustion_preserves_error_and_cleans_staging(tmp_path, monkeypatch):
+    lake = Lake(tmp_path)
+    attempts, delays = [], []
+    failure = PermissionError(errno.EACCES, "Persistent Windows publication denial")
+    failure.winerror = 5
+
+    def always_denied(source, destination):
+        attempts.append((source, destination))
+        raise failure
+
+    monkeypatch.setattr(os, "rename", always_denied)
+    monkeypatch.setattr(lake_module.time, "sleep", delays.append)
+    with pytest.raises(PermissionError) as caught:
+        lake.write("denied", record("denied"), None)
+    assert caught.value is failure
+    assert len(attempts) == 6
+    assert delays == [0.01, 0.05, 0.2, 0.5, 1.0]
+    assert sum(delays) == pytest.approx(1.76)
+    assert list(lake.experiments.iterdir()) == []
+
+
+@pytest.mark.parametrize("error_number", [errno.EACCES, errno.EIO])
+def test_publication_errors_without_windows_code_are_not_retried(
+    tmp_path, monkeypatch, error_number
+):
+    lake = Lake(tmp_path)
+    attempts, delays = [], []
+    failure = OSError(error_number, "Non-Windows publication failure")
+
+    def denied(source, destination):
+        attempts.append((source, destination))
+        raise failure
+
+    monkeypatch.setattr(os, "rename", denied)
+    monkeypatch.setattr(lake_module.time, "sleep", delays.append)
+    with pytest.raises(OSError) as caught:
+        lake.write("denied", record("denied"), None)
+    assert caught.value is failure
+    assert len(attempts) == 1
+    assert delays == []
+    assert list(lake.experiments.iterdir()) == []
+
+
+@pytest.mark.parametrize("collision_errno", [errno.EEXIST, errno.ENOTEMPTY])
+def test_publication_collision_is_not_retried(tmp_path, monkeypatch, collision_errno):
+    lake = Lake(tmp_path)
+    attempts, delays = [], []
+
+    def collision(source, destination):
+        attempts.append((source, destination))
+        raise OSError(collision_errno, "Publication collision")
+
+    monkeypatch.setattr(os, "rename", collision)
+    monkeypatch.setattr(lake_module.time, "sleep", delays.append)
+    with pytest.raises(FileExistsError):
+        lake.write("collision", record("collision"), None)
+    assert len(attempts) == 1
+    assert delays == []
     assert list(lake.experiments.iterdir()) == []

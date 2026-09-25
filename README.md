@@ -182,8 +182,9 @@ error record, but no partial field trajectory or structured last-valid time.
 `completed` means integration finished. Check `metrics.needs_review` and the recorded
 tolerances before interpreting the result. Unforced viscous energy should dissipate;
 an observed increase flags a numerical question, not physical blow-up. Diagnostics
-are sampled at saved frames and can miss intervening events. PDE residuals and
-dissipation-balance residuals are future work.
+are sampled at saved frames and can miss intervening events. Time-dependent
+numerical-reference PDE residuals and dissipation-balance residuals are future work;
+Darcy algebraic residuals and PINN physics residuals are already measured.
 
 `verify` detects missing, modified, or unexpected artifacts. Application writes are
 append-only; the manifest is unsigned and does not prevent external modification.
