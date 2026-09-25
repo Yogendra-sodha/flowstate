@@ -2,11 +2,11 @@
 
 Flowstate's contribution is a reproducible scientific investigation system: generate experiments, execute numerical or learned models, preserve fields and provenance, query failures, and use that evidence to choose the next experiment. The first deliverable is a small working CPU engine that makes this loop inspectable.
 
-## First milestone boundary
+## Current prototype boundary
 
-The current implementation effort covers periodic viscous Burgers in one dimension and unforced incompressible Navier–Stokes in two dimensions; a local experiment lake using Zarr, Parquet, and DuckDB; parameter sweeps; completed-run reuse; and explicit parent lineage. Numerical checks and limits are specified in [scientific-validation.md](scientific-validation.md).
+Version 0.2 adds a manufactured Darcy problem, numerical refinement reports, streamed field output, dataset ETL, a PDEBench Burgers import contract, CPU FNO/PINN baselines, an S3 artifact mirror, a research graph, and a deterministic proposal/execution loop to the original numerical engine. The [stepbook](../STEPBOOK.md) explains the implementation, processing loops, and validation. Numerical checks and limits are specified in [scientific-validation.md](scientific-validation.md).
 
-The larger system below is a proposed 15-day sequence, not a claim that all components exist. Each phase has an exit criterion. If a scientific or reproducibility criterion fails, carry it forward before broadening the system; dataset scale and machine-learning scope depend on measured compute and storage budgets.
+The table below preserves the original 15-day plan as acceptance criteria, not elapsed development time. Most capabilities now have a local prototype and tests. The scale criterion remains partial: local process-pool execution exists, but concurrency throughput and a live cloud deployment have not been measured. The S3 protocol is tested with an emulator. PDEBench ingestion is tested with representative HDF5 fixtures; no public benchmark result is claimed. The integrated demonstration records measured evidence separately from code completion.
 
 | Days | Deliverable | Exit criterion |
 | --- | --- | --- |
@@ -49,8 +49,8 @@ This object-and-link approach is inspired by the documented [Palantir Ontology c
 
 Start by measuring one run. For example, 10,000 runs × 1,000 saved frames × 512² cells × one float32 scalar is approximately 10.49 TB before compression and overhead. Three scalar fields need approximately 31.46 TB. Saving fewer frames, choosing chunks around access patterns, streaming output, and retaining selected derived quantities are experimental-design decisions, not substitutes for validation. Integrator timesteps and saved frames are separate counts.
 
-Object storage, remote workers, mid-trajectory checkpoints, distributed scheduling, a graph database, a visual dashboard, and an LLM research planner are later capabilities. A local directory and process pool do not establish any of these. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
+The S3 mirror implements conditional immutable publication and verified download; deploying a live bucket and measuring cloud behavior remain future work. Remote workers, mid-trajectory solver checkpoints, distributed scheduling, a graph database, a visual dashboard, and an LLM research planner are also future capabilities. Model training already supports optimizer/RNG checkpoint resumption. A local directory and process pool do not establish distributed support. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
 
-Begin the autonomous researcher with an auditable policy: choose a metric, find an uncertain or failing region, propose a bounded parameter change, and attach the supporting experiments. A later language-model planner can formulate hypotheses and explanations, but execution remains constrained by explicit budgets and validation gates. Repeated observations should earn confidence through independently reproducible evidence.
+The implemented researcher uses an auditable policy: prioritize failures and flags, propose timestep or grid refinement, preserve comparison conditions, and attach the supporting experiments. Its budgets bound run count and integration steps, not elapsed time or cloud spend. A later language-model planner can formulate hypotheses and explanations, while execution remains constrained by explicit budgets and validation gates. Repeated observations should earn confidence through independently reproducible evidence.
 
 The [PDEBench benchmark](https://arxiv.org/abs/2210.07182) and [Fourier Neural Operator paper](https://arxiv.org/abs/2010.08895) provide established tasks and methods to integrate and compare. Flowstate's intended novelty is the orchestration, data lineage, queryable evidence, and experiment-selection workflow around those methods.

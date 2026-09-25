@@ -10,6 +10,7 @@ import os
 import platform
 import subprocess
 import sys
+import tempfile
 import time
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
@@ -53,7 +54,7 @@ def capture_provenance() -> dict[str, Any]:
     status = _git_value(repo, "status", "--porcelain") if repo else None
     versions = {
         name: importlib.metadata.version(name)
-        for name in ("numpy", "zarr", "duckdb", "pyarrow", "flowstate-research")
+        for name in ("numpy", "zarr", "duckdb", "pyarrow", "scipy", "h5py", "flowstate-research")
     }
     return {
         "git_commit": commit,
@@ -71,9 +72,7 @@ def capture_provenance() -> dict[str, Any]:
     }
 
 
-def experiment_id(
-    config: dict, provenance: dict, parent_id: str | None, attempt: int
-) -> str:
+def experiment_id(config: dict, provenance: dict, parent_id: str | None, attempt: int) -> str:
     """Content identity excludes timestamps; changing code/environment creates a new run."""
     identity = {
         "schema_version": SCHEMA_VERSION,
@@ -92,6 +91,21 @@ def experiment_id(
 def summarize(result: Any, config: dict) -> dict:
     """Flag sampled numerical diagnostics; flags are not physical conclusions."""
     diagnostic = result.diagnostics
+    if config["equation"] == "darcy2d":
+        residual = float(diagnostic["residual_l2"][-1])
+        error = float(diagnostic["pressure_l2_error"][-1])
+        if not np.isfinite([residual, error]).all():
+            raise FloatingPointError("Non-finite Darcy diagnostics")
+        return {
+            "residual_l2": residual,
+            "pressure_l2_error": error,
+            "saved_frames": 1,
+            "final_time": 0.0,
+            "needs_review": residual > 1e-8,
+            "residual_tolerance": 1e-8,
+            "reference": "manufactured analytic pressure",
+            "diagnostic_sampling": "steady_state",
+        }
     energy = np.asarray(diagnostic["energy"], dtype=float)
     if not all(np.isfinite(values).all() for values in diagnostic.values()):
         raise FloatingPointError("Non-finite diagnostic values")
@@ -116,7 +130,8 @@ def summarize(result: Any, config: dict) -> dict:
         "saved_frames": len(result.times),
         "reynolds": (
             config["amplitude"] * config["domain_length"] / config["viscosity"]
-            if config["viscosity"] > 0 else None
+            if config["viscosity"] > 0
+            else None
         ),
         "reynolds_convention": "configured amplitude * domain_length / viscosity",
     }
@@ -151,6 +166,7 @@ def run_experiment(
     *,
     parent_id: str | None = None,
     attempt: int = 0,
+    stream: bool = False,
 ) -> RunOutcome:
     """Execute once, or reuse a verified immutable result including a recorded failure.
 
@@ -182,6 +198,8 @@ def run_experiment(
         "solver": (
             "finite_difference_rk4"
             if config["equation"] == "burgers1d"
+            else "darcy_harmonic_sparse"
+            if config["equation"] == "darcy2d"
             else "pseudospectral_rk4"
         ),
         "config": config,
@@ -189,28 +207,41 @@ def run_experiment(
         "status": "running",
         "metrics": {},
         "error": None,
+        "storage_mode": "streamed" if stream and config["equation"] != "darcy2d" else "buffered",
     }
     start = time.perf_counter()
-    result = None
-    try:
-        with np.errstate(over="raise", invalid="raise", divide="raise"):
-            result = solve(config)
-            record["metrics"] = summarize(result, config)
-        record["solver_metadata"] = result.metadata
-        record["status"] = "completed"
-    except (ValueError, RuntimeError, ArithmeticError) as exc:
-        # Publication failures propagate separately so they cannot masquerade as solver failures.
-        record["status"] = "failed"
-        record["error"] = {"type": type(exc).__name__, "message": str(exc)}
-        result = None
-    record["runtime_seconds"] = time.perf_counter() - start
-    try:
-        lake.write(run_id, record, result)
-    except FileExistsError:
-        # Two workers may request the same deterministic experiment simultaneously.
-        if problems := lake.verify(run_id):
-            raise ValueError(f"Concurrent experiment failed verification: {problems}") from None
-        return RunOutcome(lake.load_record(run_id), resumed=True)
+    result, field_store = None, None
+    with tempfile.TemporaryDirectory(prefix=".stream-", dir=lake.experiments) as scratch:
+        sink = None
+        if record["storage_mode"] == "streamed":
+            from flowstate.streaming import ZarrFrameSink
+
+            sink = ZarrFrameSink(Path(scratch) / "fields.zarr", config)
+        try:
+            with np.errstate(over="raise", invalid="raise", divide="raise"):
+                result = (
+                    solve(config, frame_callback=sink, retain_fields=False)
+                    if sink
+                    else solve(config)
+                )
+                record["metrics"] = summarize(result, config)
+            record["solver_metadata"] = result.metadata
+            record["status"] = "completed"
+        except (ValueError, RuntimeError, ArithmeticError) as exc:
+            record["status"] = "failed"
+            record["error"] = {"type": type(exc).__name__, "message": str(exc)}
+            result = None
+        # Storage I/O failures propagate; they are never presented as physical anomalies.
+        if result is not None and sink is not None:
+            sink.finish(result)
+            field_store = sink.path
+        record["runtime_seconds"] = time.perf_counter() - start
+        try:
+            lake.write(run_id, record, result, field_store=field_store)
+        except FileExistsError:
+            if problems := lake.verify(run_id):
+                raise ValueError(f"Concurrent experiment failed verification: {problems}") from None
+            return RunOutcome(lake.load_record(run_id), resumed=True)
     return RunOutcome(record, resumed=False)
 
 
@@ -241,8 +272,8 @@ def expand_sweep(spec: dict) -> list[dict]:
 
 
 def _worker(args: tuple) -> RunOutcome:
-    config, root, parent, attempt = args
-    return run_experiment(config, root, parent_id=parent, attempt=attempt)
+    config, root, parent, attempt, stream = args
+    return run_experiment(config, root, parent_id=parent, attempt=attempt, stream=stream)
 
 
 def run_sweep(
@@ -252,10 +283,11 @@ def run_sweep(
     workers: int = 1,
     parent_id: str | None = None,
     attempt: int = 0,
+    stream: bool = False,
 ) -> list[RunOutcome]:
     if isinstance(workers, bool) or not isinstance(workers, int) or not 1 <= workers <= 32:
         raise ValueError("workers must be an integer between 1 and 32")
-    jobs = [(config, str(lake_root), parent_id, attempt) for config in expand_sweep(spec)]
+    jobs = [(config, str(lake_root), parent_id, attempt, stream) for config in expand_sweep(spec)]
     if workers == 1:
         return [_worker(job) for job in jobs]
     with ProcessPoolExecutor(max_workers=workers) as pool:

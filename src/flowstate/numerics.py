@@ -77,6 +77,10 @@ def normalize_config(config: dict) -> dict:
     """
     if not isinstance(config, dict):
         raise ValueError("config must be a dictionary")
+    if config.get("equation") == "darcy2d":
+        from flowstate.darcy import normalize_darcy_config
+
+        return normalize_darcy_config(config)
     unknown = set(config) - _CONFIG_KEYS
     if unknown:
         raise ValueError(f"Unknown configuration keys: {', '.join(sorted(map(str, unknown)))}")
@@ -169,7 +173,7 @@ def _base_metadata(config: dict, solver: str, axes: list[str]) -> dict:
     }
 
 
-def solve(config: dict) -> SimulationResult:
+def solve(config: dict, *, frame_callback=None, retain_fields: bool = True) -> SimulationResult:
     """Run a validated config, including initial/final frames and finite checks.
 
     Explicit conservative stability bounds are checked at every RK stage.
@@ -177,18 +181,24 @@ def solve(config: dict) -> SimulationResult:
     and compare diagnostics before drawing scientific conclusions.
     """
     canonical = normalize_config(config)
+    if canonical["equation"] == "darcy2d":
+        from flowstate.darcy import solve_darcy
+
+        return solve_darcy(canonical)
+    if not retain_fields and frame_callback is None:
+        raise ValueError("A frame_callback is required when fields are not retained")
     with np.errstate(over="raise", invalid="raise", divide="raise"):
         try:
             if canonical["equation"] == "burgers1d":
-                return _burgers(canonical)
-            return _navier_stokes(canonical)
+                return _burgers(canonical, frame_callback, retain_fields)
+            return _navier_stokes(canonical, frame_callback, retain_fields)
         except FloatingPointError as exc:
             raise ValueError(
                 "Non-finite numerical state; reduce dt/amplitude or rescale domain"
             ) from exc
 
 
-def _burgers(config: dict) -> SimulationResult:
+def _burgers(config: dict, frame_callback=None, retain_fields=True) -> SimulationResult:
     n, length, dt = config["grid_size"], config["domain_length"], config["dt"]
     viscosity = config["viscosity"]
     dx = length / n
@@ -218,7 +228,10 @@ def _burgers(config: dict) -> SimulationResult:
     diagnostic_rows = []
 
     def save(step):
-        frames.append(velocity.copy())
+        if retain_fields:
+            frames.append(velocity.copy())
+        if frame_callback is not None:
+            frame_callback(step * dt, {"velocity": velocity})
         times.append(step * dt)
         mean = float(np.mean(velocity))
         diagnostic_rows.append((mean, mean * length, float(0.5 * np.mean(velocity**2))))
@@ -238,7 +251,7 @@ def _burgers(config: dict) -> SimulationResult:
     )
     return SimulationResult(
         times=np.asarray(times, dtype=np.float64),
-        fields={"velocity": np.stack(frames)},
+        fields={"velocity": np.stack(frames)} if retain_fields else {},
         diagnostics={
             name: diagnostics[:, index]
             for index, name in enumerate(("mean_velocity", "mass", "energy"))
@@ -248,7 +261,7 @@ def _burgers(config: dict) -> SimulationResult:
     )
 
 
-def _navier_stokes(config: dict) -> SimulationResult:
+def _navier_stokes(config: dict, frame_callback=None, retain_fields=True) -> SimulationResult:
     n, length, dt = config["grid_size"], config["domain_length"], config["dt"]
     viscosity = config["viscosity"]
     x = np.arange(n, dtype=np.float64) * (length / n)
@@ -307,8 +320,11 @@ def _navier_stokes(config: dict) -> SimulationResult:
         u, v, u_hat, v_hat = velocity_from(omega_hat)
         omega = np.fft.ifft2(omega_hat).real
         divergence = np.fft.ifft2(1j * kx * u_hat + 1j * ky * v_hat).real
-        for name, field in (("u", u), ("v", v), ("vorticity", omega)):
-            frames[name].append(field.copy())
+        if retain_fields:
+            for name, field in (("u", u), ("v", v), ("vorticity", omega)):
+                frames[name].append(field.copy())
+        if frame_callback is not None:
+            frame_callback(step * dt, {"u": u, "v": v, "vorticity": omega})
         mean = float(np.mean(omega))
         times.append(step * dt)
         diagnostic_rows.append(
@@ -346,7 +362,7 @@ def _navier_stokes(config: dict) -> SimulationResult:
     )
     return SimulationResult(
         times=np.asarray(times, dtype=np.float64),
-        fields={name: np.stack(saved) for name, saved in frames.items()},
+        fields={name: np.stack(saved) for name, saved in frames.items()} if retain_fields else {},
         diagnostics={
             name: diagnostics[:, index]
             for index, name in enumerate(

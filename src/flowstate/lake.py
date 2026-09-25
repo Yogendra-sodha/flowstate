@@ -118,7 +118,14 @@ class Lake:
     def records(self) -> list[dict[str, Any]]:
         return [self.load_record(path.name) for path in self._run_dirs()]
 
-    def write(self, experiment_id: str, record: dict, result: Any | None) -> Path:
+    def write(
+        self,
+        experiment_id: str,
+        record: dict,
+        result: Any | None,
+        *,
+        field_store: Path | None = None,
+    ) -> Path:
         """Persist one result, refusing to overwrite an existing experiment.
 
         Failed experiments may have ``result=None``. Invalid input or interrupted
@@ -136,7 +143,10 @@ class Lake:
         try:
             (staging / "record.json").write_text(_encode(document) + "\n", encoding="utf-8")
             pq.write_table(pa.Table.from_pylist([_flatten(document)]), staging / "metadata.parquet")
-            if result is not None:
+            if field_store is not None:
+                # Copy chunk files without loading the full trajectory into memory.
+                shutil.copytree(field_store, staging / "fields.zarr")
+            elif result is not None:
                 self._write_arrays(staging / "fields.zarr", result)
             artifacts = {
                 file.relative_to(staging).as_posix(): _sha256(file)

@@ -2,7 +2,7 @@
 
 Flowstate is an experiment and evidence system. A `completed` run means a particular numerical configuration finished; its diagnostic flags may still require review. Completion is not a certificate of convergence or a theorem. The Clay problem concerns three-dimensional incompressible Navier–Stokes existence and smoothness. This milestone studies a much narrower two-dimensional periodic problem. Numerical instability is not evidence of a mathematical singularity. See [Fefferman's official problem statement](https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf).
 
-## First milestone
+## Implemented numerical scope
 
 The CPU experiment engine targets viscous, unforced equations on uniform periodic grids. Configurations also accept zero viscosity for smooth inviscid experiments; the Burgers discretization is not suitable for capturing shocks.
 
@@ -10,12 +10,13 @@ The CPU experiment engine targets viscous, unforced equations on uniform periodi
 | --- | --- | --- |
 | Viscous Burgers, one dimension | Velocity; conservative finite differences and classical explicit RK4 | No walls, forcing, inviscid shock benchmark, or adaptive mesh |
 | Incompressible Navier–Stokes, two dimensions | Scalar vorticity; Fourier derivatives, dealiased nonlinear term, explicit RK4; velocity reconstructed from vorticity | Zero mean velocity and compatible zero mean vorticity; no pressure output or three-dimensional flow |
+| Steady Darcy, two dimensions | Positive variable permeability, harmonic face fluxes, sparse direct solve | Manufactured forcing and pressure on a square with zero Dirichlet boundaries; a validation family, not a general Darcy dataset |
 
 The vorticity formulation enforces incompressibility through velocity reconstruction. It is not a separately implemented pressure-projection solver. Pressure could later be recovered from a Poisson equation with an explicit gauge, but absent pressure data must never be synthesized or labelled as measured.
 
 The data path is local Zarr fields, Parquet metadata/metrics, DuckDB queries, immutable finalized results, and parent-experiment lineage. Resuming a sweep reuses both completed and recorded failed configurations after integrity verification; a new attempt creates a distinct result. A crash before publication reruns from the initial state. There are no timestep checkpoints. Failed solves retain an error record, but no partial fields or structured last-valid time.
 
-The solvers use float64 and hold saved frames in memory. A 256 MiB estimated saved-output limit bounds accepted configurations, not total process memory; working arrays and assembly copies require additional memory. Chunked disk storage alone does not establish streaming output or distributed scalability.
+The solvers use float64. Buffered mode retains saved fields; `--stream` writes each saved field during integration and keeps only scalar diagnostic histories alongside solver working arrays. A 256 MiB estimated saved-output limit bounds accepted unsteady configurations, not total process memory. Darcy bounds its sparse grid separately. Neither chunked storage nor streaming establishes distributed scalability. See the [Darcy/validation chapter](steps/02-darcy-validation.md) and [stepbook](../STEPBOOK.md) for measured scope.
 
 ## Equations and conventions
 
@@ -75,7 +76,7 @@ Each result needs the resolved configuration, initial-condition definition and s
 
 Completed artifacts must not be silently overwritten by a rerun. Failed attempts remain identifiable through their configuration and attempt number; an explicit parent relation can additionally link a retry to its previous attempt. Catalog rows become visible after atomic publication of the artifact directory. SHA-256 manifests detect accidental artifact changes, but the manifests are unsigned: this is application-level immutability and integrity verification, not tamper-proof storage.
 
-Any future FNO or PINN evaluation must apply these rules:
+Implemented FNO/PINN baselines and future extensions must apply these rules:
 
 1. Split by entire initial-condition trajectories and related experiment families before extracting windows. Adjacent timesteps from one trajectory must not enter both training and test sets.
 2. Fit normalizers and select model hyperparameters using training/validation only. Version the split, preprocessing, model checkpoint, and training dataset hashes.
@@ -84,4 +85,4 @@ Any future FNO or PINN evaluation must apply these rules:
 5. Report field norms, conservation/dissipation metrics, failure counts, and cost together. Include training cost and warmup when making speed claims, and separate in-distribution tests from held-out viscosities, resolutions, or domains.
 6. Keep numerical anomalies, statistical outliers, and scientific hypotheses distinct. A proposal generated from previous runs is a candidate to test, not an established finding.
 
-The [PDEBench paper](https://arxiv.org/abs/2210.07182) supplies an existing scientific-ML benchmark with simulation data, generation code, and FNO/U-Net/PINN baselines. The [original FNO paper](https://arxiv.org/abs/2010.08895) studies function-space operators on Burgers, Darcy, and Navier–Stokes problems. These are references and future integration targets; this initial engine does not reproduce their published benchmarks or claim a novel neural operator.
+The [PDEBench paper](https://arxiv.org/abs/2210.07182) supplies an existing scientific-ML benchmark with simulation data, generation code, and FNO/U-Net/PINN baselines. The [original FNO paper](https://arxiv.org/abs/2010.08895) studies function-space operators on Burgers, Darcy, and Navier–Stokes problems. The prototype implements a small Burgers FNO/PINN workflow and a provenance-aware Burgers HDF5 import contract. It does not reproduce their published benchmarks or claim a novel neural operator. The [learning chapter](steps/04-learning-baselines.md) documents supervision, tensor shapes, optimizer/checkpoint loops, and comparison limits.

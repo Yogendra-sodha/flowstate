@@ -30,6 +30,14 @@ flowchart TD
 | `engine.py` | Execution identity, provenance, metric summaries, attempts, process-based sweeps |
 | `lake.py` | Atomic publication, Zarr arrays, Parquet catalog, SQL, checksums, lineage |
 | `cli.py` | JSON commands, readable failures, machine-readable output and exit status |
+| `darcy.py` | Manufactured steady Darcy problems and a sparse harmonic-face solve |
+| `validation.py` | Refinement studies, measured resources, NPZ evidence and a JSON report |
+| `streaming.py` | Saved-frame callback writing Zarr chunks during integration |
+| `datasets.py` | Verified extraction, compatible-grid ETL, family splits, HDF5 import |
+| `ml.py` | CPU FNO/PINN training, checkpoint resumption, physical evaluation metrics |
+| `object_store.py` | Conditional immutable S3 objects and verified download publication |
+| `research.py` | Typed graph, explicit assertions, budgeted refinement policy |
+| `demo.py` | Reproducible integration study with stage-level JSONL events |
 
 There is no central writable metadata database. A DuckDB connection builds the
 `experiments` table from the per-run Parquet records, so distinct workers can publish
@@ -78,12 +86,18 @@ analysis and automatic for resumption; SQL does not rehash every field chunk.
 
 ## Scientific entities
 
-Current records implement Experiment, Equation, Solver, configuration/initial
-condition, Dataset artifacts, Metric, and a parent relationship. The graph command
-exports experiment nodes and `parent_of` edges. It is a lineage graph, not yet a
-full ontology of models, checkpoints, hypotheses, and findings. Those entities need
-versioned evidence links and action semantics before an autonomous researcher can
-operate on them.
+The default graph command exports experiment nodes and `parent_of` edges for a
+compact lineage view. `graph --ontology` adds scientific entity types, versioned
+explicit assertions, model/data relations, and evidence links.
+
+The expanded graph now implements explicit typed entities and evidence links in
+`research/entities/`, reconstructed together with the experiment-derived nodes.
+FNO/PINN bundles carry dataset/checkpoint hashes and can be registered. The
+deterministic refinement policy generates hypotheses and proposals, and executing
+a bounded cycle records observational findings. It never automatically promotes
+them to proof or claims of scientific support. See [the stepbook](../STEPBOOK.md)
+for the exact pipeline and [learning chapter](steps/04-learning-baselines.md) for
+the data split and checkpoint contract.
 
 The scientific reviewer has a separate role: challenge numerical validity,
 provenance, benchmark splits, and interpretation. Review flags are numerical
