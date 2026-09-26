@@ -185,4 +185,8 @@ Learning exercises:
 - Compare buffered and streamed mode at the same worker count. Discuss elapsed time and sampled RSS separately.
 - Read the event sequence for a deliberately failing small trial and locate the point where successful aggregation is prevented.
 
-No measured results are invented in this chapter. A measured entry should record the exact command, code provenance, canonical workload, trial order, repetitions, observed values, verification outcomes, and limitations. Subsequent steps can then investigate an actual configured object store or distributed workers using their own explicit measurement contracts.
+The [version 0.3 study report](../reports/local-scaling-0.3.json) contains the
+measured trial order, numerical-equivalence checks, timings, RSS samples, and
+provenance. [Stepbook section 15](../../STEPBOOK.md) interprets those results.
+Subsequent steps can investigate an actual configured object store or distributed
+workers using their own explicit measurement contracts.

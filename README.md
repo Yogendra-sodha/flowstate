@@ -30,6 +30,8 @@ problem.
   dissipation checks, storage/orchestration integration tests, and isolated local
   sweep benchmarks with process-tree memory sampling.
 
+New to the project? Start with [the plain-English guide](docs/start-here.md),
+which follows one run through the code and gives you a one-hour practice route.
 Read [the implementation stepbook](STEPBOOK.md) for the design decisions, functions,
 loops, setup, extraction/transformation/loading logic, and measured validation.
 The [roadmap](docs/roadmap.md) distinguishes the implemented local prototype from

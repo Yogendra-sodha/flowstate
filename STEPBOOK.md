@@ -552,3 +552,59 @@ The complete local suite passed 186 tests in 88.28 seconds. Ruff passed, and
 `uv build` produced the version 0.3.0 source archive and wheel. The larger measured
 study is kept separate from these regression checks so its timings are collected
 without a concurrent test workload.
+
+## 15. Results of the isolated local scaling study
+
+The study ran from clean source commit `9646962` on the same Windows computer as
+the version 0.2 demonstration. The exact configuration, execution order, trial
+values, provenance, and report hash are committed in the
+[compact scale report](docs/reports/local-scaling-0.3.json). Eighteen fresh trials
+each ran eight experiments: four random Burgers and four random 2D Navier–Stokes
+problems at grid size 32, viscosity 0.05, 64 integration steps, and a saved frame
+every two steps. There were three trials for each worker/mode combination, totaling
+144 fresh experiments and 9,216 integration steps. Every trial subsequently reused
+all eight verified artifacts. Fields, coordinates, saved times, and diagnostic
+values matched across every condition.
+
+The table reports the median of three complete fresh-sweep wall times. The sampled
+RSS column is the *largest observed parent-plus-child RSS sum* across those three
+trials, not a median or actual physical-memory peak.
+
+| Storage | Workers | Median wall time | Speedup within mode | Maximum sampled RSS sum |
+| --- | ---: | ---: | ---: | ---: |
+| Buffered | 1 | 11.87 s | 1.00× | 104 MB |
+| Buffered | 2 | 9.12 s | 1.30× | 281 MB |
+| Buffered | 4 | 9.15 s | 1.30× | 463 MB |
+| Streamed | 1 | 19.92 s | 1.00× | 104 MB |
+| Streamed | 2 | 15.34 s | 1.30× | 279 MB |
+| Streamed | 4 | 10.77 s | 1.85× | 450 MB |
+
+For this small mixed workload, **two buffered workers** gave the lowest median
+time. Four buffered workers gave no meaningful further improvement but a much
+larger sampled RSS sum. Streamed mode gained more from four workers but remained
+slower than two buffered workers in absolute median time. Each trial stored about
+3.43 MB of finalized artifacts. The reuse medians were about 2.3–3.5 seconds,
+including checksum verification and pool startup.
+
+This does not contradict the earlier 64×64 single-run result showing much lower
+traced *Python allocations* with streaming. This 32-grid study has short saved
+histories and samples *resident process memory*, including libraries and worker
+interpreters. At this size, the sampled one-worker RSS was almost unchanged by
+storage mode. The metrics have different scopes and should stay separate.
+
+The local output directory was OneDrive-backed; OS caches, synchronization,
+background work, and CPU scheduling were not controlled. At most three repeats per
+condition give a useful first comparison, not a universal scaling law. A larger
+grid or longer saved history may change the best setting. We therefore retain the
+default of one worker for safety and let users choose a measured worker count for
+their workload. More representative throughput and an actual cloud bucket remain
+future measurements.
+
+## 16. Learning the project from one real experiment
+
+The [plain-English start guide](docs/start-here.md) explains the project as one
+literal data journey. It gives a 45–60 minute practice route: run Burgers twice,
+see verified reuse, inspect stored fields, query metrics, and locate the functions
+and tests responsible. It then introduces dataset ETL, FNO versus PINN, the
+research graph, and the scaling study in dependency order. Its videos and articles
+are optional support for concepts that appear in this repository.
