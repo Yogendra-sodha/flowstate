@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "flowstate-research"
-version = "0.2.0"
+version = "0.3.0"
 description = "Reproducible numerical PDE experiments and an immutable local experiment lake"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -16,6 +16,7 @@ dependencies = [
   "pyarrow>=19,<24",
   "scipy>=1.15,<2",
   "h5py>=3.12,<4",
+  "psutil>=7.2,<8",
 ]
 
 [project.optional-dependencies]

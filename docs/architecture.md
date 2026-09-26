@@ -38,6 +38,8 @@ flowchart TD
 | `object_store.py` | Conditional immutable S3 objects and verified download publication |
 | `research.py` | Typed graph, explicit assertions, budgeted refinement policy |
 | `demo.py` | Reproducible integration study with stage-level JSONL events |
+| `scaling.py` | Isolated sweep trials, scientific equivalence checks, throughput aggregation |
+| `resources.py` | Sampled parent/descendant RSS with partial-read accounting |
 
 There is no central writable metadata database. A DuckDB connection builds the
 `experiments` table from the per-run Parquet records, so distinct workers can publish
@@ -45,6 +47,13 @@ without competing over a database writer lock. Temporary staging directories are
 hidden from discovery. A crash before publication leaves no finalized run; a later
 invocation starts that configuration again. Power-loss durability and remote object
 storage transactions are outside this local prototype's guarantees.
+
+Process pools use an explicit `spawn` context so workers do not inherit active
+threads or numerical runtime state. The scaling harness creates a new interpreter
+and lake for each trial, then samples that interpreter and its descendants while
+timing the complete sweep. Measurements include publication; extra integrity checks
+and scientific value comparisons follow outside the timer. Reports preserve partial
+execution on failure. No success aggregate is emitted unless every condition passes.
 
 ## On-disk contract
 

@@ -1,0 +1,15 @@
+{
+  "base": {
+    "grid_size": 32,
+    "viscosity": 0.05,
+    "amplitude": 0.5,
+    "initial_condition": "random",
+    "dt": 0.001,
+    "steps": 64,
+    "save_every": 2
+  },
+  "parameters": {
+    "equation": ["burgers1d", "navier_stokes2d"],
+    "seed": [11, 23, 37, 41]
+  }
+}

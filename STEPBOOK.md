@@ -207,6 +207,7 @@ and validation rules in subsequent chapters.
 - [Darcy and validation](docs/steps/02-darcy-validation.md)
 - [Dataset ETL and object storage](docs/steps/03-data-pipelines.md)
 - [Learning baselines](docs/steps/04-learning-baselines.md)
+- [Local worker and storage scaling](docs/steps/05-local-scaling.md)
 
 The remaining sections explain the research graph, proposal policy, streaming,
 review corrections, and measured integrated execution.
@@ -513,3 +514,41 @@ The next infrastructure steps, in execution order, are:
 
 These are future capabilities and measurements. The delivered work establishes the
 local experiment-to-dataset-to-model-to-evidence loop and documents its current limits.
+
+## 14. Continue with measured local concurrency
+
+This phase starts from `aa69bb5`, the verified version 0.2 prototype. The next
+question is practical: for a fixed workload on this machine, do extra workers
+reduce elapsed time, and how much resident process memory do they add?
+
+Version 0.3 adds `scaling.py` to organize isolated trials and `resources.py` to sample
+process-tree RSS with psutil. The [new chapter](docs/steps/05-local-scaling.md) explains
+the loops and the benchmark's own extract-transform-load pipeline. The declared
+example uses four random seeds for each of Burgers and Navier–Stokes, thirty-two
+grid points per dimension, sixty-four integration steps, and a saved frame every
+two steps. One, two, and four workers are compared in both storage modes.
+
+The engine now explicitly starts workers with `spawn`. Starting a pool with fork
+while a sampler or Zarr runtime has active threads can inherit unsafe runtime
+state. Spawn also makes the process-start contract explicit across Windows and Linux.
+Its startup cost is included in the measurement.
+
+Review caught two reporting problems before the final study. First, writing an
+unignored output directory can change Git's dirty annotation without changing code.
+Runtime comparisons now use the actual commit, source fingerprint, dependencies,
+Python, hardware, and precision while retaining dirty state as an annotation.
+Second, an I/O exception after partial publication must not erase elapsed time or
+memory evidence. Those measurements are saved in `finally`, and failed reports list
+the published experiment IDs. They never enter a successful speedup summary.
+
+The initial focused verification passed forty-nine engine, scaling, and sampler
+tests. Resource tests use controlled process values to prove that the aggregate
+peak comes from one sample, rather than adding unrelated parent and child peaks.
+An actual subprocess integration test compares serial/parallel and buffered/streamed
+results, checks reuse, and confirms that equivalent arrays have identical hashes.
+Measured workload results are appended after running from a clean source commit.
+
+The complete local suite passed 186 tests in 88.28 seconds. Ruff passed, and
+`uv build` produced the version 0.3.0 source archive and wheel. The larger measured
+study is kept separate from these regression checks so its timings are collected
+without a concurrent test workload.

@@ -27,7 +27,8 @@ problem.
 - **Research:** typed evidence objects, hypotheses, findings, and deterministic
   budgeted refinement proposals that can execute through the same engine.
 - **Validation:** known-solution comparisons, convergence tests, conservation and
-  dissipation checks, and storage/orchestration integration tests.
+  dissipation checks, storage/orchestration integration tests, and isolated local
+  sweep benchmarks with process-tree memory sampling.
 
 Read [the implementation stepbook](STEPBOOK.md) for the design decisions, functions,
 loops, setup, extraction/transformation/loading logic, and measured validation.
@@ -91,6 +92,26 @@ boundary losses. These are different learning settings, not an equal-budget clai
 Numerical reference data are not exact truth, and beating persistence is measured,
 not assumed. Resume training into a **new** directory with `--resume outputs/fno`
 and matching original hyperparameters; `--epochs` then means additional epochs.
+
+## Measure local worker and storage scaling
+
+```sh
+uv run --no-sync flowstate sweep-benchmark examples/scaling_sweep.json outputs/scaling-01 --workers 1 2 4 --modes buffered streamed --repeats 3
+```
+
+This compares the same eight numerical configurations across worker counts and
+storage modes. Each trial starts in a fresh interpreter and lake; the engine uses
+explicitly spawned workers on Windows and Linux. Timings include worker startup,
+integration, storage, hashing, and publication. A separate timing measures verified
+reuse. Scientific array hashes must agree across every trial before a success
+report is published.
+
+The report contains individual trials, median/range wall times, within-mode serial
+speedups, artifact sizes, and sampled summed process-tree RSS. RSS can double-count
+shared pages and sampling can miss peaks; this is distinct from the earlier
+`storage-benchmark` allocation tracing. Fresh directories do not imply cold OS
+caches. See the [scaling chapter](docs/steps/05-local-scaling.md) for processing loops,
+budgets, failure evidence, and interpretation. Choose a new output path each time.
 
 ## Import data and mirror artifacts
 

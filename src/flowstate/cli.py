@@ -62,6 +62,17 @@ def main(argv: list[str] | None = None) -> int:
     benchmark.add_argument("output", help="New output directory")
     benchmark.add_argument("--grid-size", type=int, default=64)
     benchmark.add_argument("--steps", type=int, default=32)
+    scaling = commands.add_parser(
+        "sweep-benchmark", help="Compare isolated local worker/storage configurations"
+    )
+    scaling.add_argument("config", help="JSON sweep specification")
+    scaling.add_argument("output", help="New study directory")
+    scaling.add_argument("--workers", nargs="+", type=int, default=[1, 2, 4])
+    scaling.add_argument(
+        "--modes", nargs="+", choices=["buffered", "streamed"], default=["buffered", "streamed"]
+    )
+    scaling.add_argument("--repeats", type=int, default=3)
+    scaling.add_argument("--seed", type=int, default=0)
     dataset = commands.add_parser("dataset", help="Curate or verify trajectory datasets")
     dataset_commands = dataset.add_subparsers(dest="dataset_command", required=True)
     export = dataset_commands.add_parser("export")
@@ -183,7 +194,20 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _extended_command(args) -> int:
-    if args.command == "storage-benchmark":
+    if args.command == "sweep-benchmark":
+        from flowstate.scaling import benchmark_sweep
+
+        _print(
+            benchmark_sweep(
+                _read_json(args.config),
+                args.output,
+                workers=args.workers,
+                modes=args.modes,
+                repeats=args.repeats,
+                seed=args.seed,
+            )
+        )
+    elif args.command == "storage-benchmark":
         from flowstate.streaming import benchmark_storage
 
         _print(benchmark_storage(args.output, grid_size=args.grid_size, steps=args.steps))

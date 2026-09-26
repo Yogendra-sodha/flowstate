@@ -6,6 +6,7 @@ import hashlib
 import importlib.metadata
 import itertools
 import json
+import multiprocessing
 import os
 import platform
 import subprocess
@@ -290,5 +291,9 @@ def run_sweep(
     jobs = [(config, str(lake_root), parent_id, attempt, stream) for config in expand_sweep(spec)]
     if workers == 1:
         return [_worker(job) for job in jobs]
-    with ProcessPoolExecutor(max_workers=workers) as pool:
+    # Spawn avoids inheriting active Zarr/native-library/sampling threads and
+    # gives Windows and POSIX the same explicit process-start contract.
+    with ProcessPoolExecutor(
+        max_workers=workers, mp_context=multiprocessing.get_context("spawn")
+    ) as pool:
         return list(pool.map(_worker, jobs))
