@@ -73,6 +73,12 @@ dataset, trains/evaluates FNO and PINN baselines, registers their evidence, and
 executes two bounded refinement proposals. Inspect `report.json`, `events.jsonl`,
 `research_graph.json`, and the model/dataset manifests inside that directory.
 
+For real external data, run `uv run --no-sync flowstate public-study outputs/public-01`.
+It downloads a bounded, attributed PDEBench subset and compares three FNO seeds
+plus one PINN with persistence. The [executed public-data report](docs/reports/public-burgers-0.4.json)
+records prediction improvements and conservation weaknesses; the
+[walkthrough](docs/steps/06-public-data.md) explains reproduction and limits.
+
 To run individual stages:
 
 ```sh

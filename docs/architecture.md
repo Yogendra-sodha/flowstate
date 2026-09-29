@@ -36,6 +36,8 @@ flowchart TD
 | `datasets.py` | Verified extraction, compatible-grid ETL, family splits, HDF5 import |
 | `ml.py` | CPU FNO/PINN training, checkpoint resumption, physical evaluation metrics |
 | `object_store.py` | Conditional immutable S3 objects and verified download publication |
+| `http_ranges.py`, `public_data.py` | Bounded public HDF5 extraction, source receipts, attributed subset import |
+| `public_study.py` | Fixed public-data study plan, three FNO seeds, one PINN, progress/failure evidence |
 | `research.py` | Typed graph, explicit assertions, budgeted refinement policy |
 | `demo.py` | Reproducible integration study with stage-level JSONL events |
 | `scaling.py` | Isolated sweep trials, scientific equivalence checks, throughput aggregation |

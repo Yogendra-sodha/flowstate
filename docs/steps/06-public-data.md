@@ -103,3 +103,12 @@ Three FNO seeds measure training randomness conditional on that split; they do n
 estimate population uncertainty. The per-instance PINN and pretrained FNO have
 different learning tasks. Every accuracy metric compares numerical references,
 not an exact PDE solution, and the study is not a full PDEBench reproduction.
+
+## Executed evidence
+
+The [version 0.4 report](../reports/public-burgers-0.4.json) comes from clean commit
+`29377f3`. Acquisition transferred 49,881,216 bytes in 49 requests. All three FNO
+seeds reduced field RMSE versus persistence, but preserved mean velocity less
+accurately. One PINN case also reduced field RMSE while retaining a substantial
+physics residual. The [stepbook](../../STEPBOOK.md#measured-public-data-result)
+explains those results and why lower prediction error alone is insufficient.

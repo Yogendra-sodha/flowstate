@@ -645,3 +645,53 @@ held-out results never choose hyperparameters or a preferred seed. It then fits
 one PINN using only a held-out initial frame and physics. Every completed stage
 keeps its artifacts, and failures record their stage and error. This adds a
 traceable external-data demonstration, not a claim to reproduce the full benchmark.
+
+### Measured public-data result
+
+The complete study ran on 2026-09-28 local time (2026-09-29 UTC) from clean commit
+`29377f3f7f9b1a97e72c2570596651ce0e52725b`, version 0.4.0. The
+[measured report](docs/reports/public-burgers-0.4.json) preserves the plan, source
+attribution, transfer receipts, split membership, every seed's results, per-time
+errors, hashes, and execution events. Full local fields, predictions, and
+checkpoints are in ignored `outputs/public-study-20260928/`.
+
+The download used 49 range requests and received **49,881,216 bytes**, below the
+64 MiB cap. It selected 24 of 10,000 source trajectories, preserving all 201 frames
+over physical time 0–2 and all 1,024 spatial points: 4,939,776 field values. The
+frozen split contains 16 training, 4 validation, and 4 test trajectories. The local
+subset SHA-256 is
+`0cff51358bd57ace1fcd879a7de68fdff1207dfef14c62635cce2461c6939cf5`.
+The publisher's full-file MD5 remains unverified, as the receipt states.
+
+All FNO runs used ten epochs, with checkpoint selection using validation data.
+The table reports physical-field RMSE on the same four held-out trajectories.
+One-step prediction receives the true preceding frame; rollout starts from the
+initial frame and feeds each prediction into the next step. Lower is better.
+
+| Predictor | Selected epoch | One-step RMSE | 200-step rollout RMSE |
+| --- | ---: | ---: | ---: |
+| Persistence | — | 0.0309762 | 0.6878275 |
+| FNO seed 0 | 10 | 0.0113663 | 0.3021139 |
+| FNO seed 1 | 9 | 0.0110455 | 0.1872345 |
+| FNO seed 2 | 10 | 0.0124395 | 0.2348113 |
+
+These prediction improvements do **not** establish satisfactory conservation.
+Rollout mean-velocity RMSE was 0.1734, 0.06567, and 0.09272 for seeds 0/1/2,
+versus 0.00004540 for persistence. Seed 0's rollout energy RMSE was also worse
+than persistence (0.2372 versus 0.2225), despite lower field RMSE. Mean preservation
+and longer-rollout behavior are concrete targets for the next model improvement.
+No seed has been discarded or promoted based on its test results.
+
+The 200-epoch PINN fit the initial-value problem from public source row 4729,
+using its initial frame and physics. Its subsequent-trajectory RMSE was 0.26106,
+versus 0.82236 for persistence on that **single** trajectory. Its physical residual
+RMS was 0.31026, and its mean-velocity error was worse than persistence. This is
+not a head-to-head comparison with the FNO's four-trajectory average or a claim
+of a converged physics solution. It demonstrates that the same evidence pipeline
+can retain both improvements and weaknesses on external numerical data.
+
+The final local suite passed **289 tests in 71.89 seconds**, Ruff passed, and the
+0.4.0 source archive and wheel built successfully. GitHub Actions passed on
+[Windows and Linux](https://github.com/Yogendra-sodha/flowstate/actions/runs/36513158601).
+Cloud-bucket validation, distributed recovery, and broader independent scientific
+studies remain open. This milestone completes the first real public-data study.

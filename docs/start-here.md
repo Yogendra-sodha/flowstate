@@ -49,7 +49,7 @@ Flowstate does not solve the 3D Navier–Stokes existence and smoothness problem
 | --- | --- |
 | Local Burgers, 2D Navier–Stokes, and a manufactured Darcy solver | Broader PDE families and stronger application-specific references |
 | Immutable local lake, SQL queries, checksums, streamed output | Distributed work queues, remote workers, and mid-simulation recovery |
-| Dataset export and a PDEBench Burgers import adapter | Declared public-dataset studies and larger benchmark comparisons |
+| Dataset export, bounded public PDEBench acquisition, and a completed 24-trajectory study | Larger independent benchmark comparisons and better rollout conservation |
 | CPU FNO and PINN baselines with reproducible artifacts | Broader generalization studies, tuning, and uncertainty evaluation |
 | S3-compatible mirroring with emulator tests | Validation against an actual configured cloud account and workload |
 | Local worker/storage benchmark tooling | Representative scale measurements and operational scheduling decisions |
