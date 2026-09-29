@@ -9,6 +9,7 @@ import math
 import shutil
 import tempfile
 from collections.abc import Callable
+from numbers import Integral
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -19,6 +20,7 @@ import zarr
 from flowstate.lake import Lake, _rename_with_retry, _sha256
 
 _SPLITS = ("train", "validation", "test")
+_MAX_IMPORT_VALUES = 16_000_000
 _CONVENTION = "u_t + u*u_x = viscosity*u_xx; viscosity is the effective diffusion coefficient"
 
 
@@ -331,6 +333,10 @@ def import_pdebench(
     license_name: str,
     viscosity: float,
     seed: int = 0,
+    sample_indices: list[int] | None = None,
+    time_stop: int | None = None,
+    max_values: int = _MAX_IMPORT_VALUES,
+    acquisition: str | Path | None = None,
 ) -> dict:
     """Import the periodic uniform-viscosity PDEBench Burgers HDF5 contract.
 
@@ -338,6 +344,12 @@ def import_pdebench(
     viscosity is the effective diffusion coefficient, e.g. filename Nu0.01
     means 0.01/pi in the official PDEBench generator. The caller asserts that
     this coefficient is shared by every trajectory; filenames are not parsed.
+
+    Optional sample indices preserve their supplied order and original source
+    identities. time_stop selects an exclusive prefix including the initial
+    frame; the full spatial grid is always retained. The selected tensor must
+    fit the explicit value budget, capped at the learning loader's 16M values.
+    Full-file provenance hashing still reads all source bytes after validation.
     """
     import h5py
 
@@ -349,26 +361,88 @@ def import_pdebench(
     ):
         raise ValueError("Explicit source_url, source_version, and license_name are required")
     viscosity = _viscosity(viscosity)
+    if (
+        isinstance(max_values, bool)
+        or not isinstance(max_values, Integral)
+        or not 1 <= max_values <= _MAX_IMPORT_VALUES
+    ):
+        raise ValueError(f"max_values must be an integer between 1 and {_MAX_IMPORT_VALUES}")
+    max_values = int(max_values)
     source = Path(source)
-    raw_sha256 = _sha256(source)
+    acquisition_metadata = None
+    if acquisition is not None:
+        from flowstate.public_data import verify_acquisition
+
+        acquisition = Path(acquisition)
+        if problems := verify_acquisition(acquisition):
+            raise ValueError(f"Acquisition verification failed: {problems}")
+        if source.resolve() != (acquisition / "source.hdf5").resolve():
+            raise ValueError("Source file does not belong to the acquisition")
+        acquisition_metadata = json.loads((acquisition / "metadata.json").read_text("utf-8"))
+        declared = acquisition_metadata["source"]
+        if (
+            source_url != declared["source_url"]
+            or source_version != declared["source_version"]
+            or license_name != declared["license_name"]
+            or viscosity != declared["effective_viscosity"]
+        ):
+            raise ValueError("Import provenance differs from the verified acquisition")
     with h5py.File(source, "r") as handle:
         if not {"tensor", "x-coordinate", "t-coordinate"}.issubset(handle.keys()):
             raise ValueError("Expected PDEBench tensor, x-coordinate, and t-coordinate datasets")
         tensor = handle["tensor"]
         if tensor.ndim != 3 or tensor.shape[0] < 3:
             raise ValueError("PDEBench tensor must have shape [sample,time,x] with >= 3 samples")
+        if acquisition_metadata and (
+            list(tensor.shape) != acquisition_metadata["shape"]
+            or len(acquisition_metadata["selection"]["sample_indices"]) != tensor.shape[0]
+        ):
+            raise ValueError("Acquisition selection does not match the local tensor")
+        nt = tensor.shape[1]
+        if time_stop is None:
+            stop = nt
+        elif isinstance(time_stop, bool) or not isinstance(time_stop, Integral):
+            raise ValueError("time_stop must be an integer between 2 and the source frame count")
+        else:
+            stop = int(time_stop)
+        if not 2 <= stop <= nt:
+            raise ValueError("time_stop must be between 2 and the source frame count")
+        if sample_indices is not None:
+            if not isinstance(sample_indices, list) or len(sample_indices) < 3:
+                raise ValueError("sample_indices must be a list containing at least 3 indices")
+            if any(
+                isinstance(index, bool) or not isinstance(index, Integral)
+                for index in sample_indices
+            ):
+                raise ValueError("sample_indices must contain integers, not booleans")
+            selected = [int(index) for index in sample_indices]
+            if len(set(selected)) != len(selected):
+                raise ValueError("sample_indices must be unique")
+            if any(index < 0 or index >= tensor.shape[0] for index in selected):
+                raise ValueError("sample_indices must be within the source sample range")
+            sample_count = len(selected)
+        else:
+            sample_count = tensor.shape[0]
+        selected_values = sample_count * stop * tensor.shape[2]
+        if selected_values > max_values:
+            raise ValueError(
+                f"Selected tensor has {selected_values} values, exceeding max_values={max_values}; "
+                "choose fewer sample_indices or a shorter time_stop"
+            )
+        if sample_indices is None:
+            selected = list(range(sample_count))
         x = _coordinate(handle["x-coordinate"][:], "x", 4)
         original_time = _coordinate(handle["t-coordinate"][:], "time", 2)
-        nt = tensor.shape[1]
         if len(original_time) not in (nt, nt + 1) or tensor.shape[2] != len(x):
             raise ValueError("PDEBench coordinate lengths do not match tensor shape")
-        times = original_time[:nt]
+        times = original_time[:stop]
         _coordinate(times, "time", 2)
         for name in ("viscosity", "nu"):
             if name in handle and np.asarray(handle[name]).size != 1:
                 raise ValueError("Per-trajectory viscosity arrays are not supported")
+        raw_sha256 = _sha256(source)
         trajectories = []
-        for index in range(tensor.shape[0]):
+        for index in selected:
             initial = np.asarray(tensor[index, 0], dtype="<f4")
             if not np.isfinite(initial).all():
                 raise ValueError("PDEBench initial fields contain non-finite values")
@@ -387,24 +461,42 @@ def import_pdebench(
                     "source_sha256": raw_sha256,
                 }
             )
+            if acquisition_metadata:
+                trajectories[-1]["remote_source_index"] = acquisition_metadata["selection"][
+                    "sample_indices"
+                ][index]
         provenance = {
             "kind": "pdebench_hdf5",
             "source_url": source_url,
             "source_version": source_version,
             "license_name": license_name,
             "source_sha256": raw_sha256,
+            "original_tensor_shape": list(tensor.shape),
+            "selection": {
+                "sample_indices": selected,
+                "time_start": 0,
+                "time_stop": stop,
+                "spatial_stride": 1,
+            },
+            "max_values": max_values,
             "uniform_viscosity_asserted_by_caller": viscosity,
             "viscosity_convention": _CONVENTION,
             "discarded_terminal_time_coordinate": (
                 float(original_time[-1]) if len(original_time) == nt + 1 else None
             ),
         }
+        if acquisition_metadata:
+            provenance["acquisition"] = acquisition_metadata
+            provenance["acquisition_manifest_sha256"] = _sha256(acquisition / "manifest.json")
+            provenance["source_sha256_scope"] = "Complete derived local subset HDF5 file"
+        else:
+            provenance["source_sha256_scope"] = "Complete supplied local HDF5 file"
         return _publish(
             Path(output),
             lambda staging: _write_dataset(
                 staging,
                 trajectories,
-                lambda index: tensor[index],
+                lambda index: tensor[selected[index], :stop, :],
                 times,
                 x,
                 viscosity,

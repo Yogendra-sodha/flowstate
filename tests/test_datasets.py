@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 import zarr
 
+import flowstate.datasets as datasets_module
 from flowstate.datasets import export_dataset, import_pdebench, verify_dataset
 from flowstate.lake import Lake
 from flowstate.numerics import normalize_config, solve
@@ -222,6 +223,147 @@ def test_pdebench_contract_streams_samples_and_records_raw_provenance(tmp_path, 
     assert metadata["viscosity"] == pytest.approx(0.01 / np.pi)
     assert metadata["trajectories"][0]["family_id"] == metadata["trajectories"][1]["family_id"]
     assert metadata["provenance"]["license_name"] == "CC0-1.0"
+    assert metadata["provenance"]["original_tensor_shape"] == [6, 5, 8]
+    assert metadata["provenance"]["selection"] == {
+        "sample_indices": list(range(6)),
+        "time_start": 0,
+        "time_stop": 5,
+        "spatial_stride": 1,
+    }
+
+
+def test_pdebench_subset_preserves_values_source_order_and_family_split(tmp_path, monkeypatch):
+    source = tmp_path / "burgers.hdf5"
+    data = make_hdf5(source, extra_time=True, duplicate=True)
+    indices = [1, 5, 0, 2]
+    original_getitem = h5py.Dataset.__getitem__
+    reads = []
+
+    def selected_read(dataset, key, *args, **kwargs):
+        if dataset.name == "/tensor":
+            assert isinstance(key, tuple)
+            assert key[0] in indices
+            if len(key) == 3:
+                assert key[1] == slice(None, 3)
+                assert key[2] == slice(None)
+            else:
+                assert key[1] == 0
+            reads.append(key)
+        return original_getitem(dataset, key, *args, **kwargs)
+
+    monkeypatch.setattr(h5py.Dataset, "__getitem__", selected_read)
+    metadata = import_fixture(
+        source, tmp_path / "subset", sample_indices=indices, time_stop=3, max_values=96
+    )
+    group = zarr.open_group(str(tmp_path / "subset"), mode="r")
+    np.testing.assert_array_equal(group["fields/u"][:], data[indices, :3, :])
+    np.testing.assert_array_equal(group["time"][:], np.arange(3) * 0.1)
+    np.testing.assert_array_equal(group["x"][:], np.arange(8) / 8)
+    assert group["fields/u"].shape == (4, 3, 8)
+    assert reads and verify_dataset(tmp_path / "subset") == []
+    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    assert metadata["provenance"]["source_sha256"] == source_hash
+    assert metadata["provenance"]["original_tensor_shape"] == [6, 5, 8]
+    assert metadata["provenance"]["selection"] == {
+        "sample_indices": indices,
+        "time_start": 0,
+        "time_stop": 3,
+        "spatial_stride": 1,
+    }
+    assert metadata["provenance"]["max_values"] == 96
+    assert metadata["provenance"]["discarded_terminal_time_coordinate"] == 0.5
+    assert [item["source_index"] for item in metadata["trajectories"]] == indices
+    assert [item["id"] for item in metadata["trajectories"]] == [
+        f"{source_hash[:16]}-{index}" for index in indices
+    ]
+    assert metadata["trajectories"][0]["family_id"] == metadata["trajectories"][2]["family_id"]
+    membership = {
+        local_index: split
+        for split, members in metadata["splits"].items()
+        for local_index in members
+    }
+    assert membership[0] == membership[2]
+    training = data[[indices[index] for index in metadata["splits"]["train"]], :3, :]
+    assert metadata["normalization"]["mean"] == pytest.approx(training.astype(float).mean())
+    assert metadata["normalization"]["count"] == training.size
+
+
+@pytest.mark.parametrize(
+    "options, match",
+    [
+        ({"sample_indices": [0, 1]}, "at least 3"),
+        ({"sample_indices": (0, 1, 2)}, "list"),
+        ({"sample_indices": [0, 1, 1]}, "unique"),
+        ({"sample_indices": [-1, 1, 2]}, "range"),
+        ({"sample_indices": [0, 1, 6]}, "range"),
+        ({"sample_indices": [False, 1, 2]}, "integers"),
+        ({"sample_indices": [0.0, 1, 2]}, "integers"),
+        ({"sample_indices": ["0", 1, 2]}, "integers"),
+        ({"time_stop": 1}, "time_stop"),
+        ({"time_stop": 6}, "time_stop"),
+        ({"time_stop": True}, "time_stop"),
+        ({"time_stop": 3.0}, "time_stop"),
+        ({"max_values": 0}, "max_values"),
+        ({"max_values": True}, "max_values"),
+        ({"max_values": 100.0}, "max_values"),
+        ({"max_values": 16_000_001}, "max_values"),
+        ({"max_values": 239}, "exceeding max_values"),
+        ({"sample_indices": [0, 1, 2], "time_stop": 2, "max_values": 47}, "exceeding max_values"),
+    ],
+)
+def test_invalid_import_selection_is_rejected_before_tensor_reads_or_hashing(
+    tmp_path, monkeypatch, options, match
+):
+    source = tmp_path / "burgers.hdf5"
+    make_hdf5(source)
+    original_getitem = h5py.Dataset.__getitem__
+
+    def reject_field_reads(dataset, key, *args, **kwargs):
+        if dataset.name == "/tensor":
+            pytest.fail("Invalid selection read tensor data")
+        return original_getitem(dataset, key, *args, **kwargs)
+
+    def reject_hashing(path):
+        pytest.fail("Invalid selection hashed the full source before being rejected")
+
+    monkeypatch.setattr(h5py.Dataset, "__getitem__", reject_field_reads)
+    monkeypatch.setattr(datasets_module, "_sha256", reject_hashing)
+    with pytest.raises(ValueError, match=match):
+        import_fixture(source, tmp_path / "subset", **options)
+    assert not (tmp_path / "subset").exists()
+    assert not list(tmp_path.glob(".staging-*"))
+
+
+def test_default_import_budget_rejects_large_tensor_before_any_payload_read(tmp_path, monkeypatch):
+    source = tmp_path / "large-unallocated.hdf5"
+    with h5py.File(source, "w") as handle:
+        # HDF5 need not allocate payload bytes until data is written. Only the
+        # shape is needed to prove this selection exceeds the learning budget.
+        handle.create_dataset("tensor", shape=(3, 1001, 8192), dtype="f4")
+        handle.create_dataset("x-coordinate", shape=(8192,), dtype="f8")
+        handle.create_dataset("t-coordinate", shape=(1001,), dtype="f8")
+
+    def reject_any_payload(dataset, key, *args, **kwargs):
+        pytest.fail(f"Oversized selection read payload from {dataset.name}")
+
+    monkeypatch.setattr(h5py.Dataset, "__getitem__", reject_any_payload)
+    with pytest.raises(ValueError, match="exceeding max_values=16000000"):
+        import_fixture(source, tmp_path / "subset")
+    assert not (tmp_path / "subset").exists()
+
+
+def test_subset_does_not_read_excluded_samples_or_later_frames(tmp_path):
+    source = tmp_path / "burgers.hdf5"
+    data = make_hdf5(source)
+    with h5py.File(source, "a") as handle:
+        handle["tensor"][1, :, :] = np.nan
+        handle["tensor"][:, 2:, :] = np.nan
+    metadata = import_fixture(
+        source, tmp_path / "subset", sample_indices=[5, 2, 0], time_stop=2, max_values=48
+    )
+    group = zarr.open_group(str(tmp_path / "subset"), mode="r")
+    np.testing.assert_array_equal(group["fields/u"][:], data[[5, 2, 0], :2, :])
+    assert metadata["shape"] == [3, 2, 8]
 
 
 @pytest.mark.parametrize(

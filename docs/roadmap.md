@@ -24,6 +24,14 @@ The table below preserves the original 15-day plan as acceptance criteria, not e
 
 ## Investigation model
 
+Version 0.4 adds bounded acquisition of an attributed subset from the official
+PDEBench Burgers release, verified conversion into canonical Zarr, and a fixed
+three-seed FNO plus per-instance PINN study. The [workflow](steps/06-public-data.md)
+preserves full source trajectories and distinguishes received-range/subset hashes
+from the unverified publisher checksum. It remains a small-sample demonstration;
+larger benchmark studies, a live cloud deployment, and distributed scheduling
+remain beyond the measured local prototype.
+
 The initial parent-experiment link is the seed of a research graph. Extend it with typed, versioned relations rather than overloading free-form notes:
 
 ```text

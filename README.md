@@ -21,7 +21,8 @@ problem.
   finalized runs, immutable failure records, explicit retries, and parent lineage.
 - **Data engineering:** streamed saved fields, trajectory-family dataset splits,
   training-only normalization, provenance-aware PDEBench Burgers HDF5 import,
-  and checksum-verified S3 upload/download with a manifest published last.
+  bounded public PDEBench acquisition, and checksum-verified S3 upload/download
+  with a manifest published last.
 - **Learning:** a small CPU Burgers FNO, one-step/rollout evaluation against persistence,
   resumable immutable checkpoints, and a per-instance physics-informed Burgers baseline.
 - **Research:** typed evidence objects, hypotheses, findings, and deterministic
@@ -127,7 +128,11 @@ uv run --no-sync flowstate --lake outputs/restored s3 download EXPERIMENT_ID BUC
 The importer supports the documented periodic 1D Burgers HDF5 layout, with explicit
 source/version/license and effective viscosity. PDEBench's Burgers generator uses
 `epsilon / pi` in its diffusion term: do not blindly copy the filename's `Nu` value
-into `--viscosity`. No public dataset is downloaded automatically. The S3 adapter
+into `--viscosity`. Public downloads are explicit: `dataset acquire-pdebench` or
+`public-study` reads a bounded subset of a pinned DaRUS file. See the
+[public-data workflow](docs/steps/06-public-data.md) for attribution, transfer
+limits, source-index tracking, and the distinction between subset and full-file
+checksums. The S3 adapter
 uses the normal AWS credential chain and optional `--endpoint-url`; it does not
 provision buckets or IAM. Protocol tests use an emulator, not a deployed cloud account.
 

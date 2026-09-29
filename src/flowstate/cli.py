@@ -92,6 +92,21 @@ def main(argv: list[str] | None = None) -> int:
         help="Effective PDE coefficient, not an inferred filename label",
     )
     ingest.add_argument("--seed", type=int, default=0)
+    ingest.add_argument("--sample-indices", nargs="+", type=int)
+    ingest.add_argument("--time-stop", type=int, help="Exclusive time prefix; preserve full x grid")
+    ingest.add_argument("--max-values", type=int, default=16_000_000)
+    acquire = dataset_commands.add_parser("acquire-pdebench", help="Fetch a bounded public subset")
+    acquire.add_argument("output")
+    acquire.add_argument("--samples", type=int, default=24)
+    acquire.add_argument("--sample-seed", type=int, default=20260926)
+    acquire.add_argument("--time-stop", type=int, default=201)
+    acquire.add_argument("--max-bytes", type=int, default=64 * 1024**2)
+    acquired = dataset_commands.add_parser("import-acquired")
+    acquired.add_argument("source")
+    acquired.add_argument("output")
+    acquired.add_argument("--seed", type=int, default=17)
+    acquisition_verify = dataset_commands.add_parser("verify-acquisition")
+    acquisition_verify.add_argument("path")
     dataset_verify = dataset_commands.add_parser("verify")
     dataset_verify.add_argument("path")
     for name, default_epochs in (("train-fno", 20), ("train-pinn", 200)):
@@ -139,6 +154,10 @@ def main(argv: list[str] | None = None) -> int:
     demo.add_argument("output")
     demo.add_argument("--epochs", type=int, default=20)
     demo.add_argument("--pinn-epochs", type=int, default=200)
+    public = commands.add_parser("public-study", help="Run the fixed small public Burgers study")
+    public.add_argument("output")
+    public.add_argument("--epochs", type=int, default=10)
+    public.add_argument("--pinn-epochs", type=int, default=200)
     args = parser.parse_args(argv)
     try:
         if args.command in {"run", "sweep"}:
@@ -230,8 +249,34 @@ def _extended_command(args) -> int:
                     license_name=args.license_name,
                     viscosity=args.viscosity,
                     seed=args.seed,
+                    sample_indices=args.sample_indices,
+                    time_stop=args.time_stop,
+                    max_values=args.max_values,
                 )
             )
+        elif args.dataset_command in {"acquire-pdebench", "import-acquired", "verify-acquisition"}:
+            from flowstate.public_data import (
+                acquire_pdebench,
+                import_acquired_pdebench,
+                verify_acquisition,
+            )
+
+            if args.dataset_command == "acquire-pdebench":
+                _print(
+                    acquire_pdebench(
+                        args.output,
+                        samples=args.samples,
+                        sample_seed=args.sample_seed,
+                        time_stop=args.time_stop,
+                        max_bytes=args.max_bytes,
+                    )
+                )
+            elif args.dataset_command == "import-acquired":
+                _print(import_acquired_pdebench(args.source, args.output, seed=args.seed))
+            else:
+                problems = verify_acquisition(args.path)
+                _print({"valid": not problems, "problems": problems})
+                return int(bool(problems))
         else:
             problems = verify_dataset(args.path)
             _print({"path": args.path, "valid": not problems, "problems": problems})
@@ -322,4 +367,8 @@ def _extended_command(args) -> int:
         from flowstate.demo import run_demo
 
         _print(run_demo(args.output, epochs=args.epochs, pinn_epochs=args.pinn_epochs))
+    elif args.command == "public-study":
+        from flowstate.public_study import run_public_study
+
+        _print(run_public_study(args.output, epochs=args.epochs, pinn_epochs=args.pinn_epochs))
     return 0

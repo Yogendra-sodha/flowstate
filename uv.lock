@@ -370,9 +370,10 @@ wheels = [
 
 [[package]]
 name = "flowstate-research"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
+    { name = "certifi" },
     { name = "duckdb" },
     { name = "h5py" },
     { name = "numpy" },
@@ -401,6 +402,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", marker = "extra == 's3'", specifier = ">=1.36,<2" },
+    { name = "certifi", specifier = ">=2025.1.31" },
     { name = "duckdb", specifier = ">=1.3,<2" },
     { name = "h5py", specifier = ">=3.12,<4" },
     { name = "numpy", specifier = ">=2.2,<3" },

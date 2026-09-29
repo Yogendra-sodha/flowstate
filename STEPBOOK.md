@@ -608,3 +608,40 @@ see verified reuse, inspect stored fields, query metrics, and locate the functio
 and tests responsible. It then introduces dataset ETL, FNO versus PINN, the
 research graph, and the scaling study in dependency order. Its videos and articles
 are optional support for concepts that appear in this repository.
+
+## 17. Taking real public data through the same pipeline
+
+The next gap was evidence from external data: earlier import tests used synthetic
+HDF5 fixtures, while learned-model demonstrations used our own solver. Version
+0.4 adds a bounded route from the official PDEBench Burgers release to our existing
+training pipeline. The [public-data walkthrough](docs/steps/06-public-data.md)
+documents the commands, functions, loops, extraction, transformation, publication,
+and scientific limits in detail.
+
+I first checked the official dataset version, license, size, checksum declaration,
+and diffusion convention. The smallest Burgers file is 8.23 GB, so downloading a
+whole file merely to train on a few rows would be wasteful. The server supports
+HTTP byte ranges. `HTTPRangeReader` now exposes a bounded seekable file to h5py,
+with 1 MiB blocks, four cached blocks, strict response checks, and stable ETags.
+TLS verification remains enabled. The default transfer cap is 64 MiB, and there
+is no fallback to downloading the entire file.
+
+The extraction loop selects 24 rows using a recorded random seed before seeing
+their values. It preserves all 201 saved frames and all 1,024 spatial points.
+The source's unpaired final time coordinate is recorded and omitted. A local HDF5
+subset, an attribution/selection/transfer receipt, and their manifest publish
+together. Failed staging is removed; previously published artifacts are immutable.
+
+The transformation loop checks finite fields and coordinate spacing and copies
+one trajectory at a time into canonical chunked Zarr. Related initial fields stay
+in one split. Normalization updates only on training trajectories, before any
+learning windows are generated. Public source row numbers remain separate from
+row numbers in the smaller local file. The SHA-256 explicitly covers that local
+file; the full publisher MD5 is advertised but not verified by a partial download.
+
+`public-study` writes a plan before acquisition and iterates over FNO seeds 0, 1,
+and 2 with a fixed split and training budget. Validation chooses checkpoints;
+held-out results never choose hyperparameters or a preferred seed. It then fits
+one PINN using only a held-out initial frame and physics. Every completed stage
+keeps its artifacts, and failures record their stage and error. This adds a
+traceable external-data demonstration, not a claim to reproduce the full benchmark.
