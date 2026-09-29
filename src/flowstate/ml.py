@@ -261,10 +261,20 @@ class SpectralConv1d(nn.Module):
 
 
 class FNO1d(nn.Module):
-    """Periodic, translation-equivariant residual FNO mapping [batch,x] to [batch,x]."""
+    """Periodic residual FNO, optionally preserving each input's spatial mean.
 
-    def __init__(self, width: int = 16, modes: int = 8, depth: int = 3):
+    The optional projection removes the zero Fourier mode of the learned
+    increment. It preserves mean up to floating-point error, without constraining
+    energy, stability, or accuracy of the remaining modes.
+    """
+
+    def __init__(
+        self, width: int = 16, modes: int = 8, depth: int = 3, conserve_mean: bool = False
+    ):
         super().__init__()
+        if not isinstance(conserve_mean, bool):
+            raise ValueError("conserve_mean must be a boolean")
+        self.conserve_mean = conserve_mean
         self.lift = nn.Conv1d(1, width, 1)
         self.spectral = nn.ModuleList([SpectralConv1d(width, width, modes) for _ in range(depth)])
         self.local = nn.ModuleList([nn.Conv1d(width, width, 1) for _ in range(depth)])
@@ -276,7 +286,10 @@ class FNO1d(nn.Module):
         latent = self.lift(value[:, None, :])
         for spectral, local in zip(self.spectral, self.local, strict=True):
             latent = torch.nn.functional.gelu(spectral(latent) + local(latent))
-        return value + self.project(latent)[:, 0, :]
+        residual = self.project(latent)[:, 0, :]
+        if self.conserve_mean:
+            residual = residual - residual.mean(dim=-1, keepdim=True)
+        return value + residual
 
 
 def _pairs(data: dict, split: str) -> tuple[torch.Tensor, torch.Tensor]:
@@ -322,6 +335,18 @@ def _metrics(prediction: np.ndarray, reference: np.ndarray) -> dict:
     }
 
 
+def _drift_metrics(drift: np.ndarray) -> dict:
+    """Summarize physical mean changes, separately from reference prediction error."""
+    if not np.isfinite(drift).all():
+        return {"finite": False, "rms": None, "max_abs": None, "per_saved_time_rms": None}
+    return {
+        "finite": True,
+        "rms": float(np.sqrt(np.mean(drift**2))),
+        "max_abs": float(np.max(np.abs(drift))),
+        "per_saved_time_rms": np.sqrt(np.mean(drift**2, axis=0)).tolist(),
+    }
+
+
 def _evaluate(model: FNO1d, data: dict, split: str) -> tuple[dict, dict]:
     if split not in data["splits"]:
         raise ValueError("split must be train, validation, or test")
@@ -344,11 +369,30 @@ def _evaluate(model: FNO1d, data: dict, split: str) -> tuple[dict, dict]:
             for frame in range(truth.shape[1] - 1):
                 current = model(current)
                 rollout[trajectory, frame] = current[0].numpy() * norm["std"] + norm["mean"]
+    # Compute in physical units after denormalization. Stored float32 fields and
+    # reconstruction can add rounding drift even with the residual projection.
+    reference_mean = truth.astype(np.float64).mean(axis=-1)
+    one_step_mean = one_step.astype(np.float64).mean(axis=-1)
+    rollout_mean = rollout.astype(np.float64).mean(axis=-1)
     report = {
         "split": split,
         "trajectory_indices": indices.tolist(),
         "trajectory_ids": [data["trajectories"][int(i)]["id"] for i in indices],
         "physical_times": data["times"][1:].tolist(),
+        "conserve_mean": model.conserve_mean,
+        "conservation": {
+            "quantity": "spatial_mean_velocity",
+            "units": "physical_velocity",
+            "one_step_mean_change": _drift_metrics(one_step_mean - reference_mean[:, :-1]),
+            "rollout_mean_drift": _drift_metrics(rollout_mean - reference_mean[:, :1]),
+            "reference_mean_drift": _drift_metrics(reference_mean[:, 1:] - reference_mean[:, :1]),
+            "definitions": {
+                "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+                "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+                "reference_mean_drift": "reference mean minus its initial-frame mean",
+                "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean",
+            },
+        },
         "one_step": _metrics(one_step, truth[:, 1:]),
         "rollout": _metrics(rollout, truth[:, 1:]),
         "persistence_one_step": _metrics(truth[:, :-1], truth[:, 1:]),
@@ -416,10 +460,13 @@ def train_fno(
     depth: int = 3,
     batch_size: int = 16,
     learning_rate: float = 0.001,
+    conserve_mean: bool = False,
     resume: str | Path | None = None,
 ) -> dict:
     """Train for additional epochs; publish immutable final/resumable and best-val weights."""
     _integer("epochs", epochs, 1, 2000)
+    if not isinstance(conserve_mean, bool):
+        raise ValueError("conserve_mean must be a boolean")
     config = {
         "seed": _integer("seed", seed, 0, 2**32 - 1),
         "width": _integer("width", width, 4, 128),
@@ -427,6 +474,7 @@ def train_fno(
         "depth": _integer("depth", depth, 1, 6),
         "batch_size": _integer("batch_size", batch_size, 1, 256),
         "learning_rate": _learning_rate(learning_rate),
+        "conserve_mean": conserve_mean,
     }
     data = _load_data(dataset_path)
     if modes > data["contract"]["grid_size"] // 2 + 1:
@@ -437,7 +485,7 @@ def train_fno(
         raise ValueError("Training budget exceeds 100,000 optimizer updates per call")
     parent_hash = None
     with _publication(output, dataset_path) as stage, _cpu_session(seed):
-        model = FNO1d(width=width, modes=modes, depth=depth)
+        model = FNO1d(width=width, modes=modes, depth=depth, conserve_mean=conserve_mean)
         optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
         history, start_epoch = [], 0
         best_loss = _loss(model, valid_inputs, valid_targets, batch_size)
@@ -520,7 +568,10 @@ def evaluate_fno(
     data = _load_data(dataset_path)
     saved, checkpoint_hash = _checkpoint(checkpoint, data, "fno1d")
     with _cpu_session(saved["config"]["seed"]):
-        model = FNO1d(**{key: saved["config"][key] for key in ("width", "modes", "depth")})
+        model = FNO1d(
+            **{key: saved["config"][key] for key in ("width", "modes", "depth")},
+            conserve_mean=saved["config"].get("conserve_mean", False),
+        )
         model.load_state_dict(saved["best_model_state"])
         report, predictions = _evaluate(model, data, split)
     report.update(

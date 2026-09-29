@@ -38,6 +38,8 @@ flowchart TD
 | `object_store.py` | Conditional immutable S3 objects and verified download publication |
 | `http_ranges.py`, `public_data.py` | Bounded public HDF5 extraction, source receipts, attributed subset import |
 | `public_study.py` | Fixed public-data study plan, three FNO seeds, one PINN, progress/failure evidence |
+| `queue.py` | Durable local SQLite jobs, leases, fencing tokens, heartbeats, recoverable publication |
+| `conservation_study.py` | Frozen paired FNO comparison on a fresh, non-overlapping public cohort |
 | `research.py` | Typed graph, explicit assertions, budgeted refinement policy |
 | `demo.py` | Reproducible integration study with stage-level JSONL events |
 | `scaling.py` | Isolated sweep trials, scientific equivalence checks, throughput aggregation |

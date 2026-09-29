@@ -19,12 +19,14 @@ problem.
   JSON provenance, and SHA-256 artifact verification.
 - **Execution:** parameter grids, process-based parallel workers, verified reuse of
   finalized runs, immutable failure records, explicit retries, and parent lineage.
+  A durable local SQLite queue adds leased claims and recovery after worker exit.
 - **Data engineering:** streamed saved fields, trajectory-family dataset splits,
   training-only normalization, provenance-aware PDEBench Burgers HDF5 import,
   bounded public PDEBench acquisition, and checksum-verified S3 upload/download
   with a manifest published last.
 - **Learning:** a small CPU Burgers FNO, one-step/rollout evaluation against persistence,
-  resumable immutable checkpoints, and a per-instance physics-informed Burgers baseline.
+  resumable immutable checkpoints, optional mean-preserving updates, and a
+  per-instance physics-informed Burgers baseline.
 - **Research:** typed evidence objects, hypotheses, findings, and deterministic
   budgeted refinement proposals that can execute through the same engine.
 - **Validation:** known-solution comparisons, convergence tests, conservation and
@@ -60,6 +62,19 @@ resumed. Default artifacts live in `data/lake/`, excluded from Git.
 The `ml` and `s3` extras are optional for base numerical work. `--all-extras` prepares
 the complete prototype. `--no-sync` preserves that prepared environment while
 running commands; using a sync without an optional extra may remove it.
+
+For recoverable local work, submit and drain a queue:
+
+```sh
+uv run --no-sync flowstate --lake outputs/queued-lake queue submit examples/sweep.json outputs/jobs.sqlite
+uv run --no-sync flowstate queue work outputs/jobs.sqlite --max-jobs 8
+uv run --no-sync flowstate queue status outputs/jobs.sqlite
+```
+
+Multiple worker processes may share a queue on one machine's local disk. Restart
+workers after code edits; their imported runtime is pinned. See the
+[recovery and conservation guide](docs/steps/07-recovery-conservation.md) for lease
+recovery, mean-preserving FNO training, and the fresh-data paired comparison.
 
 ## Complete a small research study
 

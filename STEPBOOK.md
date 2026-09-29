@@ -695,3 +695,55 @@ The final local suite passed **289 tests in 71.89 seconds**, Ruff passed, and th
 [Windows and Linux](https://github.com/Yogendra-sodha/flowstate/actions/runs/36513158601).
 Cloud-bucket validation, distributed recovery, and broader independent scientific
 studies remain open. This milestone completes the first real public-data study.
+
+## 18. Recoverable local jobs and a conservation-aware model
+
+The public-data measurements identified mean drift in FNO rollouts. A separate
+operational gap was the lack of a durable job claim between submission and result
+publication. Version 0.5 addresses both; the
+[implementation walkthrough](docs/steps/07-recovery-conservation.md) explains the
+commands, update equation, queue transactions, worker loop, and limitations.
+
+For the model, the new optional `conserve_mean` flag subtracts the spatial mean
+of the learned increment before adding it to the input. It preserves each
+trajectory's own mean, not the mean of the training dataset. The training and
+evaluation constructors record and restore the flag. Older checkpoints retain
+their original unconstrained behavior. Tests apply nonzero learned updates over
+200 steps on odd and even grids, check gradients, and verify exact legacy behavior
+and training resumption. New diagnostics separate invariant drift from error
+against a numerical reference that can itself drift.
+
+The fresh-cohort study writes its plan before reading new values. It selects 24
+different public source rows, checks initial-field hashes against the old cohort,
+then fits both variants for each of three fixed seeds. Paired runs use the same
+initial weights, minibatch order, hyperparameters, and budget. Six results are
+retained, including any regression. Test metrics never select a preferred seed
+or change the predeclared configuration. The earlier public cohort supplies only
+exclusion information, not labels for this new study.
+
+For the queue, `submit_sweep` expands and normalizes the input, stores immutable
+requests with code/environment identities, and deduplicates identical jobs.
+`work_queue` loops over at most `max_jobs`: claim in an immediate SQLite
+transaction, renew ownership with a heartbeat, execute through the normal engine,
+and acknowledge only if its claim token and lease are still valid. Expired claims
+become available to a later worker. If output publication succeeded before a
+worker stopped, recovery verifies and reuses the lake artifact. Otherwise it
+restarts the solver. Queue events record submissions, claims, lease expiry,
+completion, and failure.
+
+The queue uses SQLite on one machine's local disk. It does not make the system a
+distributed cluster, prevent duplicate computation after a lost lease, or add
+mid-trajectory solver checkpoints. Its token check prevents stale acknowledgments;
+the lake's existing publication rules protect finalized results. Changed code or
+runtime refuses an old queued job rather than silently producing different work.
+
+Review found another provenance trap: Python retains imported code while files
+on disk can change. Comparing a submitted job only with the latest disk hash
+could mislabel an old worker as new code. Queue workers now pin their imported
+runtime identity and check it before and after execution. Regression tests cover
+both matching-new-submission/old-worker and edits during a solve. Operators must
+restart workers after changing source or Git checkouts.
+
+Before the measured runs, the complete local suite passed **356 tests in 89.72
+seconds** and Ruff passed. The fresh-data and two-process recovery measurements
+are recorded below only after they actually run.

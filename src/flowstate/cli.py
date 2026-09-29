@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sqlite3
 import sys
 from pathlib import Path
 
@@ -73,6 +74,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     scaling.add_argument("--repeats", type=int, default=3)
     scaling.add_argument("--seed", type=int, default=0)
+    queue = commands.add_parser("queue", help="Durable local jobs with lease recovery")
+    queue_commands = queue.add_subparsers(dest="queue_command", required=True)
+    submit = queue_commands.add_parser("submit")
+    submit.add_argument("config", help="JSON sweep specification")
+    submit.add_argument("path", help="Local SQLite queue file; do not share over network storage")
+    submit.add_argument("--parent")
+    submit.add_argument("--attempt", type=int, default=0)
+    submit.add_argument("--buffered", action="store_true", help="Keep fields in memory")
+    work = queue_commands.add_parser("work")
+    work.add_argument("path")
+    work.add_argument("--max-jobs", type=int, default=1)
+    work.add_argument("--lease-seconds", type=float, default=60)
+    status = queue_commands.add_parser("status")
+    status.add_argument("path")
     dataset = commands.add_parser("dataset", help="Curate or verify trajectory datasets")
     dataset_commands = dataset.add_subparsers(dest="dataset_command", required=True)
     export = dataset_commands.add_parser("export")
@@ -122,6 +137,7 @@ def main(argv: list[str] | None = None) -> int:
         if name == "train-fno":
             train.add_argument("--modes", type=int, default=8)
             train.add_argument("--batch-size", type=int, default=16)
+            train.add_argument("--conserve-mean", action="store_true")
         else:
             train.add_argument("--trajectory-index", type=int)
             train.add_argument("--collocation-points", type=int, default=128)
@@ -158,6 +174,12 @@ def main(argv: list[str] | None = None) -> int:
     public.add_argument("output")
     public.add_argument("--epochs", type=int, default=10)
     public.add_argument("--pinn-epochs", type=int, default=200)
+    conservation = commands.add_parser(
+        "conservation-study", help="Paired FNO study on a fresh public-data cohort"
+    )
+    conservation.add_argument("previous_dataset", help="Previous acquired dataset to exclude")
+    conservation.add_argument("output")
+    conservation.add_argument("--epochs", type=int, default=10)
     args = parser.parse_args(argv)
     try:
         if args.command in {"run", "sweep"}:
@@ -206,14 +228,34 @@ def main(argv: list[str] | None = None) -> int:
             return int(bool(problems))
         else:
             return _extended_command(args)
-    except (ValueError, OSError, RuntimeError, ImportError, duckdb.Error) as exc:
+    except (ValueError, OSError, RuntimeError, ImportError, duckdb.Error, sqlite3.Error) as exc:
         print(f"flowstate: {exc}", file=sys.stderr)
         return 2
     return 0
 
 
 def _extended_command(args) -> int:
-    if args.command == "sweep-benchmark":
+    if args.command == "queue":
+        from flowstate.queue import queue_status, submit_sweep, work_queue
+
+        if args.queue_command == "submit":
+            _print(
+                submit_sweep(
+                    _read_json(args.config),
+                    args.path,
+                    args.lake,
+                    parent_id=args.parent,
+                    attempt=args.attempt,
+                    stream=not args.buffered,
+                )
+            )
+        elif args.queue_command == "work":
+            result = work_queue(args.path, max_jobs=args.max_jobs, lease_seconds=args.lease_seconds)
+            _print(result)
+            return int(bool(result["failed"] or result["lost_claim"]))
+        else:
+            _print(queue_status(args.path))
+    elif args.command == "sweep-benchmark":
         from flowstate.scaling import benchmark_sweep
 
         _print(
@@ -299,6 +341,7 @@ def _extended_command(args) -> int:
                     args.output,
                     modes=args.modes,
                     batch_size=args.batch_size,
+                    conserve_mean=args.conserve_mean,
                     **common,
                 )
             else:
@@ -371,4 +414,8 @@ def _extended_command(args) -> int:
         from flowstate.public_study import run_public_study
 
         _print(run_public_study(args.output, epochs=args.epochs, pinn_epochs=args.pinn_epochs))
+    elif args.command == "conservation-study":
+        from flowstate.conservation_study import run_conservation_study
+
+        _print(run_conservation_study(args.previous_dataset, args.output, epochs=args.epochs))
     return 0
