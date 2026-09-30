@@ -6,7 +6,7 @@ Flowstate's contribution is a reproducible scientific investigation system: gene
 
 Version 0.2 adds a manufactured Darcy problem, numerical refinement reports, streamed field output, dataset ETL, a PDEBench Burgers import contract, CPU FNO/PINN baselines, an S3 artifact mirror, a research graph, and a deterministic proposal/execution loop to the original numerical engine. The [stepbook](../STEPBOOK.md) explains the implementation, processing loops, and validation. Numerical checks and limits are specified in [scientific-validation.md](scientific-validation.md).
 
-The table below preserves the original 15-day plan as acceptance criteria, not elapsed development time. Most capabilities now have a local prototype and tests. Version 0.3 adds an [isolated local concurrency study](reports/local-scaling-0.3.json) over one, two, and four workers. The scale criterion remains partial: a live cloud deployment, broader workloads, and distributed scheduling have not been measured. The S3 protocol is tested with an emulator. PDEBench ingestion is tested with representative HDF5 fixtures; no public benchmark result is claimed. The complete local demonstration passed; its [measured report](reports/prototype-0.2.json) and stepbook distinguish executed evidence from code completion, including the PINN's weak short-budget result.
+The table below preserves the original 15-day plan as acceptance criteria, not elapsed development time. Most capabilities now have a local prototype and tests. Version 0.3 adds an [isolated local concurrency study](reports/local-scaling-0.3.json) over one, two, and four workers. The scale criterion remains partial: a live cloud deployment, broader workloads, and distributed scheduling have not been measured. The S3 protocol is tested with an emulator. PDEBench ingestion initially used representative HDF5 fixtures; versions 0.4 and 0.5 add the small public-data studies described below. The complete local demonstration passed; its [measured report](reports/prototype-0.2.json) and stepbook distinguish executed evidence from code completion, including the PINN's weak short-budget result.
 
 | Days | Deliverable | Exit criterion |
 | --- | --- | --- |
@@ -35,6 +35,16 @@ with weaker mean-velocity conservation, giving the next model work a measured ta
 
 ## Investigation model
 
+Version 0.5 adds a durable **local** SQLite job queue and optional mean-preserving
+FNO updates. The [recovery check](reports/local-recovery-0.5.json) exercised two
+workers and a process exit after result publication. The
+[fresh-cohort comparison](reports/conservation-0.5.json) reduced mean drift to about
+1e-7, but retained large long-rollout errors for seed 2. Conservation alone does
+not resolve model reliability. Version 0.6 adds a
+[verified offline experiment viewer](steps/08-research-viewer.md), including
+energy curves, final fields, search, filters, and provenance. A hosted service and
+model/graph visualizations remain separate work.
+
 The initial parent-experiment link is the seed of a research graph. Extend it with typed, versioned relations rather than overloading free-form notes:
 
 ```text
@@ -60,7 +70,7 @@ This object-and-link approach is inspired by the documented [Palantir Ontology c
 
 Start by measuring one run. For example, 10,000 runs × 1,000 saved frames × 512² cells × one float32 scalar is approximately 10.49 TB before compression and overhead. Three scalar fields need approximately 31.46 TB. Saving fewer frames, choosing chunks around access patterns, streaming output, and retaining selected derived quantities are experimental-design decisions, not substitutes for validation. Integrator timesteps and saved frames are separate counts.
 
-The S3 mirror implements conditional immutable publication and verified download; deploying a live bucket and measuring cloud behavior remain future work. Remote workers, mid-trajectory solver checkpoints, distributed scheduling, a graph database, a visual dashboard, and an LLM research planner are also future capabilities. Model training already supports optimizer/RNG checkpoint resumption. A local directory and process pool do not establish distributed support. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
+The S3 mirror implements conditional immutable publication and verified download; deploying a live bucket and measuring cloud behavior remain future work. Remote workers, mid-trajectory solver checkpoints, distributed scheduling, a graph database, a hosted multi-user dashboard, and an LLM research planner are also future capabilities. Model training already supports optimizer/RNG checkpoint resumption. A local directory and process pool do not establish distributed support. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
 
 The implemented researcher uses an auditable policy: prioritize failures and flags, propose timestep or grid refinement, preserve comparison conditions, and attach the supporting experiments. Its budgets bound run count and integration steps, not elapsed time or cloud spend. A later language-model planner can formulate hypotheses and explanations, while execution remains constrained by explicit budgets and validation gates. Repeated observations should earn confidence through independently reproducible evidence.
 

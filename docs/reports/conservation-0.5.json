@@ -1,0 +1,1581 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "plan": {
+    "schema_version": 1,
+    "question": "Does a zero-mean learned update improve Burgers mean conservation and rollout error?",
+    "source": {
+      "source_url": "https://darus.uni-stuttgart.de/api/access/datafile/281363",
+      "source_version": "DaRUS doi:10.18419/darus-2986 V8.0 (2024-02-13), file 281363",
+      "dataset_doi": "https://doi.org/10.18419/darus-2986",
+      "dataset_version_url": "https://darus.uni-stuttgart.de/dataset.xhtml?persistentId=doi:10.18419/darus-2986&version=8.0",
+      "filename": "1D_Burgers_Sols_Nu0.01.hdf5",
+      "license_name": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Takamoto et al., PDEBench: An Extensive Benchmark for Scientific Machine Learning",
+      "publisher_checksum": {
+        "algorithm": "MD5",
+        "value": "e6d9a4f62baf9a29121a816b919e2770"
+      },
+      "size_bytes": 8232968312,
+      "tensor_shape": [
+        10000,
+        201,
+        1024
+      ],
+      "filename_nu": 0.01,
+      "effective_viscosity": 0.003183098861837907,
+      "viscosity_convention": "PDEBench epsilon/pi; u_t + u*u_x = viscosity*u_xx"
+    },
+    "previous_cohort": {
+      "dataset_manifest_sha256": "df40b8866a69f6a6e96836242be18fa4507391b783d47025effe3f83906173a1",
+      "source_indices": [
+        770,
+        901,
+        1344,
+        1813,
+        2504,
+        2940,
+        3284,
+        4729,
+        4967,
+        5074,
+        5079,
+        5676,
+        5723,
+        5732,
+        6085,
+        7910,
+        8240,
+        8357,
+        8386,
+        8712,
+        8844,
+        9251,
+        9604,
+        9702
+      ],
+      "initial_hashes": [
+        "0387722c7606f8790fb764a67e523cd3c1895fe2e179bc52f4f08b818dba3430",
+        "06f2ccfdc4899c7278a8b518556360d7e70e3b286174bce9a94c6d94bd21ae10",
+        "08c71ce0875fc6fadf626737aa0c5a4935ff10ddab92e9195de83388e47c0a54",
+        "095bf6f8c43471a59b861a64a75c7a6bd544c98692ba16af1d3852f9a9fca679",
+        "13c29af769999fe5b18b2b8932ed457cd41d07eb6d493de0cb9e68895dbb0ff2",
+        "21583a9dce1e4a67f22ae455217eb5fbe8fab359525b2d9e64bde58f8a8166ad",
+        "3905715b0bf8ca89bffe566c6932e04e85802a7fbdfcf04e9a7f5a237870d5b2",
+        "4628865fc495f0f6ab301952da827a1d57951f7dbf1ac952b0617c7e84b36fa3",
+        "4a17afcc3551b8fffa794f1cbde9c32d5040384fe09eeb1591539419f104e664",
+        "58137e03e1a31cb41996d6dfc7889b95aa9a9a794f955597b47f0989f758204e",
+        "5830f20040c8dbd0a07f9ea98108715003fa3f8018a0233391358f6634945b4e",
+        "6bc9ad5fd55a16f324ef22658808af91c7c5771fd849069bf3c69ad362f80e34",
+        "6fef4e4ab5ea6b88100c6f1d78f3cdfb16b56d2de56a6aa685fafc6bbe507465",
+        "720b0d0d95ca882e94ea6bbc2ba72d574a18a36f8a79397e88aba7b9525b6e8f",
+        "77183697039afb96368f9a2f159fc12df3c6a9e037db161c6f3847e1179da2f3",
+        "7995d97c285fd20c559d6a4ffe09a8b8b82b7d50e90a85cd6063341878695b2d",
+        "81e79f7b1e3662ccf7d6e62822deff036c7f4f1f5593059e6929a6b1d6f93da5",
+        "a24f5aa4ba3892571bfb93af4a12c26f7c57d610c3bf937b1b5785a02ddde6d7",
+        "a6678456a336fa5b8c6f16b580b64c89547b30fe0d1d5aa7f264735433c80998",
+        "daf0291046532808b3070c20ebffdca999a7cec721c896172b5aaab2ce5cc8a5",
+        "dc5d7a6fbde1c352de449c2e8c081402b3f65b162607bf5897aebe56f24524f8",
+        "ef7ca22d9b9395a3ab15e50f2dbf421377afdeef7139c36dbeaf3bf9033dd4cd",
+        "f3dc738151b493d12a8c71b1c2f4d28f3161177ea28f1f43f8adcae75e1e1bed",
+        "fd25812fe55e6c18c6cd4e9e588321a015a31928e6056827723d3a152da45482"
+      ]
+    },
+    "samples": 24,
+    "sample_seed": 20260929,
+    "source_indices": [
+      8,
+      898,
+      1255,
+      2139,
+      2212,
+      2739,
+      2816,
+      2876,
+      3195,
+      3494,
+      3627,
+      5134,
+      5151,
+      5170,
+      5291,
+      5387,
+      5768,
+      6556,
+      6853,
+      6934,
+      7586,
+      7831,
+      8666,
+      9873
+    ],
+    "time_stop": 201,
+    "split_seed": 17,
+    "runs": [
+      {
+        "seed": 0,
+        "conserve_mean": false
+      },
+      {
+        "seed": 0,
+        "conserve_mean": true
+      },
+      {
+        "seed": 1,
+        "conserve_mean": true
+      },
+      {
+        "seed": 1,
+        "conserve_mean": false
+      },
+      {
+        "seed": 2,
+        "conserve_mean": false
+      },
+      {
+        "seed": 2,
+        "conserve_mean": true
+      }
+    ],
+    "training": {
+      "epochs": 10,
+      "width": 16,
+      "modes": 8,
+      "depth": 3,
+      "batch_size": 32,
+      "learning_rate": 0.001
+    },
+    "selection": "Minimum validation MSE within each run; report all test results",
+    "primary_measure": "RMS rollout spatial-mean drift from each trajectory's initial mean",
+    "secondary_measures": [
+      "Field RMSE",
+      "Energy error",
+      "Mean discrepancy against numerical reference"
+    ],
+    "provenance": {
+      "git_commit": "eee73e4f4beeb105c9849759d5e8862143ab8715",
+      "git_dirty": false,
+      "source_sha256": "074ab7c875646cca71f97353cf522f152a42ff200573af4c430e15a7db8569aa",
+      "python": "3.12.9",
+      "dependencies": {
+        "numpy": "2.5.3",
+        "zarr": "3.4.0",
+        "duckdb": "1.5.5",
+        "pyarrow": "23.0.1",
+        "scipy": "1.18.1",
+        "h5py": "3.16.0",
+        "flowstate-research": "0.5.0"
+      },
+      "hardware": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "machine": "AMD64",
+        "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+        "logical_cpu_count": 8
+      },
+      "precision": "float64"
+    }
+  },
+  "plan_sha256": "2bcc5cc96b6a362eeaa2bb9eaf89c2e578623ee0ef2f4b00f755191dea7278af",
+  "dataset_manifest_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+  "acquisition_manifest_sha256": "3b9b4298591d6242f9325eb596d1efd1a30108dc9f5e9bd7c56c057719d5dc87",
+  "acquisition": {
+    "schema_version": 1,
+    "kind": "pdebench_http_subset",
+    "source": {
+      "source_url": "https://darus.uni-stuttgart.de/api/access/datafile/281363",
+      "source_version": "DaRUS doi:10.18419/darus-2986 V8.0 (2024-02-13), file 281363",
+      "dataset_doi": "https://doi.org/10.18419/darus-2986",
+      "dataset_version_url": "https://darus.uni-stuttgart.de/dataset.xhtml?persistentId=doi:10.18419/darus-2986&version=8.0",
+      "filename": "1D_Burgers_Sols_Nu0.01.hdf5",
+      "license_name": "CC-BY-4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Takamoto et al., PDEBench: An Extensive Benchmark for Scientific Machine Learning",
+      "publisher_checksum": {
+        "algorithm": "MD5",
+        "value": "e6d9a4f62baf9a29121a816b919e2770"
+      },
+      "size_bytes": 8232968312,
+      "tensor_shape": [
+        10000,
+        201,
+        1024
+      ],
+      "filename_nu": 0.01,
+      "effective_viscosity": 0.003183098861837907,
+      "viscosity_convention": "PDEBench epsilon/pi; u_t + u*u_x = viscosity*u_xx"
+    },
+    "sample_seed": 20260929,
+    "selection": {
+      "sample_indices": [
+        8,
+        898,
+        1255,
+        2139,
+        2212,
+        2739,
+        2816,
+        2876,
+        3195,
+        3494,
+        3627,
+        5134,
+        5151,
+        5170,
+        5291,
+        5387,
+        5768,
+        6556,
+        6853,
+        6934,
+        7586,
+        7831,
+        8666,
+        9873
+      ],
+      "time_start": 0,
+      "time_stop": 201,
+      "spatial_stride": 1
+    },
+    "shape": [
+      24,
+      201,
+      1024
+    ],
+    "time_range": [
+      0.0,
+      2.0
+    ],
+    "discarded_terminal_time_coordinate": 2.009999990463257,
+    "transfer": {
+      "source_url": "https://darus.uni-stuttgart.de/api/access/datafile/281363",
+      "source_size_bytes": 8232968312,
+      "strong_etag": "\"51402d294da0c6c24bcc9e5090596072-8\"",
+      "requests": 46,
+      "bytes_received": 46735488,
+      "max_bytes": 67108864,
+      "max_requests": 128,
+      "range_sha256": [
+        {
+          "start": 0,
+          "end": 7,
+          "sha256": "4ca2915fde0a9d1d5dd59e6f6e535c04337c9b4f05dbb4b38af0a5db3c50f933"
+        },
+        {
+          "start": 0,
+          "end": 1048575,
+          "sha256": "8a706896bdb3a31fd08ea623ac5c2e6ea0f190bd30737905f6565db4f09ce2e3"
+        },
+        {
+          "start": 8232370176,
+          "end": 8232968311,
+          "sha256": "438e8caa7477afe2a0e82ef6d14ebc9f6d72725e5990a4630c0559f9ae57d46c"
+        },
+        {
+          "start": 6291456,
+          "end": 7340031,
+          "sha256": "1da466260f67cfd374228900fc463a09f12b2cc254cae7933015621fd9f0953e"
+        },
+        {
+          "start": 7340032,
+          "end": 8388607,
+          "sha256": "514bdfc53e6de65999e7c1ad2d4d3ad2ce9f8a70fcd7a7fc78c1748b3318d4fd"
+        },
+        {
+          "start": 739246080,
+          "end": 740294655,
+          "sha256": "20d52e087cba12e73a1e4de4b26fdf33a9406d7c314d6418e8b68a20497f9630"
+        },
+        {
+          "start": 1032847360,
+          "end": 1033895935,
+          "sha256": "c017d442fe86eaec9b1054514dcd8795ff84bb77a3969c25e0b07efdf46b0d1b"
+        },
+        {
+          "start": 1033895936,
+          "end": 1034944511,
+          "sha256": "26e0ad4922eaefbbb2c0d7ace91f41a7e171ad7bc01ae53ace46a988b4a76c32"
+        },
+        {
+          "start": 1760559104,
+          "end": 1761607679,
+          "sha256": "3dd5e9f8935971eb75252b75a323c355ed69a0970a07ac4626c67833ac5897a9"
+        },
+        {
+          "start": 1761607680,
+          "end": 1762656255,
+          "sha256": "5a517f733464d931d96bb16c073b7b3e65c6ef22584f7accc59011051c5fe7b4"
+        },
+        {
+          "start": 1820327936,
+          "end": 1821376511,
+          "sha256": "369ab97d75bb3dcff4c6afebbf5978144cda555690a3b5e309e059d417f36c23"
+        },
+        {
+          "start": 1821376512,
+          "end": 1822425087,
+          "sha256": "baf7200a6503a375263821357df460271a58910994faf6325cb0bbc5130e92bc"
+        },
+        {
+          "start": 2254438400,
+          "end": 2255486975,
+          "sha256": "d42dca0fe4d4a62dd3ed3dcbfbfd3e85240a3756d438d7550f15e392b0d31025"
+        },
+        {
+          "start": 2255486976,
+          "end": 2256535551,
+          "sha256": "f03589a5e1cf8aafe6f75950183db328c081b246c4da6f4b89777a16e94cd74e"
+        },
+        {
+          "start": 2318401536,
+          "end": 2319450111,
+          "sha256": "831d970cf1652191e1da9b3299e027a064d69b9de1c5d136fd263723d7dec627"
+        },
+        {
+          "start": 2367684608,
+          "end": 2368733183,
+          "sha256": "c70492c31c72c724c2b0f3d19bce2a0054f51dd3f2b7b7ac8ae71e9e62411277"
+        },
+        {
+          "start": 2629828608,
+          "end": 2630877183,
+          "sha256": "eea18d07e323bf382f4abb75ad0e897811efec796b4520f2e47de356cc9b0b60"
+        },
+        {
+          "start": 2630877184,
+          "end": 2631925759,
+          "sha256": "6b9afd69bb57d7fddc674256385b9d11d0517aa4987fac25379512c78f48d8cd"
+        },
+        {
+          "start": 2876243968,
+          "end": 2877292543,
+          "sha256": "41f4765b979ed90e78002d13efd9c5746672d39dba3966c74d31a607579d8b58"
+        },
+        {
+          "start": 2877292544,
+          "end": 2878341119,
+          "sha256": "14ce6cad619f1bb0508aac6b87af957a8a516661c578a07fbaeab5ef74ca7b2e"
+        },
+        {
+          "start": 2985295872,
+          "end": 2986344447,
+          "sha256": "90b46bb56f280ef5dcc131ed2e9a7f6a12f245e4409000f181b00c324111eb5c"
+        },
+        {
+          "start": 2986344448,
+          "end": 2987393023,
+          "sha256": "7c2965219a8860f80cfcc17dbcc88fa22131f2c10137a6a810896b7d50cfeb8e"
+        },
+        {
+          "start": 4225761280,
+          "end": 4226809855,
+          "sha256": "fc29b497fd5b526d4e2a185c5d2716b54cfed5aea27d15c76aa411fbff1c0f3c"
+        },
+        {
+          "start": 4226809856,
+          "end": 4227858431,
+          "sha256": "9dec1928bb52351f9f50307e69502470e1bc8a0dcd25a188bd796e0df4ed714f"
+        },
+        {
+          "start": 4240441344,
+          "end": 4241489919,
+          "sha256": "89e1ab09e5d8fc36744cab622b7252eb71015824f6b587d5b9be06060033b8f5"
+        },
+        {
+          "start": 4241489920,
+          "end": 4242538495,
+          "sha256": "d69bcab26499168a5431d1c4c1c8d6727939bc9f00a23da88ffdefa8c65bb500"
+        },
+        {
+          "start": 4256169984,
+          "end": 4257218559,
+          "sha256": "f20a87ad03d787e9ac5bf010fd5c62e22e1268236f7a73bf18436d4d5f8c7928"
+        },
+        {
+          "start": 4257218560,
+          "end": 4258267135,
+          "sha256": "7ddada95c4a98bd06fafb2f8e8817800a4f9524a9546a26dee648eeb61d9b6f6"
+        },
+        {
+          "start": 4355784704,
+          "end": 4356833279,
+          "sha256": "9dd9c514a6eb21c37b0a83227a9549236398f91497ac8949b5426efdc4896c25"
+        },
+        {
+          "start": 4356833280,
+          "end": 4357881855,
+          "sha256": "e97b5d23cc7b87d2375cf981ccc1181a2416c7a55faca1283f49ec7233d7ac15"
+        },
+        {
+          "start": 4434427904,
+          "end": 4435476479,
+          "sha256": "9ea65f7a488bf9dcba1669b59ea759a5159a8351733296d9be304107763a2aec"
+        },
+        {
+          "start": 4435476480,
+          "end": 4436525055,
+          "sha256": "161aa7da8a38cd646093f0498c681360486e26f62fede5a0b3caf18aaa89b19a"
+        },
+        {
+          "start": 4747952128,
+          "end": 4749000703,
+          "sha256": "92957c1c01ee7ea5e5c82e64806cd0c60ba16384d2dba7b518cebc5be401597f"
+        },
+        {
+          "start": 4749000704,
+          "end": 4750049279,
+          "sha256": "aaea662e17550a6424588b821473bcb3648f587da3893a586715f3e8fa64662b"
+        },
+        {
+          "start": 5397020672,
+          "end": 5398069247,
+          "sha256": "9de17b0087b5234db4afda42c6ac21e639532362525f1476e032101c99bbc46a"
+        },
+        {
+          "start": 5398069248,
+          "end": 5399117823,
+          "sha256": "38e42b7a5f359c54b903ebe933fe47c018aff977cf8592718a2ef3ac7616a2ea"
+        },
+        {
+          "start": 5641338880,
+          "end": 5642387455,
+          "sha256": "b12e59768095d307a1298e0fe33bfb4402092eae8fcf162b7b82077f3ddbf197"
+        },
+        {
+          "start": 5642387456,
+          "end": 5643436031,
+          "sha256": "2bfe425ffe95d4075d62f285335a8fc843b0ea3e2c41eda512a38471cf2736a5"
+        },
+        {
+          "start": 5708447744,
+          "end": 5709496319,
+          "sha256": "d1aebbe330b1615493a5b4c332c579a2cfa092ae9a14114c4980150432f44c01"
+        },
+        {
+          "start": 5709496320,
+          "end": 5710544895,
+          "sha256": "7b9f5d1f525801e7fbeecac5f5fa5e0919ea1ccb9d8249677c1d1c2d19244fd3"
+        },
+        {
+          "start": 6245318656,
+          "end": 6246367231,
+          "sha256": "4e32e70a766fc9bc1adc7241208b9f87a56a1a4b8e0f2a0d213035c05e97d802"
+        },
+        {
+          "start": 6446645248,
+          "end": 6447693823,
+          "sha256": "36129f8c277312bca3fa3da1c31d060019ccd5a4fedf11bfa33ab29bb3ee1194"
+        },
+        {
+          "start": 6447693824,
+          "end": 6448742399,
+          "sha256": "c56ef9150c42802417706b5e3f8a1c8f54aad128a80a40cc2e369a003668734d"
+        },
+        {
+          "start": 7134511104,
+          "end": 7135559679,
+          "sha256": "19ae0286aaba6b7489e2bb74025ea3825d6e30130ba0fad69cc6807397ff18cc"
+        },
+        {
+          "start": 8127512576,
+          "end": 8128561151,
+          "sha256": "e029e90f449d001d47a50075c99c3a510f167162ddb21463426804fd9f4151e0"
+        },
+        {
+          "start": 8128561152,
+          "end": 8129609727,
+          "sha256": "29a27699a9ff79a2c93de0003b46669190394d872b55807b9542682107eadec8"
+        }
+      ],
+      "full_remote_checksum_verified": false
+    },
+    "source_hdf5_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+    "provenance": {
+      "git_commit": "eee73e4f4beeb105c9849759d5e8862143ab8715",
+      "git_dirty": false,
+      "source_sha256": "074ab7c875646cca71f97353cf522f152a42ff200573af4c430e15a7db8569aa",
+      "python": "3.12.9",
+      "dependencies": {
+        "numpy": "2.5.3",
+        "zarr": "3.4.0",
+        "duckdb": "1.5.5",
+        "pyarrow": "23.0.1",
+        "scipy": "1.18.1",
+        "h5py": "3.16.0",
+        "flowstate-research": "0.5.0"
+      },
+      "hardware": {
+        "platform": "Windows-11-10.0.26200-SP0",
+        "machine": "AMD64",
+        "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+        "logical_cpu_count": 8
+      },
+      "precision": "float64"
+    },
+    "transformations": [
+      "Select seeded source rows",
+      "Keep declared time prefix",
+      "Preserve all spatial points and physical field values"
+    ],
+    "limitations": [
+      "Full remote file checksum was not verified",
+      "ETag consistency and HTTPS do not prove the publisher checksum",
+      "This is a derived subset, not the complete published benchmark"
+    ]
+  },
+  "dataset": {
+    "shape": [
+      24,
+      201,
+      1024
+    ],
+    "viscosity": 0.003183098861837907,
+    "domain_length": 1.0,
+    "saved_dt": 0.009999999776482582,
+    "splits": {
+      "train": [
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        18,
+        19,
+        20,
+        21,
+        23
+      ],
+      "validation": [
+        0,
+        11,
+        15,
+        16
+      ],
+      "test": [
+        1,
+        3,
+        17,
+        22
+      ]
+    },
+    "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+    "normalization": {
+      "mean": 0.03176066504932371,
+      "std": 0.5209152446392414,
+      "fit_split": "train",
+      "count": 3293184,
+      "constant_training_data": false
+    },
+    "trajectories": [
+      {
+        "id": "9ed1ee0c797f0a6b-0",
+        "source_index": 0,
+        "family_key": "84e3ebe55ab0c852fc505e43f60d6633774a75c9d66ca540f6be9f2d1c4970fe",
+        "initial_field_sha256": "84e3ebe55ab0c852fc505e43f60d6633774a75c9d66ca540f6be9f2d1c4970fe",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 8,
+        "family_id": "0728dd39340e52a5863d3de406c96ad1d337c74e43c5da5ff582977deffdb482"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-1",
+        "source_index": 1,
+        "family_key": "1743bba6c2c142f253900dedb864a9a1417f96629c86bdc753d20e21705ac213",
+        "initial_field_sha256": "1743bba6c2c142f253900dedb864a9a1417f96629c86bdc753d20e21705ac213",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 898,
+        "family_id": "dcead29afc8a56a15b69adcacf5be3f6da201a44e0adb6b0771c11a7178b1a0a"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-2",
+        "source_index": 2,
+        "family_key": "980f7159197b9c845e553043fda8871a15d2be099939666d022e108c79ef4c82",
+        "initial_field_sha256": "980f7159197b9c845e553043fda8871a15d2be099939666d022e108c79ef4c82",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 1255,
+        "family_id": "2cec2f949b87b9ecb624fd373629de8a44add335d58e82d82e4c244412fdb990"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-3",
+        "source_index": 3,
+        "family_key": "01ef7f79e58e28bbf69751e915ee985be75f6e3d6da3184fa1faf7f21b5e65ba",
+        "initial_field_sha256": "01ef7f79e58e28bbf69751e915ee985be75f6e3d6da3184fa1faf7f21b5e65ba",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 2139,
+        "family_id": "a6ef82a57d5261d28c493250ab6fc15e231175f5857bc0bef7aad43791faccae"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-4",
+        "source_index": 4,
+        "family_key": "25daeb40e29b980ff8cec52b7533dce33d2ee8aaa501c2ddbafa26cc49bed3ed",
+        "initial_field_sha256": "25daeb40e29b980ff8cec52b7533dce33d2ee8aaa501c2ddbafa26cc49bed3ed",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 2212,
+        "family_id": "c828b988e2f6832c0fd6881c97e595389e022cd718b26d0a697caceb2728ad0c"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-5",
+        "source_index": 5,
+        "family_key": "886119758a49bd1338590014d881e7a1616be319e40daea54b4660f633abc522",
+        "initial_field_sha256": "886119758a49bd1338590014d881e7a1616be319e40daea54b4660f633abc522",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 2739,
+        "family_id": "d77f5c401c588009be8de099c4d68b5916fcd467c2d8ea199480ce808aec1823"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-6",
+        "source_index": 6,
+        "family_key": "81c9bd02114d17dab874b8532a3b0a6c9d8a29bd04368961f06eb49eabbb627a",
+        "initial_field_sha256": "81c9bd02114d17dab874b8532a3b0a6c9d8a29bd04368961f06eb49eabbb627a",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 2816,
+        "family_id": "e7fe28d9e713bf9d69f6e8726eab22001ffd53350a3424f8bd473ba761a76a89"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-7",
+        "source_index": 7,
+        "family_key": "0d0195a5bf3a60f8b6e9ea027085936a661cf685206c3492aa04f2d313fa86c6",
+        "initial_field_sha256": "0d0195a5bf3a60f8b6e9ea027085936a661cf685206c3492aa04f2d313fa86c6",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 2876,
+        "family_id": "0539a8a28a3a88f1e8398ce0ec551fddb0fd8c6dd9f7e5ba53d982d2dc6d1999"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-8",
+        "source_index": 8,
+        "family_key": "dabdccad9c671f5d1f38d006ce0118edd4f6f97791b1702c4e9cfdd37239ee45",
+        "initial_field_sha256": "dabdccad9c671f5d1f38d006ce0118edd4f6f97791b1702c4e9cfdd37239ee45",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 3195,
+        "family_id": "2e2ba35a6026b588412c8e5386930270011ee3bac10ab4ff8660b096c46f0854"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-9",
+        "source_index": 9,
+        "family_key": "09afea34a544c8358eb7c86c3d2dfcca23079113907e921777f7f82b8740e5cd",
+        "initial_field_sha256": "09afea34a544c8358eb7c86c3d2dfcca23079113907e921777f7f82b8740e5cd",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 3494,
+        "family_id": "955ede84bf75cf7e8f760cbe450945d7b07e1a9d778e49f20a00696d5d636e24"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-10",
+        "source_index": 10,
+        "family_key": "f46d29c453d4be0b4a94f5ad144a90e310f8c3898356f39ae36adabb116ccc63",
+        "initial_field_sha256": "f46d29c453d4be0b4a94f5ad144a90e310f8c3898356f39ae36adabb116ccc63",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 3627,
+        "family_id": "93215fb210e58c2c3a1019d6b92d97c355e62d65c50db6f9c03435cf86e399e0"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-11",
+        "source_index": 11,
+        "family_key": "f6c4101530e9a554868aff930b6c5ba608509a3332c21edd956fd54126903fc3",
+        "initial_field_sha256": "f6c4101530e9a554868aff930b6c5ba608509a3332c21edd956fd54126903fc3",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 5134,
+        "family_id": "18cbcd19e449807700818a866a225f04491ea192c8f884c044cd9f95c2dcf31b"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-12",
+        "source_index": 12,
+        "family_key": "f2b3bdd6153e10223145c0f55827fc616b7cd49dc316fa4b037725c8280bd404",
+        "initial_field_sha256": "f2b3bdd6153e10223145c0f55827fc616b7cd49dc316fa4b037725c8280bd404",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 5151,
+        "family_id": "00f298650ae5b5729897b2aaec28338e452fe2d0de411ab86532f2f74deb8518"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-13",
+        "source_index": 13,
+        "family_key": "c67d93c3c24128bab38ce4c4aa4b191c34102dfab12fb89e9ea2a96e9992415c",
+        "initial_field_sha256": "c67d93c3c24128bab38ce4c4aa4b191c34102dfab12fb89e9ea2a96e9992415c",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 5170,
+        "family_id": "52d31d4a3400c12fbfef93338f12a367245e75ab9a4d49a8dd609628102a5095"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-14",
+        "source_index": 14,
+        "family_key": "407af9a8d30fddfc69eb674ae714364f3620c5130d51c83fe7211578c9f432f0",
+        "initial_field_sha256": "407af9a8d30fddfc69eb674ae714364f3620c5130d51c83fe7211578c9f432f0",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 5291,
+        "family_id": "93888d0bcf84575d0bdc22685b9c8937e99779b74080cbcece63cc94a13bfef2"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-15",
+        "source_index": 15,
+        "family_key": "f03027a0a1b1bbb29d9a1f8376b1854802bd88c0782a2873f29fbe658eaffd12",
+        "initial_field_sha256": "f03027a0a1b1bbb29d9a1f8376b1854802bd88c0782a2873f29fbe658eaffd12",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 5387,
+        "family_id": "14a0b3f6feaf0de91438965f51f53e95a34c37e444ab3778aa4bd8d8a952f109"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-16",
+        "source_index": 16,
+        "family_key": "3165dede403b59e44eb109bd5a1911d07c2b99cf9e5d84de66a62635fbcca38d",
+        "initial_field_sha256": "3165dede403b59e44eb109bd5a1911d07c2b99cf9e5d84de66a62635fbcca38d",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 5768,
+        "family_id": "0e20b1c301959f17c115141dc613a74779991d39b4563a181b41ebce65f4a0e8"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-17",
+        "source_index": 17,
+        "family_key": "0c387bbaeb79c88567a09319c83fba09907f89d9ac24111e663034a4f870c1e2",
+        "initial_field_sha256": "0c387bbaeb79c88567a09319c83fba09907f89d9ac24111e663034a4f870c1e2",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 6556,
+        "family_id": "f6d593707999a00c1ee962cac91e985a6b0741fd1ce4b0e6ff5144ef6aa266b2"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-18",
+        "source_index": 18,
+        "family_key": "ab88ec50a04910614d77bb1a9f39be138af7f839bdafc48030926c38e5862523",
+        "initial_field_sha256": "ab88ec50a04910614d77bb1a9f39be138af7f839bdafc48030926c38e5862523",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 6853,
+        "family_id": "017051a2ea4b4b594fb951c85f753f447554111af70f778903ad9fe30154288b"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-19",
+        "source_index": 19,
+        "family_key": "bf3eaedd9cc72b6f717e2273cd48b9910dd135d0f56036da634e4bfa4a19753e",
+        "initial_field_sha256": "bf3eaedd9cc72b6f717e2273cd48b9910dd135d0f56036da634e4bfa4a19753e",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 6934,
+        "family_id": "2a0bbcd09192ff245b9f702d03eecad63a4f5d95105fd8240c690f1ffc337a4c"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-20",
+        "source_index": 20,
+        "family_key": "39123c268a65f02d23b23bb4c3bd0b8bdc578ef5fa80aa220ea81dddebe7a412",
+        "initial_field_sha256": "39123c268a65f02d23b23bb4c3bd0b8bdc578ef5fa80aa220ea81dddebe7a412",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 7586,
+        "family_id": "4cef79416fd58d4de950b3c4e827df0bf5111ce19038bd4e042f94b1d1f4db33"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-21",
+        "source_index": 21,
+        "family_key": "05b8756cc42d857211a2d6240d6c8f507ed12b309137c736188801d4e5d2e2ab",
+        "initial_field_sha256": "05b8756cc42d857211a2d6240d6c8f507ed12b309137c736188801d4e5d2e2ab",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 7831,
+        "family_id": "fdc17ec2e518ba69efa937d7abd7705cb26701fd1e92dfdcf84fde35e8d4847d"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-22",
+        "source_index": 22,
+        "family_key": "2d6879cf956f818b764a58975fc487111e85b9669a452e0e2ccb16f643deafbd",
+        "initial_field_sha256": "2d6879cf956f818b764a58975fc487111e85b9669a452e0e2ccb16f643deafbd",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 8666,
+        "family_id": "630688bdb54a74118e721313a62dc9ba1c97f24a98d7f647e2070961058f2d07"
+      },
+      {
+        "id": "9ed1ee0c797f0a6b-23",
+        "source_index": 23,
+        "family_key": "5265244e0674ae0aab88143f4ffc93bb986d02f5369a9a4cc8e4c88523492aad",
+        "initial_field_sha256": "5265244e0674ae0aab88143f4ffc93bb986d02f5369a9a4cc8e4c88523492aad",
+        "config": {
+          "viscosity": 0.003183098861837907,
+          "initial_condition": "pdebench",
+          "domain_length": 1.0
+        },
+        "source_sha256": "9ed1ee0c797f0a6bfa571f18a6c75cd3af232835af689384785fa3b52e2158a0",
+        "remote_source_index": 9873,
+        "family_id": "92c11b029004c2e921f6371c66ac7a9142c55a016af905388aff6c7e0ef89935"
+      }
+    ]
+  },
+  "cohort_checks": {
+    "source_rows_disjoint": true,
+    "initial_field_hashes_disjoint": true
+  },
+  "runs": [
+    {
+      "seed": 0,
+      "conserve_mean": false,
+      "variant": "baseline",
+      "best_epoch": 10,
+      "checkpoint_sha256": "16d5c008294747b22931c2edc1b6ee4bb2c69bab79f1ef93c31b4357ba6f8d0a",
+      "training_seconds": 67.50072199990973,
+      "evaluation": {
+        "split": "test",
+        "trajectory_indices": [
+          1,
+          3,
+          17,
+          22
+        ],
+        "trajectory_ids": [
+          "9ed1ee0c797f0a6b-1",
+          "9ed1ee0c797f0a6b-3",
+          "9ed1ee0c797f0a6b-17",
+          "9ed1ee0c797f0a6b-22"
+        ],
+        "conserve_mean": false,
+        "conservation": {
+          "quantity": "spatial_mean_velocity",
+          "units": "physical_velocity",
+          "one_step_mean_change": {
+            "finite": true,
+            "rms": 0.003478808911795479,
+            "max_abs": 0.00870719162048772
+          },
+          "rollout_mean_drift": {
+            "finite": true,
+            "rms": 0.18689994752494385,
+            "max_abs": 0.5071900361217558
+          },
+          "reference_mean_drift": {
+            "finite": true,
+            "rms": 5.710652415119243e-05,
+            "max_abs": 0.00022941367933526635
+          },
+          "definitions": {
+            "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+            "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+            "reference_mean_drift": "reference mean minus its initial-frame mean",
+            "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean"
+          }
+        },
+        "one_step": {
+          "finite": true,
+          "rmse": 0.011786543885793664,
+          "relative_l2": 0.014773963706830727,
+          "max_abs_error": 0.24418652057647705,
+          "mean_velocity_rmse": 0.0034793544832627667,
+          "energy_rmse": 0.005736113789462321
+        },
+        "rollout": {
+          "finite": true,
+          "rmse": 0.224106421065793,
+          "relative_l2": 0.28090848032936927,
+          "max_abs_error": 1.027774453163147,
+          "mean_velocity_rmse": 0.18694811245059967,
+          "energy_rmse": 0.24345759909324616
+        },
+        "persistence_one_step": {
+          "finite": true,
+          "rmse": 0.02524124309106482,
+          "relative_l2": 0.03163889372118285,
+          "max_abs_error": 0.5095813274383545,
+          "mean_velocity_rmse": 6.740683110379358e-07,
+          "energy_rmse": 0.0005502859076869531
+        },
+        "persistence_rollout": {
+          "finite": true,
+          "rmse": 0.39442261004394846,
+          "relative_l2": 0.49439304535795575,
+          "max_abs_error": 1.4008214473724365,
+          "mean_velocity_rmse": 5.710652415119245e-05,
+          "energy_rmse": 0.05985626888204347
+        },
+        "inference_seconds": 1.4786571000004187,
+        "reference_limitation": "Errors are measured against the stored numerical simulation, not an exact solution. This small fixed-grid, fixed-viscosity baseline does not reproduce full PDEBench results.",
+        "kind": "fno_evaluation",
+        "dataset_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+        "dataset_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\conservation-20260929\\dataset",
+        "checkpoint_sha256": "16d5c008294747b22931c2edc1b6ee4bb2c69bab79f1ef93c31b4357ba6f8d0a",
+        "best_epoch": 10,
+        "contract": {
+          "grid_size": 1024,
+          "saved_dt": 0.009999999776482582,
+          "domain_length": 1.0,
+          "x_origin": 0.00048828125,
+          "time_start": 0.0,
+          "time_end": 2.0,
+          "viscosity": 0.003183098861837907,
+          "normalization": {
+            "mean": 0.03176066504932371,
+            "std": 0.5209152446392414,
+            "fit_split": "train"
+          },
+          "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+          "coordinate_uniformity_tolerance": {
+            "rtol": 0.0001,
+            "atol": 1e-10
+          }
+        }
+      }
+    },
+    {
+      "seed": 0,
+      "conserve_mean": true,
+      "variant": "mean_preserving",
+      "best_epoch": 10,
+      "checkpoint_sha256": "174bc0d15eb663d6bfa625c297ea610c1508c78e3a30059089a0dc5825725371",
+      "training_seconds": 63.81225700001232,
+      "evaluation": {
+        "split": "test",
+        "trajectory_indices": [
+          1,
+          3,
+          17,
+          22
+        ],
+        "trajectory_ids": [
+          "9ed1ee0c797f0a6b-1",
+          "9ed1ee0c797f0a6b-3",
+          "9ed1ee0c797f0a6b-17",
+          "9ed1ee0c797f0a6b-22"
+        ],
+        "conserve_mean": true,
+        "conservation": {
+          "quantity": "spatial_mean_velocity",
+          "units": "physical_velocity",
+          "one_step_mean_change": {
+            "finite": true,
+            "rms": 1.0119921664200712e-08,
+            "max_abs": 5.2677933126688004e-08
+          },
+          "rollout_mean_drift": {
+            "finite": true,
+            "rms": 1.3454593224992685e-07,
+            "max_abs": 8.131028153002262e-07
+          },
+          "reference_mean_drift": {
+            "finite": true,
+            "rms": 5.710652415119243e-05,
+            "max_abs": 0.00022941367933526635
+          },
+          "definitions": {
+            "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+            "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+            "reference_mean_drift": "reference mean minus its initial-frame mean",
+            "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean"
+          }
+        },
+        "one_step": {
+          "finite": true,
+          "rmse": 0.012931377242319662,
+          "relative_l2": 0.016208966759767258,
+          "max_abs_error": 0.25757765769958496,
+          "mean_velocity_rmse": 6.740977694075854e-07,
+          "energy_rmse": 0.0006133085140847227
+        },
+        "rollout": {
+          "finite": true,
+          "rmse": 0.13517872550039423,
+          "relative_l2": 0.1694411528799015,
+          "max_abs_error": 0.9043920189142227,
+          "mean_velocity_rmse": 5.698327648692266e-05,
+          "energy_rmse": 0.010995509620355625
+        },
+        "persistence_one_step": {
+          "finite": true,
+          "rmse": 0.02524124309106482,
+          "relative_l2": 0.03163889372118285,
+          "max_abs_error": 0.5095813274383545,
+          "mean_velocity_rmse": 6.740683110379358e-07,
+          "energy_rmse": 0.0005502859076869531
+        },
+        "persistence_rollout": {
+          "finite": true,
+          "rmse": 0.39442261004394846,
+          "relative_l2": 0.49439304535795575,
+          "max_abs_error": 1.4008214473724365,
+          "mean_velocity_rmse": 5.710652415119245e-05,
+          "energy_rmse": 0.05985626888204347
+        },
+        "inference_seconds": 1.2353897999273613,
+        "reference_limitation": "Errors are measured against the stored numerical simulation, not an exact solution. This small fixed-grid, fixed-viscosity baseline does not reproduce full PDEBench results.",
+        "kind": "fno_evaluation",
+        "dataset_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+        "dataset_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\conservation-20260929\\dataset",
+        "checkpoint_sha256": "174bc0d15eb663d6bfa625c297ea610c1508c78e3a30059089a0dc5825725371",
+        "best_epoch": 10,
+        "contract": {
+          "grid_size": 1024,
+          "saved_dt": 0.009999999776482582,
+          "domain_length": 1.0,
+          "x_origin": 0.00048828125,
+          "time_start": 0.0,
+          "time_end": 2.0,
+          "viscosity": 0.003183098861837907,
+          "normalization": {
+            "mean": 0.03176066504932371,
+            "std": 0.5209152446392414,
+            "fit_split": "train"
+          },
+          "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+          "coordinate_uniformity_tolerance": {
+            "rtol": 0.0001,
+            "atol": 1e-10
+          }
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "conserve_mean": true,
+      "variant": "mean_preserving",
+      "best_epoch": 7,
+      "checkpoint_sha256": "f853e9aa8abc8924e3ba67ea346d1eff1e385cd22c44b02bf8b7b6c01d08b383",
+      "training_seconds": 60.995355899911374,
+      "evaluation": {
+        "split": "test",
+        "trajectory_indices": [
+          1,
+          3,
+          17,
+          22
+        ],
+        "trajectory_ids": [
+          "9ed1ee0c797f0a6b-1",
+          "9ed1ee0c797f0a6b-3",
+          "9ed1ee0c797f0a6b-17",
+          "9ed1ee0c797f0a6b-22"
+        ],
+        "conserve_mean": true,
+        "conservation": {
+          "quantity": "spatial_mean_velocity",
+          "units": "physical_velocity",
+          "one_step_mean_change": {
+            "finite": true,
+            "rms": 1.480169108158917e-08,
+            "max_abs": 7.241033017635345e-08
+          },
+          "rollout_mean_drift": {
+            "finite": true,
+            "rms": 1.3460100226228238e-07,
+            "max_abs": 4.7584762796759605e-07
+          },
+          "reference_mean_drift": {
+            "finite": true,
+            "rms": 5.710652415119243e-05,
+            "max_abs": 0.00022941367933526635
+          },
+          "definitions": {
+            "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+            "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+            "reference_mean_drift": "reference mean minus its initial-frame mean",
+            "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean"
+          }
+        },
+        "one_step": {
+          "finite": true,
+          "rmse": 0.015163894021332228,
+          "relative_l2": 0.01900733769764472,
+          "max_abs_error": 0.33562612533569336,
+          "mean_velocity_rmse": 6.732298226364537e-07,
+          "energy_rmse": 0.0003583575841258368
+        },
+        "rollout": {
+          "finite": true,
+          "rmse": 0.18774852082924431,
+          "relative_l2": 0.23533529927170857,
+          "max_abs_error": 0.9911723136901855,
+          "mean_velocity_rmse": 5.723223942008991e-05,
+          "energy_rmse": 0.005739768586226835
+        },
+        "persistence_one_step": {
+          "finite": true,
+          "rmse": 0.02524124309106482,
+          "relative_l2": 0.03163889372118285,
+          "max_abs_error": 0.5095813274383545,
+          "mean_velocity_rmse": 6.740683110379358e-07,
+          "energy_rmse": 0.0005502859076869531
+        },
+        "persistence_rollout": {
+          "finite": true,
+          "rmse": 0.39442261004394846,
+          "relative_l2": 0.49439304535795575,
+          "max_abs_error": 1.4008214473724365,
+          "mean_velocity_rmse": 5.710652415119245e-05,
+          "energy_rmse": 0.05985626888204347
+        },
+        "inference_seconds": 1.4952333000255749,
+        "reference_limitation": "Errors are measured against the stored numerical simulation, not an exact solution. This small fixed-grid, fixed-viscosity baseline does not reproduce full PDEBench results.",
+        "kind": "fno_evaluation",
+        "dataset_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+        "dataset_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\conservation-20260929\\dataset",
+        "checkpoint_sha256": "f853e9aa8abc8924e3ba67ea346d1eff1e385cd22c44b02bf8b7b6c01d08b383",
+        "best_epoch": 7,
+        "contract": {
+          "grid_size": 1024,
+          "saved_dt": 0.009999999776482582,
+          "domain_length": 1.0,
+          "x_origin": 0.00048828125,
+          "time_start": 0.0,
+          "time_end": 2.0,
+          "viscosity": 0.003183098861837907,
+          "normalization": {
+            "mean": 0.03176066504932371,
+            "std": 0.5209152446392414,
+            "fit_split": "train"
+          },
+          "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+          "coordinate_uniformity_tolerance": {
+            "rtol": 0.0001,
+            "atol": 1e-10
+          }
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "conserve_mean": false,
+      "variant": "baseline",
+      "best_epoch": 10,
+      "checkpoint_sha256": "2cfa9003b5a13c9e23ec10b8844212b3f2d8af90d535e951100fb2236c857002",
+      "training_seconds": 60.536918699974194,
+      "evaluation": {
+        "split": "test",
+        "trajectory_indices": [
+          1,
+          3,
+          17,
+          22
+        ],
+        "trajectory_ids": [
+          "9ed1ee0c797f0a6b-1",
+          "9ed1ee0c797f0a6b-3",
+          "9ed1ee0c797f0a6b-17",
+          "9ed1ee0c797f0a6b-22"
+        ],
+        "conserve_mean": false,
+        "conservation": {
+          "quantity": "spatial_mean_velocity",
+          "units": "physical_velocity",
+          "one_step_mean_change": {
+            "finite": true,
+            "rms": 0.0025429922207982547,
+            "max_abs": 0.005347415921278298
+          },
+          "rollout_mean_drift": {
+            "finite": true,
+            "rms": 0.15497234783252414,
+            "max_abs": 0.4235974415205419
+          },
+          "reference_mean_drift": {
+            "finite": true,
+            "rms": 5.710652415119243e-05,
+            "max_abs": 0.00022941367933526635
+          },
+          "definitions": {
+            "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+            "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+            "reference_mean_drift": "reference mean minus its initial-frame mean",
+            "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean"
+          }
+        },
+        "one_step": {
+          "finite": true,
+          "rmse": 0.012025948156570545,
+          "relative_l2": 0.015074047432983987,
+          "max_abs_error": 0.23401713371276855,
+          "mean_velocity_rmse": 0.002543545445797288,
+          "energy_rmse": 0.0038012889965522816
+        },
+        "rollout": {
+          "finite": true,
+          "rmse": 0.2356379564008865,
+          "relative_l2": 0.2953628009661463,
+          "max_abs_error": 1.1527782082557678,
+          "mean_velocity_rmse": 0.1550168216356778,
+          "energy_rmse": 0.19340628214146113
+        },
+        "persistence_one_step": {
+          "finite": true,
+          "rmse": 0.02524124309106482,
+          "relative_l2": 0.03163889372118285,
+          "max_abs_error": 0.5095813274383545,
+          "mean_velocity_rmse": 6.740683110379358e-07,
+          "energy_rmse": 0.0005502859076869531
+        },
+        "persistence_rollout": {
+          "finite": true,
+          "rmse": 0.39442261004394846,
+          "relative_l2": 0.49439304535795575,
+          "max_abs_error": 1.4008214473724365,
+          "mean_velocity_rmse": 5.710652415119245e-05,
+          "energy_rmse": 0.05985626888204347
+        },
+        "inference_seconds": 1.5057827999116853,
+        "reference_limitation": "Errors are measured against the stored numerical simulation, not an exact solution. This small fixed-grid, fixed-viscosity baseline does not reproduce full PDEBench results.",
+        "kind": "fno_evaluation",
+        "dataset_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+        "dataset_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\conservation-20260929\\dataset",
+        "checkpoint_sha256": "2cfa9003b5a13c9e23ec10b8844212b3f2d8af90d535e951100fb2236c857002",
+        "best_epoch": 10,
+        "contract": {
+          "grid_size": 1024,
+          "saved_dt": 0.009999999776482582,
+          "domain_length": 1.0,
+          "x_origin": 0.00048828125,
+          "time_start": 0.0,
+          "time_end": 2.0,
+          "viscosity": 0.003183098861837907,
+          "normalization": {
+            "mean": 0.03176066504932371,
+            "std": 0.5209152446392414,
+            "fit_split": "train"
+          },
+          "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+          "coordinate_uniformity_tolerance": {
+            "rtol": 0.0001,
+            "atol": 1e-10
+          }
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "conserve_mean": false,
+      "variant": "baseline",
+      "best_epoch": 9,
+      "checkpoint_sha256": "d2d635463827c29da757b0b18d2b3604f6cf755a10efadf3d54e9808803bb631",
+      "training_seconds": 60.101577699999325,
+      "evaluation": {
+        "split": "test",
+        "trajectory_indices": [
+          1,
+          3,
+          17,
+          22
+        ],
+        "trajectory_ids": [
+          "9ed1ee0c797f0a6b-1",
+          "9ed1ee0c797f0a6b-3",
+          "9ed1ee0c797f0a6b-17",
+          "9ed1ee0c797f0a6b-22"
+        ],
+        "conserve_mean": false,
+        "conservation": {
+          "quantity": "spatial_mean_velocity",
+          "units": "physical_velocity",
+          "one_step_mean_change": {
+            "finite": true,
+            "rms": 0.00391113434472064,
+            "max_abs": 0.008544348878785968
+          },
+          "rollout_mean_drift": {
+            "finite": true,
+            "rms": 5.297188355503996,
+            "max_abs": 35.718294070858974
+          },
+          "reference_mean_drift": {
+            "finite": true,
+            "rms": 5.710652415119243e-05,
+            "max_abs": 0.00022941367933526635
+          },
+          "definitions": {
+            "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+            "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+            "reference_mean_drift": "reference mean minus its initial-frame mean",
+            "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean"
+          }
+        },
+        "one_step": {
+          "finite": true,
+          "rmse": 0.011864805875273159,
+          "relative_l2": 0.014872061996150977,
+          "max_abs_error": 0.22607576847076416,
+          "mean_velocity_rmse": 0.003910550414780213,
+          "energy_rmse": 0.0054166774797873045
+        },
+        "rollout": {
+          "finite": true,
+          "rmse": 5.3002478554520165,
+          "relative_l2": 6.643649759624401,
+          "max_abs_error": 37.435452580451965,
+          "mean_velocity_rmse": 5.297138624149632,
+          "energy_rmse": 75.45197335729429
+        },
+        "persistence_one_step": {
+          "finite": true,
+          "rmse": 0.02524124309106482,
+          "relative_l2": 0.03163889372118285,
+          "max_abs_error": 0.5095813274383545,
+          "mean_velocity_rmse": 6.740683110379358e-07,
+          "energy_rmse": 0.0005502859076869531
+        },
+        "persistence_rollout": {
+          "finite": true,
+          "rmse": 0.39442261004394846,
+          "relative_l2": 0.49439304535795575,
+          "max_abs_error": 1.4008214473724365,
+          "mean_velocity_rmse": 5.710652415119245e-05,
+          "energy_rmse": 0.05985626888204347
+        },
+        "inference_seconds": 1.4347043000161648,
+        "reference_limitation": "Errors are measured against the stored numerical simulation, not an exact solution. This small fixed-grid, fixed-viscosity baseline does not reproduce full PDEBench results.",
+        "kind": "fno_evaluation",
+        "dataset_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+        "dataset_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\conservation-20260929\\dataset",
+        "checkpoint_sha256": "d2d635463827c29da757b0b18d2b3604f6cf755a10efadf3d54e9808803bb631",
+        "best_epoch": 9,
+        "contract": {
+          "grid_size": 1024,
+          "saved_dt": 0.009999999776482582,
+          "domain_length": 1.0,
+          "x_origin": 0.00048828125,
+          "time_start": 0.0,
+          "time_end": 2.0,
+          "viscosity": 0.003183098861837907,
+          "normalization": {
+            "mean": 0.03176066504932371,
+            "std": 0.5209152446392414,
+            "fit_split": "train"
+          },
+          "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+          "coordinate_uniformity_tolerance": {
+            "rtol": 0.0001,
+            "atol": 1e-10
+          }
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "conserve_mean": true,
+      "variant": "mean_preserving",
+      "best_epoch": 7,
+      "checkpoint_sha256": "21d487c3898f6f9ed89c35323a17d15479b0e6dcadc70d1a858a9a0889d4ee6d",
+      "training_seconds": 62.257823400083,
+      "evaluation": {
+        "split": "test",
+        "trajectory_indices": [
+          1,
+          3,
+          17,
+          22
+        ],
+        "trajectory_ids": [
+          "9ed1ee0c797f0a6b-1",
+          "9ed1ee0c797f0a6b-3",
+          "9ed1ee0c797f0a6b-17",
+          "9ed1ee0c797f0a6b-22"
+        ],
+        "conserve_mean": true,
+        "conservation": {
+          "quantity": "spatial_mean_velocity",
+          "units": "physical_velocity",
+          "one_step_mean_change": {
+            "finite": true,
+            "rms": 4.198940209119994e-09,
+            "max_abs": 2.019805833697319e-08
+          },
+          "rollout_mean_drift": {
+            "finite": true,
+            "rms": 9.207737322049603e-08,
+            "max_abs": 6.27216650173068e-07
+          },
+          "reference_mean_drift": {
+            "finite": true,
+            "rms": 5.710652415119243e-05,
+            "max_abs": 0.00022941367933526635
+          },
+          "definitions": {
+            "one_step_mean_change": "predicted mean minus preceding reference-frame mean",
+            "rollout_mean_drift": "autoregressive predicted mean minus initial-frame mean",
+            "reference_mean_drift": "reference mean minus its initial-frame mean",
+            "mean_velocity_rmse": "RMSE of prediction mean minus target reference mean"
+          }
+        },
+        "one_step": {
+          "finite": true,
+          "rmse": 0.011441294517013931,
+          "relative_l2": 0.014341207362512876,
+          "max_abs_error": 0.22916340827941895,
+          "mean_velocity_rmse": 6.743518184400025e-07,
+          "energy_rmse": 0.0006632504153835662
+        },
+        "rollout": {
+          "finite": true,
+          "rmse": 5.510174263479616,
+          "relative_l2": 6.90678415791424,
+          "max_abs_error": 62.93693017959595,
+          "mean_velocity_rmse": 5.704181740520255e-05,
+          "energy_rmse": 51.90574540580902
+        },
+        "persistence_one_step": {
+          "finite": true,
+          "rmse": 0.02524124309106482,
+          "relative_l2": 0.03163889372118285,
+          "max_abs_error": 0.5095813274383545,
+          "mean_velocity_rmse": 6.740683110379358e-07,
+          "energy_rmse": 0.0005502859076869531
+        },
+        "persistence_rollout": {
+          "finite": true,
+          "rmse": 0.39442261004394846,
+          "relative_l2": 0.49439304535795575,
+          "max_abs_error": 1.4008214473724365,
+          "mean_velocity_rmse": 5.710652415119245e-05,
+          "energy_rmse": 0.05985626888204347
+        },
+        "inference_seconds": 1.3436426999978721,
+        "reference_limitation": "Errors are measured against the stored numerical simulation, not an exact solution. This small fixed-grid, fixed-viscosity baseline does not reproduce full PDEBench results.",
+        "kind": "fno_evaluation",
+        "dataset_sha256": "d2e584baf061417616e9610350111d3551c3ac70d38a34b13dcb660d1cfc2926",
+        "dataset_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\conservation-20260929\\dataset",
+        "checkpoint_sha256": "21d487c3898f6f9ed89c35323a17d15479b0e6dcadc70d1a858a9a0889d4ee6d",
+        "best_epoch": 7,
+        "contract": {
+          "grid_size": 1024,
+          "saved_dt": 0.009999999776482582,
+          "domain_length": 1.0,
+          "x_origin": 0.00048828125,
+          "time_start": 0.0,
+          "time_end": 2.0,
+          "viscosity": 0.003183098861837907,
+          "normalization": {
+            "mean": 0.03176066504932371,
+            "std": 0.5209152446392414,
+            "fit_split": "train"
+          },
+          "split_sha256": "b0e4ff0f77f777b3de1987db65f782a4a8d0446425ad1a838469802e4375d1c9",
+          "coordinate_uniformity_tolerance": {
+            "rtol": 0.0001,
+            "atol": 1e-10
+          }
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Fresh cohort from the same public generator, not independent-source validation",
+    "24 trajectories, one viscosity, one split; seeds measure training randomness only",
+    "Mean projection does not guarantee energy dissipation, stability, or accuracy",
+    "Numerical references can drift in mean; reference error is not invariant drift",
+    "Only received ranges and the complete local subset were checksum-verified"
+  ],
+  "report_origin": {
+    "path": "outputs/conservation-20260929/report.json",
+    "sha256": "0b6de95d3a12fcec4025f4db3ac213dc8b7cc965feaafa29aeabb7b8ff336c1a",
+    "omitted": "Per-saved-time arrays from evaluations only; all six runs, scalar metrics, cohort identities and acquisition receipt retained."
+  },
+  "interpretation": [
+    "Mean-preserving models held RMS rollout mean drift near 1e-7 for all three seeds.",
+    "Field rollout RMSE improved for seeds 0 and 1 but worsened for seed 2; seed 2 failed to beat persistence in both variants.",
+    "One-step field RMSE worsened for projected seeds 0 and 1. Preserving one invariant is not general predictive accuracy or stability.",
+    "Fresh trajectories and initial-field hashes are disjoint from the earlier cohort, but come from the same public file and generator.",
+    "This ten-epoch, three-seed, four-test-trajectory comparison does not establish a general benchmark ranking."
+  ]
+}

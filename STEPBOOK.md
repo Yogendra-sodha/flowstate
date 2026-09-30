@@ -747,3 +747,103 @@ restart workers after changing source or Git checkouts.
 Before the measured runs, the complete local suite passed **356 tests in 89.72
 seconds** and Ruff passed. The fresh-data and two-process recovery measurements
 are recorded below only after they actually run.
+
+### Measured recovery and conservation results
+
+Both measurements ran with clean source at commit `eee73e4`, package 0.5.0. The
+[queue report](docs/reports/local-recovery-0.5.json) records eight Navier–Stokes runs
+across two fresh worker processes, four jobs each, with all artifacts verified.
+Repeating submission found eight existing jobs; another worker processed zero.
+A child process deliberately called `os._exit(23)` after `run_experiment()` had
+published a complete artifact but before queue acknowledgement. The next process
+reclaimed its expired lease and returned `resumed=true` with the same result ID.
+The event sequence is submitted, claimed, lease_expired, claimed, completed. The
+claim count is two. This demonstrates local recovery at that publication boundary;
+it does not claim mid-trajectory checkpoints, power-loss durability, or cloud scale.
+
+The [conservation report](docs/reports/conservation-0.5.json) preserves the frozen
+plan, receipt, hashes, cohort checks, and all six model results. The raw report and
+its SHA-256 are identified; only per-time evaluation curves are omitted from the
+compact committed copy. The new cohort has 24 complete trajectories, 201 times,
+1,024 cells, and 16/4/4 train/validation/test families. Acquisition received
+46,735,488 bytes. Both old/new source-row and initial-field-hash overlap checks
+passed. Each seed pairs the same initialization and minibatch order across the
+two model variants; validation chooses each run's checkpoint independently.
+
+| Seed | Baseline rollout RMSE | Mean-preserving rollout RMSE | Baseline RMS mean drift | Mean-preserving RMS mean drift |
+| --- | ---: | ---: | ---: | ---: |
+| 0 | 0.224106 | 0.135179 | 0.186900 | 1.35e-7 |
+| 1 | 0.235638 | 0.187749 | 0.154972 | 1.35e-7 |
+| 2 | 5.300248 | 5.510174 | 5.297188 | 9.21e-8 |
+
+Persistence rollout RMSE was 0.394423; the stored reference's RMS mean drift was
+5.71e-5. The projection preserves mean, but seed 2 still has large finite errors
+and its aggregate rollout RMSE worsens. Projected one-step errors worsen for seeds
+0 and 1 as well. The engineering conclusion is specific: keeping one invariant
+does not ensure accurate fields or reliable long predictions. We retain this
+negative evidence; this completed test set was not used for more tuning.
+
+The full synthetic release demo also passed 19 validation cases and six refinement
+studies, generated and reused twelve trajectories, and executed two proposals.
+An actual pre-flag 0.4 FNO checkpoint re-evaluated with identical previous metrics;
+new drift diagnostics were added without changing its predictions. The 0.5 build,
+356 local tests, and Windows/Linux CI passed before these measurements.
+
+## 19. Make saved evidence readable in an offline viewer
+
+The next local gap was inspection: the records existed, but a new user had to
+read JSON or write plotting code to see a run. `dashboard.py` now turns a verified
+lake into one browser file; `dashboard.html` holds its inline UI. The CLI command
+is `flowstate --lake PATH dashboard OUTPUT.html --max-experiments 50`.
+
+The extraction loop visits selected experiment directories in sorted ID order.
+It calls `Lake.verify()`, reads `record.json`, and records both manifest and record
+hashes. `_arrays()` selects an energy history of at most 201 saved samples with
+both endpoints, plus only the final scalar field. Spatial stride is
+`max(1, ceil(size / limit))`: 256 points for 1D or 64 along each 2D axis. The axis
+loop slices coordinates with exactly those same strides. This keeps decoded plot
+data small; integrity verification still scans every selected file. Limits bound
+the export to 200 experiments and 32 MiB of JSON rather than pretending every lake
+fits inside a browser page.
+
+Transformation converts NumPy data into JSON-compatible lists, replacing
+nonfinite values with nulls. `_safe_json()` escapes HTML/script delimiters and
+Unicode line separators. The browser uses `textContent` for record strings and
+creates SVG nodes for plots. `render()` filters the embedded array, `show()` builds
+record details, `lineChart()` preserves gaps between nonfinite samples, and nested
+row/column loops draw heatmap cells. Each heatmap has its own explicit value range.
+No fetch, server database, or live connection is involved.
+
+Loading means publishing a fresh HTML artifact. The exporter rejects destinations
+inside the lake and existing files or symlinks. It writes and fsyncs a temporary
+sibling, then publishes with `os.link()`, which cannot overwrite a concurrent
+winner. Hard-link support is required. The CLI dispatches this command before
+constructing `Lake`, so a mistyped source path does not create an empty lake.
+The snapshot includes full run provenance and local paths; it should be inspected
+before external sharing.
+
+Scientific review corrected the Darcy preview: `t=0` is a storage marker for a
+steady solution, not physical evolution time. Nonfinite heatmap ranges now say
+unavailable rather than inventing zero. The
+[viewer chapter](docs/steps/08-research-viewer.md) documents the commands, functions,
+ETL path, sampling limits, and why a visualization is not proof of solver accuracy.
+Independent tests exercise corruption rejection, exact sampled values, unsafe
+output paths, and script escaping; browser checks exercise the actual filters,
+failure records, and line/heatmap rendering. Final validation results follow.
+
+Final local validation on 30 September passed **388 tests with four skips in
+151.88 seconds**. The four skipped cases require Windows symbolic-link privileges
+not available to this account; the Linux CI job exercises those cases. Ruff and
+the source/wheel builds passed. Every packaged Python file and the HTML template
+were checked against the current source. The
+[viewer validation report](docs/reports/viewer-0.6.json) retains output hashes,
+test evidence, browser checks, and their limits.
+
+The exported release lake has sixteen experiments, including the intentional
+failure and Darcy case; a second export contains eight Navier–Stokes runs. Browser
+checks through localhost showed the Burgers plots, Darcy heatmap, corrected steady
+caption, status filter, and no-match states without captured console errors. The
+last small template edit narrows the no-energy message to mention Darcy only for
+Darcy runs. Direct-file navigation could not be tested because the browser tool
+blocks the file protocol; no workaround was attempted. The artifacts contain no
+external dependencies, and their HTML template is included in the built wheel.

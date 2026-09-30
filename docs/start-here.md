@@ -31,8 +31,8 @@ drift go into the run record and its queryable Parquet row. The record also says
 which config, code version, and machine produced them. A checksum list makes later
 accidental damage visible. DuckDB reads the Parquet rows so you can ask which runs
 completed or had an unusual metric. To train a model, Flowstate combines several
-compatible verified movies, separates related starting conditions across train,
-validation, and test, then saves a curated dataset. The model tries to predict a
+compatible verified movies, keeps related starting conditions together, and splits
+whole families into train, validation, and test, then saves a curated dataset. The model tries to predict a
 future frame; its error is compared with the saved numerical frame. Finally, the
 research graph connects the run, data, model, observation, and a proposed follow-up.
 
@@ -48,18 +48,25 @@ Flowstate does not solve the 3D Navier–Stokes existence and smoothness problem
 | Available in this repository | Work still requiring its own implementation or evidence |
 | --- | --- |
 | Local Burgers, 2D Navier–Stokes, and a manufactured Darcy solver | Broader PDE families and stronger application-specific references |
-| Immutable local lake, SQL queries, checksums, streamed output | Distributed work queues, remote workers, and mid-simulation recovery |
-| Dataset export, bounded public PDEBench acquisition, and a completed 24-trajectory study | Larger independent benchmark comparisons and better rollout conservation |
+| Immutable local lake, SQL queries, checksums, streamed output, and recoverable local jobs | Distributed work queues, remote workers, and mid-simulation recovery |
+| Dataset export, bounded public PDEBench acquisition, and two completed 24-trajectory studies | Larger independent benchmark comparisons and reliable long rollouts |
 | CPU FNO and PINN baselines with reproducible artifacts | Broader generalization studies, tuning, and uncertainty evaluation |
 | S3-compatible mirroring with emulator tests | Validation against an actual configured cloud account and workload |
 | Local worker/storage benchmark tooling | Representative scale measurements and operational scheduling decisions |
-| Typed research evidence and a deterministic proposal policy | A visual dashboard and constrained LLM research planning |
+| Typed research evidence, deterministic proposals, and an offline visual experiment viewer | Hosted multi-user inspection and constrained LLM research planning |
 
-For planning, estimate about **90% of the local prototype** and roughly **40% of the
-larger vision**. These are judgment calls, not measured percentages. The local
-experiment-to-evidence loop works; each larger deployment or scientific claim needs
-a separate acceptance criterion. See the [roadmap](roadmap.md) and
+The local experiment-to-evidence workflow is implemented and exercised. A single
+percentage for the larger vision would hide its undefined scale and deployment
+requirements. Remaining work has separate acceptance criteria: a real cloud
+round trip, remote worker recovery, stronger model evaluation, and constrained
+language-model planning. See the [roadmap](roadmap.md) and
 [implementation stepbook](../STEPBOOK.md).
+
+For a quick visual introduction, run `uv run --no-sync flowstate --lake data/lake
+dashboard outputs/research.html` after generating experiments, then open that
+HTML file in your browser. Select an experiment to see its final simulated field,
+energy history, input settings, and saved code identity. The
+[viewer chapter](steps/08-research-viewer.md) follows this data path in plain English.
 
 ## Follow one run through the code
 

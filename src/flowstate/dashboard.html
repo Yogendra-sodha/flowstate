@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Flowstate · Research snapshot</title>
+<style>
+:root{color-scheme:light;--ink:#172a31;--muted:#52676e;--line:#d8e1df;--paper:#f5f7f4;--accent:#006e62}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+header,main,footer{max-width:1440px;margin:auto;padding:26px 32px}header{border-bottom:1px solid var(--line)}
+.brand{letter-spacing:.16em;font-size:13px;font-weight:800;color:var(--accent)}h1{font-size:32px;margin:10px 0 4px;line-height:1.2}
+h2{font-size:21px;margin:0 0 12px}h3{font-size:15px;margin:0 0 8px}p{margin:6px 0}.muted,figcaption{color:var(--muted);font-size:13px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:16px}.badge{font-size:12px;padding:5px 10px;background:#e0ede7;color:#225344;border-radius:20px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}.stat,.card{background:white;border:1px solid var(--line);border-radius:12px;padding:18px}
+.stat strong{font-size:24px;display:block}.stat span{font-size:12px;color:var(--muted)}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:18px}label{font-size:12px;font-weight:700;display:block}input,select{width:100%;padding:10px;border:1px solid #aabbb8;border-radius:7px;background:white;color:var(--ink);font:inherit;margin-top:5px}
+button{font:inherit;color:inherit}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #008b7b;outline-offset:3px}
+.workspace{display:grid;grid-template-columns:minmax(240px,320px) minmax(0,1fr);gap:20px}.list{max-height:950px;overflow:auto;padding:3px;display:grid;gap:9px;align-content:start}
+.run{width:100%;text-align:left;background:white;border:1px solid var(--line);border-radius:10px;padding:13px;cursor:pointer}.run[aria-pressed=true]{border:2px solid var(--accent);background:#edf6f1;padding:12px}.run:hover{border-color:var(--accent)}
+.run strong{display:block;overflow-wrap:anywhere;font:12px ui-monospace,monospace}.run span{display:block;font-size:12px;margin-top:5px}.warn{color:#934300}.ok{color:#226449}.failed{color:#ad3131}
+.detail{min-width:0}.detail>.card{margin-bottom:16px}.identifier{overflow-wrap:anywhere;font:13px ui-monospace,monospace}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.two>.card{min-width:0}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.6 ui-monospace,monospace;margin:0;color:#2e4850;max-height:360px;overflow:auto}details{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}summary{cursor:pointer;font-weight:600}
+figure{margin:0}svg{width:100%;height:auto;display:block;background:#fcfdfb;border-radius:6px}.chartnote{font-size:12px;color:var(--muted);margin-top:8px}.axis{fill:#52676e;font:11px system-ui,sans-serif}.empty{padding:32px;text-align:center;color:var(--muted)}
+footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line)}#source{overflow-wrap:anywhere}#count{margin-bottom:12px}noscript{display:block;padding:24px}ul{padding-left:20px}
+@media(max-width:850px){header,main,footer{padding:20px}.workspace,.two{grid-template-columns:1fr}.list{max-height:320px}.filters{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}h1{font-size:27px}}
+@media(prefers-reduced-motion:no-preference){.run{transition:background .12s,border-color .12s}}
+</style></head><body>
+<header><div class="topline"><span class="brand">FLOWSTATE / RESEARCH</span><span class="badge">OFFLINE SNAPSHOT</span></div>
+<h1>Experiments, with evidence.</h1><p class="muted">Inspect saved results, numerical diagnostics, and the code that produced them.</p></header>
+<noscript>This snapshot needs JavaScript enabled to display its embedded records. It makes no network requests.</noscript>
+<main><section class="stats" aria-label="Snapshot counts">
+<div class="stat"><strong id="displayed">0</strong><span>Experiments displayed</span></div><div class="stat"><strong id="completed">0</strong><span>Solver completed</span></div>
+<div class="stat"><strong id="review">0</strong><span>Flagged for review</span></div><div class="stat"><strong id="failed">0</strong><span>Failed runs</span></div></section>
+<section aria-label="Filter experiments"><div class="filters">
+<label>Search records<input id="search" type="search" placeholder="ID, solver, parameter, commit…"></label>
+<label>Equation<select id="equation"><option value="">All equations</option></select></label>
+<label>Status<select id="status"><option value="">All statuses</option></select></label>
+<label>Review flags<select id="flags"><option value="">Any review status</option><option value="flagged">Flagged</option><option value="clear">No recorded flag</option></select></label>
+</div><p id="count" class="muted" aria-live="polite"></p></section>
+<div class="workspace"><nav aria-label="Experiment selection"><div id="list" class="list"></div></nav>
+<section id="detail" class="detail" aria-label="Selected experiment"></section></div></main>
+<footer><p id="source"></p><p id="selection"></p><details><summary>Scope and limitations</summary><ul id="limitations"></ul></details></footer>
+<script id="snapshot" type="application/json">__PAYLOAD__</script>
+<script>
+'use strict';
+const snapshot=JSON.parse(document.getElementById('snapshot').textContent);
+const records=snapshot.experiments;
+const byId=id=>document.getElementById(id);
+const text=(tag,value,cls)=>{const el=document.createElement(tag);el.textContent=String(value??'');if(cls)el.className=cls;return el;};
+const svgEl=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs||{}))el.setAttribute(k,String(v));return el;};
+const fmt=v=>Number.isFinite(v)?Number(v).toPrecision(4):'unavailable';
+const flagged=r=>Boolean(r.metrics?.needs_review||r.metrics?.energy_increase_observed);
+let selected=records.length?records[0].record.id:null;
+byId('displayed').textContent=snapshot.summary.displayed+' / '+snapshot.summary.total;
+byId('completed').textContent=records.filter(i=>i.record.status==='completed').length;
+byId('review').textContent=records.filter(i=>flagged(i.record)).length;
+byId('failed').textContent=records.filter(i=>i.record.status==='failed').length;
+byId('source').textContent='Source lake: '+snapshot.lake_root+' · Exported '+snapshot.exported_at;
+byId('selection').textContent=snapshot.summary.selection+(snapshot.summary.truncated?' · Export cap reached; undisplayed records are not verified by this snapshot.':'');
+for(const message of snapshot.limitations)byId('limitations').append(text('li',message));
+for(const key of ['equation','status'])for(const value of [...new Set(records.map(i=>i.record[key]??'unknown'))].sort()){
+ const option=text('option',value);option.value=value;byId(key).append(option);
+}
+function jsonBlock(parent,title,value){const section=document.createElement('details');section.append(text('summary',title),text('pre',JSON.stringify(value??null,null,2)));parent.append(section);}
+function lineChart(parent,x,y,title,xlabel,ylabel){
+ const points=x.map((v,i)=>[v,y[i]]).filter(p=>p.every(Number.isFinite));
+ if(!points.length){parent.append(text('p','No finite samples are available.','muted'));return;}
+ const figure=document.createElement('figure'),svg=svgEl('svg',{viewBox:'0 0 600 250',role:'img','aria-label':'Scientific line plot; values and ranges described below'});
+ const xmin=Math.min(...points.map(p=>p[0])),xmax=Math.max(...points.map(p=>p[0]));
+ const ymin=Math.min(...points.map(p=>p[1])),ymax=Math.max(...points.map(p=>p[1]));
+ const xx=v=>54+520*(v-xmin)/(xmax-xmin||1),yy=v=>202-170*(v-ymin)/(ymax-ymin||1);
+ svg.append(svgEl('path',{d:'M54 25V202H580',fill:'none',stroke:'#aabbb8'}));
+ let segment=[];const flush=()=>{if(segment.length)svg.append(svgEl('polyline',{points:segment.join(' '),fill:'none',stroke:'#00786a','stroke-width':2}));segment=[];};
+ for(let i=0;i<x.length;i++){if(Number.isFinite(x[i])&&Number.isFinite(y[i]))segment.push(xx(x[i])+','+yy(y[i]));else flush();}flush();
+ if(points.length===1)svg.append(svgEl('circle',{cx:xx(points[0][0]),cy:yy(points[0][1]),r:3,fill:'#00786a'}));
+ for(const [label,xp,yp] of [[fmt(xmin),54,220],[fmt(xmax),530,220],[fmt(ymin),3,202],[fmt(ymax),3,35],[xlabel,230,243]]){
+  const node=svgEl('text',{x:xp,y:yp,class:'axis'});node.textContent=label;svg.append(node);
+ }
+ figure.append(svg,text('figcaption',title+' · '+ylabel+' · min '+fmt(ymin)+', max '+fmt(ymax)+', last '+fmt(y[y.length-1])+'.'));
+ parent.append(figure);
+}
+function preview(parent,p){
+ if(!p){parent.append(text('p','No supported scalar-field preview was saved.','muted'));return;}
+ parent.append(text('p',p.label+' · '+(p.steady?'Steady field (t=0 storage marker)':'physical time '+fmt(p.time)),'muted'));
+ if(p.display_shape.length===1)lineChart(parent,p.coordinates.x,p.values,'Final saved field','x (simulation coordinates)',p.label);
+ else{
+  const ny=p.display_shape[0],nx=p.display_shape[1],flat=p.values.flat().filter(Number.isFinite),lo=flat.length?Math.min(...flat):null,hi=flat.length?Math.max(...flat):null;
+  const svg=svgEl('svg',{viewBox:'0 0 320 320',role:'img','aria-label':'Final scalar-field heatmap; y increases upwards; value and coordinate ranges described below'});
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+   const v=p.values[j][i],t=Number.isFinite(v)?(v-lo)/(hi-lo||1):0.5;
+   const color=Number.isFinite(v)?'rgb('+Math.round(35+195*t)+','+Math.round(91+58*(1-Math.abs(2*t-1)))+','+Math.round(135-75*t)+')':'#d6d6d6';
+   svg.append(svgEl('rect',{x:320*i/nx,y:320*(ny-j-1)/ny,width:320/nx+.05,height:320/ny+.05,fill:color}));
+  }
+  const figure=document.createElement('figure');figure.append(svg,text('figcaption','Blue (low) → orange (high): '+fmt(lo)+' → '+fmt(hi)+'. Gray: missing. x '+fmt(p.coordinates.x[0])+' … '+fmt(p.coordinates.x.at(-1))+'; y '+fmt(p.coordinates.y[0])+' … '+fmt(p.coordinates.y.at(-1))+'.'));parent.append(figure);
+ }
+ parent.append(text('p','Preview '+p.display_shape.join(' × ')+' of '+p.source_shape.join(' × ')+' points; stride '+p.strides.join(' × ')+'. '+p.sampling+'.','chartnote'));
+}
+function show(item){
+ const detail=byId('detail');detail.replaceChildren();if(!item){detail.append(text('p','No experiments match these filters.','empty'));return;}
+ const r=item.record,head=text('div','', 'card');head.append(text('h2',r.equation||'Unknown equation'),text('p',r.id,'identifier'));
+ head.append(text('p',(r.status||'unknown')+' · '+(r.solver||'unknown solver')+' · '+(r.created_at||'timestamp unavailable'),'muted'));
+ head.append(text('p',r.status==='failed'?'Run failed; inspect the saved error below.':flagged(r)?'Diagnostic flags require review.':'No review flag recorded; this is not proof of numerical correctness.',r.status==='failed'?'failed':flagged(r)?'warn':'muted'));
+ head.append(text('p','Parent experiment: '+(r.parent_id||'none'),'identifier'));detail.append(head);
+ const charts=text('div','','two'),energy=text('div','','card'),field=text('div','','card');energy.append(text('h3','Energy through saved time'));field.append(text('h3','Final scalar field'));
+ if(item.energy){const e=item.energy;lineChart(energy,e.time,e.values,e.label,'Time (simulation units)',e.units);energy.append(text('p','Displaying '+e.display_samples+' of '+e.source_samples+' saved diagnostics. Samples include both endpoints; changes between samples may be missed.','chartnote'));}
+ else energy.append(text('p','No energy history is stored for this run.'+(r.equation==='darcy2d'?' Steady Darcy solves have no time evolution.':''),'muted'));
+ preview(field,item.preview);charts.append(energy,field);detail.append(charts);
+ const evidence=text('div','','card');evidence.append(text('h3','Record and provenance'));
+ if(r.error)jsonBlock(evidence,'Saved failure details',r.error);
+ jsonBlock(evidence,'Parameters',r.config);jsonBlock(evidence,'Diagnostic metrics and thresholds',r.metrics);jsonBlock(evidence,'Code, environment, and execution provenance',r.provenance);
+ jsonBlock(evidence,'Integrity identifiers',{experiment_id:r.id,manifest_sha256:item.manifest_sha256,record_sha256:item.record_sha256});
+ jsonBlock(evidence,'Complete saved record',r);detail.append(evidence);
+}
+function render(){
+ const query=byId('search').value.toLowerCase(),equation=byId('equation').value,status=byId('status').value,flag=byId('flags').value;
+ const filtered=records.filter(i=>{const r=i.record;return (!equation||(r.equation??'unknown')===equation)&&(!status||(r.status??'unknown')===status)&&(!flag||(flag==='flagged')===flagged(r))&&(!query||JSON.stringify(r).toLowerCase().includes(query));});
+ if(!filtered.some(i=>i.record.id===selected))selected=filtered.length?filtered[0].record.id:null;
+ byId('list').replaceChildren();byId('count').textContent=filtered.length+' matching of '+records.length+' exported experiments. Select a record with mouse, Tab, and Enter or Space.';
+ for(const item of filtered){const r=item.record,button=text('button','','run');button.type='button';button.setAttribute('aria-pressed',String(r.id===selected));button.append(text('strong',r.id),text('span',(r.equation||'unknown')+' · '+(r.status||'unknown')),text('span',flagged(r)?'Review flagged':'No recorded review flag',flagged(r)?'warn':'muted'));
+  button.addEventListener('click',()=>{selected=r.id;for(const sibling of byId('list').children)sibling.setAttribute('aria-pressed',String(sibling===button));show(item);});byId('list').append(button);
+ }
+ show(filtered.find(i=>i.record.id===selected));
+}
+for(const id of ['search','equation','status','flags'])byId(id).addEventListener('input',render);
+render();
+</script></body></html>

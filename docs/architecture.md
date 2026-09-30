@@ -30,6 +30,7 @@ flowchart TD
 | `engine.py` | Execution identity, provenance, metric summaries, attempts, process-based sweeps |
 | `lake.py` | Atomic publication, Zarr arrays, Parquet catalog, SQL, checksums, lineage |
 | `cli.py` | JSON commands, readable failures, machine-readable output and exit status |
+| `dashboard.py` / `dashboard.html` | Verify local runs, extract bounded previews, publish an offline HTML snapshot |
 | `darcy.py` | Manufactured steady Darcy problems and a sparse harmonic-face solve |
 | `validation.py` | Refinement studies, measured resources, NPZ evidence and a JSON report |
 | `streaming.py` | Saved-frame callback writing Zarr chunks during integration |

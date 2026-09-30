@@ -29,6 +29,8 @@ problem.
   per-instance physics-informed Burgers baseline.
 - **Research:** typed evidence objects, hypotheses, findings, and deterministic
   budgeted refinement proposals that can execute through the same engine.
+- **Inspection:** a verified offline HTML snapshot with search, equation/status
+  filters, saved energy curves, final-field previews, and inspectable provenance.
 - **Validation:** known-solution comparisons, convergence tests, conservation and
   dissipation checks, storage/orchestration integration tests, and isolated local
   sweep benchmarks with process-tree memory sampling.
@@ -38,7 +40,7 @@ which follows one run through the code and gives you a one-hour practice route.
 Read [the implementation stepbook](STEPBOOK.md) for the design decisions, functions,
 loops, setup, extraction/transformation/loading logic, and measured validation.
 The [roadmap](docs/roadmap.md) distinguishes the implemented local prototype from
-production distributed execution, a dashboard, and an LLM research planner.
+production distributed execution, a hosted dashboard, and an LLM research planner.
 
 ## Quick start
 
@@ -75,6 +77,18 @@ Multiple worker processes may share a queue on one machine's local disk. Restart
 workers after code edits; their imported runtime is pinned. See the
 [recovery and conservation guide](docs/steps/07-recovery-conservation.md) for lease
 recovery, mean-preserving FNO training, and the fresh-data paired comparison.
+
+View an existing lake in your browser:
+
+```sh
+uv run --no-sync flowstate --lake data/lake dashboard outputs/research.html
+```
+
+Open the generated HTML file directly. It works offline and leaves the lake
+unchanged. Each export requires a new filename; see the
+[viewer walkthrough](docs/steps/08-research-viewer.md) for the extraction and
+sampling rules. It shows numerical experiments; trained-model comparisons remain
+in their evaluation reports.
 
 ## Complete a small research study
 

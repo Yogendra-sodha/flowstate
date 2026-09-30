@@ -87,3 +87,44 @@ Each includes RMS, maximum absolute drift, and per-saved-time RMS, in physical
 velocity units. A lower drift does not guarantee lower field error, dissipating
 energy, stable rollouts, or a converged PDE solution. Those outcomes remain
 separate measured quantities.
+
+## Executed results on 29 September 2026
+
+The [local recovery report](../reports/local-recovery-0.5.json) records two fresh
+worker processes completing four jobs each. All eight Navier–Stokes artifacts
+passed verification. Resubmission created no new jobs. A separate process then
+exited with code 23 after publishing a result but before acknowledging its job;
+the next worker reclaimed the expired lease and reused that exact verified result.
+This tests process exit on one Windows machine, not a power failure or distributed
+storage recovery. The 13.546-second concurrent run is a smoke check, not a scale
+benchmark.
+
+The [paired conservation report](../reports/conservation-0.5.json) uses 24 new
+trajectories, 201 saved frames, and 1,024 spatial points from the same public source.
+It transferred 46,735,488 bytes, split 16/4/4 by whole trajectory families, and ran
+all six planned ten-epoch models. Source rows and initial-field hashes are disjoint
+from the earlier study. These are held-out test metrics; lower is better:
+
+| Seed | Variant | One-step field RMSE | Rollout field RMSE | RMS rollout mean drift |
+| --- | --- | ---: | ---: | ---: |
+| 0 | Baseline | 0.011787 | 0.224106 | 0.186900 |
+| 0 | Mean preserving | 0.012931 | 0.135179 | 1.35e-7 |
+| 1 | Baseline | 0.012026 | 0.235638 | 0.154972 |
+| 1 | Mean preserving | 0.015164 | 0.187749 | 1.35e-7 |
+| 2 | Baseline | 0.011865 | 5.300248 | 5.297188 |
+| 2 | Mean preserving | 0.011441 | 5.510174 | 9.21e-8 |
+
+Persistence rollout RMSE is 0.394423. Reference mean drift RMS is 5.71e-5.
+Projection holds the predicted mean near floating-point rounding levels in all
+three seeds, but seed 2 has large finite long-rollout errors in both variants and
+worse aggregate field RMSE after projection. One-step errors also worsen for
+projected seeds 0 and 1. These results support the conservation property, not a
+general claim of stable or more accurate predictions. No seed was discarded.
+Checkpoint selection used validation error; the test results were not used to
+retune this completed study.
+
+Both studies ran on clean commit `eee73e4`. A complete synthetic demo also passed
+its 19 validation cases and six refinement studies, reused all 12 generated
+trajectories, and completed two research proposals. Re-evaluating an original
+0.4 FNO checkpoint preserved its previous error metrics exactly while adding the
+new conservation diagnostics with `conserve_mean=false`.

@@ -5,6 +5,27 @@ import json
 from flowstate.cli import main
 
 
+def test_dashboard_cli_exports_snapshot_and_rejects_overwrite(tmp_path, capsys):
+    from flowstate.engine import run_experiment
+
+    lake, output = tmp_path / "lake", tmp_path / "snapshot.html"
+    run_experiment({"grid_size": 8, "steps": 2}, lake)
+    args = ["--lake", str(lake), "dashboard", str(output), "--max-experiments", "1"]
+    assert main(args) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["displayed"] == 1 and result["output_html"] == str(output.resolve())
+    assert output.read_text(encoding="utf-8").startswith("<!doctype html>")
+    assert main(args) == 2
+    assert "already exists" in capsys.readouterr().err
+
+
+def test_dashboard_cli_does_not_create_missing_lake(tmp_path, capsys):
+    lake = tmp_path / "missing"
+    assert main(["--lake", str(lake), "dashboard", str(tmp_path / "snapshot.html")]) == 2
+    assert not lake.exists()
+    assert "flowstate:" in capsys.readouterr().err
+
+
 def test_queue_cli_submits_executes_and_reports_the_same_jobs(tmp_path, capsys):
     spec = tmp_path / "sweep.json"
     spec.write_text(

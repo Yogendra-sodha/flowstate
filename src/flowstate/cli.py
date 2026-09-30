@@ -49,6 +49,9 @@ def main(argv: list[str] | None = None) -> int:
     query = commands.add_parser("query", help="Read-only SQL over the experiments table")
     query.add_argument("sql")
     commands.add_parser("list", help="List experiment records")
+    dashboard = commands.add_parser("dashboard", help="Export a verified offline research snapshot")
+    dashboard.add_argument("output", help="New HTML file outside the lake")
+    dashboard.add_argument("--max-experiments", type=int, default=50)
     graph = commands.add_parser("graph", help="Export lineage or the typed research ontology")
     graph.add_argument("--ontology", action="store_true")
     show = commands.add_parser("show", help="Show full configuration, provenance, and metrics")
@@ -203,6 +206,8 @@ def main(argv: list[str] | None = None) -> int:
                 ]
             )
             return int(any(out.record["status"] == "failed" for out in outcomes))
+        if args.command == "dashboard":
+            return _extended_command(args)
         lake = Lake(args.lake)
         if args.command == "query":
             _print(lake.query(args.sql))
@@ -235,7 +240,11 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _extended_command(args) -> int:
-    if args.command == "queue":
+    if args.command == "dashboard":
+        from flowstate.dashboard import export_dashboard
+
+        _print(export_dashboard(args.lake, args.output, max_experiments=args.max_experiments))
+    elif args.command == "queue":
         from flowstate.queue import queue_status, submit_sweep, work_queue
 
         if args.queue_command == "submit":
