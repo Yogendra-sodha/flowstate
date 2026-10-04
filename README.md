@@ -22,7 +22,7 @@ problem.
   A durable local SQLite queue adds leased claims and recovery after worker exit.
 - **Data engineering:** streamed saved fields, trajectory-family dataset splits,
   training-only normalization, provenance-aware PDEBench Burgers HDF5 import,
-  bounded public PDEBench acquisition, and checksum-verified S3 upload/download
+  bounded public PDEBench acquisition, and checksum-verified S3/GCS upload/download
   with a manifest published last.
 - **Learning:** a small CPU Burgers FNO, one-step/rollout evaluation against persistence,
   resumable immutable checkpoints, optional mean-preserving updates, and a
@@ -61,7 +61,7 @@ seed, all at the same final physical time. Repeat it to reuse verified results.
 The JSON output reports each experiment ID, status, metrics, and whether it was
 resumed. Default artifacts live in `data/lake/`, excluded from Git.
 
-The `ml` and `s3` extras are optional for base numerical work. `--all-extras` prepares
+The `ml`, `s3`, and `gcs` extras are optional for base numerical work. `--all-extras` prepares
 the complete prototype. `--no-sync` preserves that prepared environment while
 running commands; using a sync without an optional extra may remove it.
 
@@ -170,6 +170,24 @@ limits, source-index tracking, and the distinction between subset and full-file
 checksums. The S3 adapter
 uses the normal AWS credential chain and optional `--endpoint-url`; it does not
 provision buckets or IAM. Protocol tests use an emulator, not a deployed cloud account.
+
+For Google Cloud Storage, prepare Application Default Credentials and use the
+native `gcs` command. The `gcs` extra is included by the quick-start installation.
+Use an ID returned by `run` or `list`; `--lake` goes before `gcs`:
+
+```sh
+uv run --no-sync flowstate --lake data/lake gcs upload EXPERIMENT_ID flowstate-codex --prefix flowstate/ --project flowstate-510320
+uv run --no-sync flowstate --lake outputs/gcs-restored gcs download EXPERIMENT_ID flowstate-codex --prefix flowstate/ --project flowstate-510320
+uv run --no-sync flowstate --lake outputs/gcs-restored verify EXPERIMENT_ID
+```
+
+GCS uploads create objects conditionally and publish the completion manifest last.
+Repeating a transfer verifies and reuses identical content; conflicting bytes are
+rejected. Downloads verify SHA-256 hashes before making the local experiment
+visible. The bucket needs object creation and reading permissions. Credentials
+stay outside the experiment files. See the [GCS stepbook chapter](docs/steps/09-gcs-storage.md)
+for authentication, the data path, and the scope of the cloud check. This mirrors
+experiment artifacts; calculation still runs on the machine invoking `run`.
 
 ```sh
 uv run --no-sync flowstate list

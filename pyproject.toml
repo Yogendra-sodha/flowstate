@@ -23,6 +23,7 @@ dependencies = [
 [project.optional-dependencies]
 ml = ["torch>=2.6,<3"]
 s3 = ["boto3>=1.36,<2"]
+gcs = ["google-cloud-storage>=3,<4"]
 
 [project.scripts]
 flowstate = "flowstate.cli:main"

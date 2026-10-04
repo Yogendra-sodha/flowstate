@@ -169,6 +169,12 @@ def main(argv: list[str] | None = None) -> int:
     storage.add_argument("bucket")
     storage.add_argument("--prefix", default="")
     storage.add_argument("--endpoint-url")
+    gcs = commands.add_parser("gcs", help="Mirror verified artifacts to Google Cloud Storage")
+    gcs.add_argument("storage_command", choices=["upload", "download"])
+    gcs.add_argument("id")
+    gcs.add_argument("bucket", help="Bucket name without gs://")
+    gcs.add_argument("--prefix", default="")
+    gcs.add_argument("--project", help="Google Cloud project ID (or use the ADC default)")
     demo = commands.add_parser("demo", help="Run a small reproducible end-to-end research study")
     demo.add_argument("output")
     demo.add_argument("--epochs", type=int, default=20)
@@ -415,6 +421,25 @@ def _extended_command(args) -> int:
             )
         except (BotoCoreError, ClientError) as exc:
             raise RuntimeError(f"S3 request failed: {exc}") from exc
+    elif args.command == "gcs":
+        try:
+            from google.api_core.exceptions import GoogleAPICallError
+            from google.auth.exceptions import GoogleAuthError
+            from google.cloud.storage.exceptions import DataCorruption
+        except ImportError as exc:
+            raise RuntimeError("Install GCS support with: uv sync --extra gcs") from exc
+
+        from flowstate.gcs_store import download_experiment, upload_experiment
+
+        operation = upload_experiment if args.storage_command == "upload" else download_experiment
+        try:
+            _print(
+                operation(
+                    args.lake, args.id, args.bucket, prefix=args.prefix, project=args.project
+                )
+            )
+        except (GoogleAPICallError, GoogleAuthError, DataCorruption) as exc:
+            raise RuntimeError(f"GCS request failed: {exc}") from exc
     elif args.command == "demo":
         from flowstate.demo import run_demo
 

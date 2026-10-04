@@ -847,3 +847,42 @@ last small template edit narrows the no-energy message to mention Darcy only for
 Darcy runs. Direct-file navigation could not be tested because the browser tool
 blocks the file protocol; no workaround was attempted. The artifacts contain no
 external dependencies, and their HTML template is included in the built wheel.
+
+## 20. Add Google Cloud Storage with verified transfers
+
+The chosen cloud project is `flowstate-510320`, with bucket `flowstate-codex`
+and object prefix `flowstate/`. The service account is
+`flowstate@flowstate-510320.iam.gserviceaccount.com`. Local authentication uses
+Application Default Credentials with service-account impersonation; credentials
+stay outside the repository and experiment artifacts. The worker has bucket-level
+Storage Object Creator and Storage Object Viewer access. A live CLI check already
+confirmed token creation, object creation, reading, and listing. This established
+access, but the Python application still required its own GCS adapter.
+
+`gcs_store.py` implements that adapter, and `cli.py` exposes `gcs upload` and
+`gcs download`. The optional `gcs` dependency installs Google's storage SDK.
+`artifact_mirror.py` now owns the shared publication and restoration workflow for
+both GCS and S3, so the two providers follow the same evidence rules. The S3
+commands and object layout retain their existing behavior.
+
+The extraction step verifies the experiment and reads its manifest. The
+transformation maps each relative file path to an object key under the experiment
+and manifest hash; the numerical arrays and metadata retain their bytes. In the
+load loop, a private copy of each artifact is hashed before upload. This closes a
+race found during review: editing an original file after preflight verification
+must not poison an immutable cloud object. The loop uses only one artifact copy
+at a time, and raises a clear error if its hash differs from the manifest.
+
+GCS writes use `if_generation_match=0` so an existing object cannot be overwritten.
+If it already exists, the adapter reads and hashes its bytes before reporting
+reuse. Each upload requests a CRC32C transport checksum, and the completion
+manifest is uploaded last. If a transfer stops partway, the already uploaded
+objects can be reused by the next attempt. A download pins each object's
+generation, reads 1 MiB blocks, hashes them while writing to a temporary local
+directory, and only publishes the experiment after all checks pass.
+
+The [GCS chapter](docs/steps/09-gcs-storage.md) follows the functions, loops,
+extraction/transformation/loading path, directory structure, authentication, and
+terminal commands. Offline checks cover corruption, missing chunks, interruptions,
+conflicts, local source edits during upload, unsafe paths, and CLI failures.
+Measured application-level cloud results will be recorded after the live test.

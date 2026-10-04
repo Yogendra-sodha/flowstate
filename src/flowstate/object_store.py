@@ -2,19 +2,13 @@
 
 from __future__ import annotations
 
-import errno
 import hashlib
 import io
-import json
-import re
-import shutil
-import tempfile
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from urllib.parse import urlparse
 
-from flowstate.lake import Lake, _rename_with_retry, _sha256
+from flowstate import artifact_mirror
 
-_SHA256 = re.compile(r"[a-f0-9]{64}\Z")
 _SINGLE_PUT_LIMIT = 5 * 1024**3
 
 
@@ -41,17 +35,6 @@ def _client(endpoint_url: str | None):
         endpoint_url=endpoint_url,
         config=Config(retries={"max_attempts": 3, "mode": "standard"}),
     )
-
-
-def _prefix(prefix: str) -> str:
-    prefix = prefix.strip("/")
-    if "\\" in prefix or any(piece in (".", "..", "") for piece in prefix.split("/") if prefix):
-        raise ValueError("Object prefix must contain ordinary slash-separated path components")
-    return prefix
-
-
-def _key(prefix: str, *parts: str) -> str:
-    return "/".join(part for part in (prefix, *parts) if part)
 
 
 def _read_optional(client, bucket: str, key: str) -> bytes | None:
@@ -112,32 +95,28 @@ def _put_immutable(client, bucket: str, key: str, source: Path | bytes, digest: 
     raise RuntimeError("Unreachable conditional write retry state")
 
 
-def _manifest(data: bytes) -> dict[str, str]:
-    try:
-        document = json.loads(data)
-        artifacts = document["artifacts"]
-        if (
-            document.get("version") != 1
-            or document.get("algorithm") != "sha256"
-            or not isinstance(artifacts, dict)
-            or not {"record.json", "metadata.parquet"}.issubset(artifacts)
-        ):
-            raise ValueError("Invalid experiment manifest")
-        for relative, digest in artifacts.items():
-            path = PurePosixPath(relative)
-            if (
-                not relative
-                or path.is_absolute()
-                or any(piece in (".", "..", "") for piece in relative.split("/"))
-                or "\\" in relative
-                or ":" in relative
-                or not isinstance(digest, str)
-                or not _SHA256.fullmatch(digest)
-            ):
-                raise ValueError("Unsafe path or invalid hash in experiment manifest")
-        return artifacts
-    except (TypeError, KeyError, json.JSONDecodeError) as error:
-        raise ValueError("Invalid experiment manifest") from error
+class _S3Store:
+    def __init__(self, client, bucket: str):
+        self.client = client
+        self.bucket = bucket
+
+    def read_optional(self, key: str) -> bytes | None:
+        return _read_optional(self.client, self.bucket, key)
+
+    def put_immutable(self, key: str, source: Path | bytes, digest: str) -> bool:
+        return _put_immutable(self.client, self.bucket, key, source, digest)
+
+    def download(self, key: str, destination: Path) -> str:
+        body = self.client.get_object(Bucket=self.bucket, Key=key)["Body"]
+        digest = hashlib.sha256()
+        try:
+            with destination.open("wb") as target:
+                for block in body.iter_chunks(chunk_size=1024 * 1024):
+                    digest.update(block)
+                    target.write(block)
+        finally:
+            body.close()
+        return digest.hexdigest()
 
 
 def upload_experiment(
@@ -147,46 +126,10 @@ def upload_experiment(
     prefix: str = "",
     endpoint_url: str | None = None,
 ) -> dict:
-    """Upload immutable content objects, then conditionally publish the manifest.
-
-    Repeating an interrupted upload verifies existing objects and sends missing
-    ones. An existing commit with different content is never overwritten.
-    """
-    lake = Lake(lake_root)
-    if problems := lake.verify(experiment_id):
-        raise ValueError(f"Source experiment failed verification: {problems}")
-    directory = lake.experiments / experiment_id
-    manifest_data = (directory / "manifest.json").read_bytes()
-    artifacts = _manifest(manifest_data)
-    manifest_hash = hashlib.sha256(manifest_data).hexdigest()
-    prefix = _prefix(prefix)
-    marker = _key(prefix, "experiments", experiment_id, "manifest.json")
-    content = _key(prefix, "artifacts", experiment_id, manifest_hash)
-    client = _client(endpoint_url)
-    existing = _read_optional(client, bucket, marker)
-    if existing is not None and existing != manifest_data:
-        raise FileExistsError(
-            f"Remote experiment has a different committed manifest: {experiment_id}"
-        )
-    uploaded = reused = 0
-    for relative, digest in sorted(artifacts.items()):
-        if _put_immutable(client, bucket, _key(content, relative), directory / relative, digest):
-            uploaded += 1
-        else:
-            reused += 1
-    # This small marker is the only signal that an upload is complete.
-    committed_now = _put_immutable(client, bucket, marker, manifest_data, manifest_hash)
-    return {
-        "id": experiment_id,
-        "bucket": bucket,
-        "prefix": prefix,
-        "manifest_key": marker,
-        "manifest_sha256": manifest_hash,
-        "uploaded_objects": uploaded,
-        "reused_objects": reused,
-        "committed": True,
-        "resumed": not committed_now,
-    }
+    """Upload verified content with conditional writes and a manifest published last."""
+    return artifact_mirror.upload(
+        lake_root, experiment_id, bucket, prefix, lambda: _S3Store(_client(endpoint_url), bucket)
+    )
 
 
 def download_experiment(
@@ -196,66 +139,7 @@ def download_experiment(
     prefix: str = "",
     endpoint_url: str | None = None,
 ) -> dict:
-    """Download a committed mirror, verify all hashes, then atomically publish locally."""
-    lake = Lake(lake_root)
-    # Use public ID validation before composing object keys or filesystem paths.
-    lake.exists(experiment_id)
-    prefix = _prefix(prefix)
-    marker = _key(prefix, "experiments", experiment_id, "manifest.json")
-    client = _client(endpoint_url)
-    manifest_data = _read_optional(client, bucket, marker)
-    if manifest_data is None:
-        raise FileNotFoundError(f"No committed remote experiment: {experiment_id}")
-    artifacts = _manifest(manifest_data)
-    manifest_hash = hashlib.sha256(manifest_data).hexdigest()
-    destination = lake.experiments / experiment_id
-    if lake.exists(experiment_id):
-        if lake.verify(experiment_id):
-            raise ValueError("Existing local experiment failed verification")
-        if _sha256(destination / "manifest.json") != manifest_hash:
-            raise FileExistsError("Existing local experiment has a different manifest")
-        return {"id": experiment_id, "path": str(destination), "resumed": True}
-    staging = Path(
-        tempfile.mkdtemp(prefix=f".staging-download-{experiment_id}-", dir=lake.experiments)
+    """Restore a committed mirror and verify all hashes before local publication."""
+    return artifact_mirror.download(
+        lake_root, experiment_id, prefix, lambda: _S3Store(_client(endpoint_url), bucket)
     )
-    try:
-        staged_lake = Lake(staging)
-        candidate = staged_lake.experiments / experiment_id
-        candidate.mkdir()
-        content = _key(prefix, "artifacts", experiment_id, manifest_hash)
-        for relative, expected in sorted(artifacts.items()):
-            local = candidate / relative
-            local.parent.mkdir(parents=True, exist_ok=True)
-            body = client.get_object(Bucket=bucket, Key=_key(content, relative))["Body"]
-            digest = hashlib.sha256()
-            try:
-                with local.open("wb") as target:
-                    for block in body.iter_chunks(chunk_size=1024 * 1024):
-                        digest.update(block)
-                        target.write(block)
-            finally:
-                body.close()
-            if digest.hexdigest() != expected:
-                raise ValueError(f"Downloaded artifact hash mismatch: {relative}")
-        (candidate / "manifest.json").write_bytes(manifest_data)
-        if problems := staged_lake.verify(experiment_id):
-            raise ValueError(f"Downloaded experiment failed verification: {problems}")
-        if staged_lake.load_record(experiment_id).get("id") != experiment_id:
-            raise ValueError("Downloaded record ID does not match requested experiment")
-        try:
-            _rename_with_retry(candidate, destination)
-        except OSError as error:
-            if error.errno not in (errno.EEXIST, errno.ENOTEMPTY):
-                raise
-            if (
-                lake.verify(experiment_id)
-                or _sha256(destination / "manifest.json") != manifest_hash
-            ):
-                raise FileExistsError(
-                    "Concurrent local publication has different content"
-                ) from error
-            return {"id": experiment_id, "path": str(destination), "resumed": True}
-        return {"id": experiment_id, "path": str(destination), "resumed": False}
-    finally:
-        if staging.resolve().is_relative_to(lake.experiments.resolve()):
-            shutil.rmtree(staging, ignore_errors=True)
