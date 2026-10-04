@@ -38,8 +38,9 @@ research graph connects the run, data, model, observation, and a proposed follow
 
 That first path generates data by running the included equations. A second path can
 import a compatible Burgers HDF5 file using the PDEBench adapter. Uploading an
-experiment to S3 is an optional copy of verified artifacts; no live cloud bucket
-is part of the local run above.
+experiment to S3 or GCS is an optional copy of verified artifacts. The local run
+above needs neither service. The [GCS workflow](steps/09-gcs-storage.md) has a
+measured live upload, reuse, and verified restore using the project's bucket.
 
 Flowstate does not solve the 3D Navier–Stokes existence and smoothness problem. Numerical evidence can reveal behavior or defects without establishing a mathematical theorem.
 
@@ -51,14 +52,14 @@ Flowstate does not solve the 3D Navier–Stokes existence and smoothness problem
 | Immutable local lake, SQL queries, checksums, streamed output, and recoverable local jobs | Distributed work queues, remote workers, and mid-simulation recovery |
 | Dataset export, bounded public PDEBench acquisition, and two completed 24-trajectory studies | Larger independent benchmark comparisons and reliable long rollouts |
 | CPU FNO and PINN baselines with reproducible artifacts | Broader generalization studies, tuning, and uncertainty evaluation |
-| S3-compatible mirroring with emulator tests | Validation against an actual configured cloud account and workload |
+| S3 mirroring with emulator tests and native GCS mirroring with a live round trip | Representative cloud workload, transfer-cost, and failure-recovery measurements |
 | Local worker/storage benchmark tooling | Representative scale measurements and operational scheduling decisions |
 | Typed research evidence, deterministic proposals, and an offline visual experiment viewer | Hosted multi-user inspection and constrained LLM research planning |
 
 The local experiment-to-evidence workflow is implemented and exercised. A single
 percentage for the larger vision would hide its undefined scale and deployment
-requirements. Remaining work has separate acceptance criteria: a real cloud
-round trip, remote worker recovery, stronger model evaluation, and constrained
+requirements. Remaining work has separate acceptance criteria: larger cloud
+workloads, remote worker recovery, stronger model evaluation, and constrained
 language-model planning. See the [roadmap](roadmap.md) and
 [implementation stepbook](../STEPBOOK.md).
 

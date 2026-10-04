@@ -885,4 +885,23 @@ The [GCS chapter](docs/steps/09-gcs-storage.md) follows the functions, loops,
 extraction/transformation/loading path, directory structure, authentication, and
 terminal commands. Offline checks cover corruption, missing chunks, interruptions,
 conflicts, local source edits during upload, unsafe paths, and CLI failures.
-Measured application-level cloud results will be recorded after the live test.
+
+On 4 October 2026 the application-level GCS check passed from clean commit
+`9e6fee0`. It ran the standard 64-point Burgers example for 200 steps and saved
+21 frames. The experiment is `186ee23716212de6260e3be2838b668a`. Its 38 artifacts
+and one manifest total 36,507 bytes. Upload took 15.027 seconds; a repeated upload
+took 22.262 seconds, read/verified the existing content, reused all 38 artifacts,
+and created none. Restoring into a fresh lake took 12.535 seconds. Every one of
+the 39 local files matched byte for byte, the record retained its original
+provenance, SQL found the restored experiment, and an offline viewer was exported
+from it. These single small-transfer timings include CLI startup and credential
+work; they are not a cloud throughput benchmark.
+
+The [measured report](docs/reports/gcs-20261004.json) retains commands, per-stage
+timings, source identity, object counts, and validation scope. It contains no
+credentials. The new GCS tests include 39 offline cases; the full suite passed
+427 tests with four Windows symbolic-link permission skips in 267.18 seconds.
+Ruff, source/wheel builds, and comparison of packaged source files passed. Live
+verification uses the native Python SDK with local ADC impersonation, rather
+than shelling out to `gcloud` for transfers. Cloud compute, distributed scheduling,
+model/dataset mirroring, and large-transfer measurements remain separate work.

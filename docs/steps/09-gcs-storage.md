@@ -298,11 +298,19 @@ do not provide deletion. Reuse checks read existing object bytes, so repeated
 uploads still incur reads and transfer work. Data operations may incur cloud
 charges according to the bucket's location and billing configuration.
 
-At the time this chapter was written, automated fake-client coverage and the
-live GCS smoke test were pending. The intended verification covers successful
+On 4 October 2026, 39 GCS tests passed using an in-memory fake. They exercise
 round trips, repeated uploads, conflicting content, edits to source files during
-upload, missing or malformed manifests, corrupt downloads, and generation-pinned
-reads. A live check should
-upload an actual experiment, repeat the upload, restore it into a fresh lake,
-and verify the restored files. Record measured results after those checks run;
-the commands above are instructions, not a claim that those checks have passed.
+upload, missing or malformed manifests, corrupt downloads, generation-pinned
+reads, and terminal command failures. The combined GCS/S3 checks passed 48 tests;
+the full project suite passed 427 tests with four Windows symbolic-link permission
+skips. Ruff and the source/wheel builds passed.
+
+The native SDK also completed a live round trip from clean commit `9e6fee0` using
+the account and bucket above. The standard Burgers example produced experiment
+`186ee23716212de6260e3be2838b668a`: 38 artifacts plus the completion manifest,
+36,507 bytes total. The first upload created all 38 artifacts; repeating it
+created zero and reused 38. A fresh download matched all 39 original files byte
+for byte, passed `verify`, appeared in a SQL query, and produced a viewer export.
+The [measured report](../reports/gcs-20261004.json) retains the commands, timings,
+source fingerprint, and scope. This small transfer validates the application path;
+it does not measure large workloads, cloud compute, or real network fault recovery.
