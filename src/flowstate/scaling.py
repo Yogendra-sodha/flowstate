@@ -41,10 +41,13 @@ def _runtime_identity(provenance: dict) -> dict:
     return {key: value for key, value in provenance.items() if key != "git_dirty"}
 
 
-def _plan(spec: dict, workers, modes, repeats: int, seed: int) -> dict:
+def _plan(spec: dict, workers, modes, repeats: int, seed: int, *, large: bool = False) -> dict:
     configs = expand_sweep(spec)
-    if not 1 <= len(configs) <= 32:
-        raise ValueError("Scaling studies require 1 to 32 distinct experiments per trial")
+    max_configs, max_runs, max_gib = (256, 4096, 16) if large else (32, 256, 2)
+    if not 1 <= len(configs) <= max_configs:
+        raise ValueError(
+            f"Scaling studies require 1 to {max_configs} distinct experiments per trial"
+        )
     workers, modes = list(workers), list(modes)
     if (
         not workers
@@ -72,10 +75,12 @@ def _plan(spec: dict, workers, modes, repeats: int, seed: int) -> dict:
     total_runs = len(cases) * len(configs)
     estimated_bytes = sum(_output_size(c) for c in configs) * len(cases)
     total_steps = sum(c["steps"] for c in configs) * len(cases)
-    if len(cases) > 48 or total_runs > 256 or total_steps > 2_000_000:
-        raise ValueError("Study exceeds 48 trials, 256 fresh runs, or 2 million integration steps")
-    if estimated_bytes > 2 * 1024**3:
-        raise ValueError("Study exceeds 2 GiB estimated uncompressed saved fields")
+    if len(cases) > 48 or total_runs > max_runs or total_steps > 2_000_000:
+        raise ValueError(
+            f"Study exceeds 48 trials, {max_runs} fresh runs, or 2 million integration steps"
+        )
+    if estimated_bytes > max_gib * 1024**3:
+        raise ValueError(f"Study exceeds {max_gib} GiB estimated uncompressed saved fields")
     random.Random(seed).shuffle(cases)
     for index, case in enumerate(cases):
         case["id"] = f"trial-{index:03d}-{case['mode']}-w{case['workers']}-r{case['repeat']}"
@@ -115,7 +120,24 @@ def _execute_case(request: dict, output: Path) -> dict:
     """Run in its own interpreter so prior trials cannot retain parent allocations."""
     output.mkdir(parents=True, exist_ok=False)
     lake_root = output / "lake"
-    report = {"schema_version": 1, "case": request["case"], "status": "running"}
+    report = {
+        "schema_version": 1,
+        "case": request["case"],
+        "status": "running",
+        "completed_experiments": 0,
+        "failure_count": 0,
+        "runs_per_hour": 0.0,
+        "attempts_per_hour": 0.0,
+        "runtime_thread_settings": {
+            key: os.environ.get(key)
+            for key in (
+                "OMP_NUM_THREADS",
+                "OPENBLAS_NUM_THREADS",
+                "MKL_NUM_THREADS",
+                "NUMEXPR_NUM_THREADS",
+            )
+        },
+    }
     try:
         before = capture_provenance()
         if _runtime_identity(before) != _runtime_identity(request["provenance"]):
@@ -135,17 +157,25 @@ def _execute_case(request: dict, output: Path) -> dict:
         finally:
             report["memory"] = memory.report()
         elapsed = report["wall_seconds"]
+        completed = sum(o.record["status"] == "completed" for o in outcomes)
+        failures = sum(o.record["status"] == "failed" for o in outcomes)
         report.update(
             experiments_per_second=len(outcomes) / elapsed,
             experiments=len(outcomes),
+            completed_experiments=completed,
+            failure_count=failures,
+            runs_per_hour=3600 * completed / elapsed,
+            attempts_per_hour=3600 * len(outcomes) / elapsed,
         )
+        report["outcomes"] = [
+            {"id": o.record["id"], "status": o.record["status"], "error": o.record["error"]}
+            for o in outcomes
+        ]
         if len(outcomes) != len(expected) or any(
-            o.record["status"] != "completed" or o.resumed for o in outcomes
+            o.record["status"] not in ("completed", "failed") or o.resumed for o in outcomes
         ):
-            report["outcomes"] = [
-                {"id": o.record["id"], "status": o.record["status"], "error": o.record["error"]}
-                for o in outcomes
-            ]
+            raise RuntimeError("Fresh benchmark runs must complete without reuse")
+        if failures and request.get("allow_numerical_failures") is not True:
             raise RuntimeError("Fresh benchmark runs must complete without reuse")
         lake = Lake(lake_root)
         scientific = {}
@@ -155,11 +185,21 @@ def _execute_case(request: dict, output: Path) -> dict:
                 raise ValueError("An experiment used a different code/environment snapshot")
             if problems := lake.verify(record["id"]):
                 raise ValueError(f"Artifact verification failed: {problems}")
-            scientific[_config_key(record["config"])] = {
-                "id": record["id"],
-                "values_sha256": _fingerprint(lake._path(record["id"]) / "fields.zarr"),
-                "needs_review": record["metrics"]["needs_review"],
-            }
+            if record["status"] == "failed":
+                result = {
+                    "id": record["id"],
+                    "status": "failed",
+                    "error": record["error"],
+                    "values_sha256": None,
+                    "needs_review": None,
+                }
+            else:
+                result = {
+                    "id": record["id"],
+                    "values_sha256": _fingerprint(lake._path(record["id"]) / "fields.zarr"),
+                    "needs_review": record["metrics"]["needs_review"],
+                }
+            scientific[_config_key(record["config"])] = result
         report["scientific_results"] = scientific
         if set(scientific) != expected:
             raise RuntimeError("Returned configurations differ from the planned sweep")
@@ -181,7 +221,22 @@ def _execute_case(request: dict, output: Path) -> dict:
     except BaseException as exc:
         report.update(status="failed", error={"type": type(exc).__name__, "message": str(exc)})
         try:
-            report["committed_experiment_ids"] = [path.name for path in Lake(lake_root)._run_dirs()]
+            lake = Lake(lake_root)
+            report["committed_experiment_ids"] = [path.name for path in lake._run_dirs()]
+            if "experiments" not in report:
+                # An I/O error may interrupt the sweep before it returns outcomes.
+                # Published records remain countable; unreturned attempts do not.
+                records = [
+                    lake.load_record(run_id) for run_id in report["committed_experiment_ids"]
+                ]
+                report["completed_experiments"] = sum(r["status"] == "completed" for r in records)
+                report["failure_count"] = sum(r["status"] == "failed" for r in records)
+                if elapsed := report.get("wall_seconds"):
+                    report["runs_per_hour"] = 3600 * report["completed_experiments"] / elapsed
+                report["attempts_per_hour"] = None
+                report["partial_counts_scope"] = (
+                    "Finalized records only; total attempted count is unknown after interruption"
+                )
         except OSError as catalog_error:
             report["partial_catalog_error"] = str(catalog_error)
         raise
@@ -190,13 +245,13 @@ def _execute_case(request: dict, output: Path) -> dict:
     return report
 
 
-def _isolated_trial(request_path: Path, output: Path) -> dict:
+def _isolated_trial(request_path: Path, output: Path, *, env: dict | None = None) -> dict:
     """Use a fresh interpreter; retain stderr and partial evidence on failure."""
     command = [sys.executable, "-m", "flowstate.scaling", str(request_path), str(output)]
-    # Do not pass a shell or credentials. The caller's ordinary numerical runtime
-    # environment is inherited, and the small nonsecret thread settings are recorded.
+    # Never invoke a shell. By default inherit the runtime environment; callers
+    # may supply a copy with numerical thread limits pinned. Do not log that copy.
     with subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env
     ) as job:
         try:
             stdout, stderr = job.communicate()
@@ -213,8 +268,16 @@ def _isolated_trial(request_path: Path, output: Path) -> dict:
                     pass
             if job.poll() is None:
                 job.kill()
-            job.communicate()
+            _, stderr = job.communicate()
+            if stderr:
+                output.mkdir(parents=True, exist_ok=True)
+                with (output / "stderr.txt").open("x", encoding="utf-8") as stream:
+                    stream.write(stderr)
             raise
+    if stderr:
+        output.mkdir(parents=True, exist_ok=True)
+        with (output / "stderr.txt").open("x", encoding="utf-8") as stream:
+            stream.write(stderr)
     if job.returncode:
         raise RuntimeError(f"Trial process exited {job.returncode}: {stderr.strip()[-4000:]}")
     if stdout.strip():
@@ -233,6 +296,15 @@ def _aggregate(trials: list[dict]) -> list[dict]:
         peaks = [v["memory"]["sampled_peak_aggregate_rss_bytes"] for v in values]
         baseline = statistics.median(v["wall_seconds"] for v in groups[(mode, 1)])
         median = statistics.median(seconds)
+        reuse_seconds = [v["verified_reuse_seconds"] for v in values]
+        stored_bytes = [v["stored_bytes"] for v in values]
+        completed = [
+            v.get(
+                "completed_experiments",
+                v.get("experiments", round(v["experiments_per_second"] * v["wall_seconds"])),
+            )
+            for v in values
+        ]
         summary.append(
             {
                 "mode": mode,
@@ -245,14 +317,25 @@ def _aggregate(trials: list[dict]) -> list[dict]:
                 "experiments_per_second_median": statistics.median(
                     v["experiments_per_second"] for v in values
                 ),
+                "completed_experiments": sum(completed),
+                "failure_count": sum(v.get("failure_count", 0) for v in values),
+                "runs_per_hour_median": statistics.median(
+                    v.get("runs_per_hour", 3600 * count / v["wall_seconds"])
+                    for v, count in zip(values, completed, strict=True)
+                ),
+                "attempts_per_hour_median": statistics.median(
+                    v.get("attempts_per_hour", 3600 * v["experiments_per_second"]) for v in values
+                ),
                 "sampled_peak_aggregate_rss_bytes_max": (
                     max(peaks) if all(p is not None for p in peaks) else None
                 ),
                 "sampling_errors": sum(v["memory"]["sampling_errors"] for v in values),
-                "verified_reuse_seconds_median": statistics.median(
-                    v["verified_reuse_seconds"] for v in values
-                ),
-                "stored_bytes_median": statistics.median(v["stored_bytes"] for v in values),
+                "verified_reuse_seconds_median": statistics.median(reuse_seconds),
+                "verified_reuse_seconds_min": min(reuse_seconds),
+                "verified_reuse_seconds_max": max(reuse_seconds),
+                "stored_bytes_median": statistics.median(stored_bytes),
+                "stored_bytes_min": min(stored_bytes),
+                "stored_bytes_max": max(stored_bytes),
             }
         )
     return summary
