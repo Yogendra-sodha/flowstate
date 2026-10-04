@@ -133,6 +133,18 @@ and matching original hyperparameters; `--epochs` then means additional epochs.
 
 ## Measure local worker and storage scaling
 
+For the larger fixed protocol, including a generated chart, follow the
+[scale measurement walkthrough](docs/steps/10-scale-measurement.md):
+
+```sh
+uv run --no-sync flowstate scaling-study outputs/scaling-large-01
+```
+
+This requires the `benchmark` extra (included by the all-extras setup above),
+clean committed code, and a new output directory with sufficient disk space.
+It uses short Navier–Stokes trajectories and measures local infrastructure.
+The smaller configurable comparison remains available:
+
 ```sh
 uv run --no-sync flowstate sweep-benchmark examples/scaling_sweep.json outputs/scaling-01 --workers 1 2 4 --modes buffered streamed --repeats 3
 ```

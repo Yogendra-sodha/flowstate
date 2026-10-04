@@ -905,3 +905,30 @@ Ruff, source/wheel builds, and comparison of packaged source files passed. Live
 verification uses the native Python SDK with local ADC impersonation, rather
 than shelling out to `gcloud` for transfers. Cloud compute, distributed scheduling,
 model/dataset mirroring, and large-transfer measurements remain separate work.
+
+## 21. Freeze and measure a larger local workload
+
+The revised roadmap makes measured data infrastructure the next gate. The
+existing isolated benchmark already checked array equality and verified reuse,
+but its deliberately small limits could not accommodate the requested scale.
+The [new chapter](docs/steps/10-scale-measurement.md) follows the configuration
+loops, process boundaries, artifact extraction, aggregation, and report loading.
+
+`scaling_study.py` freezes the workload before execution and shuffles all grid,
+worker-count, and repetition combinations together. It requires a clean source
+commit, checks disk headroom, records the lockfile hash, and passes explicit
+numerical-library thread settings to isolated trials. The older configurable
+benchmark retains its original safety bounds; larger runs are an explicit mode.
+
+The trial loop distinguishes completed experiments from numerical failures and
+reports successful throughput separately from attempted throughput. Both types
+of finalized record must pass manifest verification and verified reuse. Scientific
+array hashes and review flags must match across worker counts for each grid.
+An infrastructure error keeps partial evidence and prevents a success summary.
+
+The aggregation loop groups equivalent workloads, derives medians and ranges,
+and passes the retained measurements to a static chart renderer. The renderer
+does not run simulations or invent missing memory values. Short trajectories,
+warm-cache reuse, sampled rather than exact peak RSS, and uncontrolled background
+load are explicit limitations. Results and validation are recorded after running
+the committed implementation; no benchmark success is assumed here.

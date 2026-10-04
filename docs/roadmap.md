@@ -1,5 +1,37 @@
 # Flowstate: experiment engine first
 
+## Revised delivery milestones
+
+The current priority is a portfolio-grade data engineering system around the
+trusted loop: request, run or verified reuse, store, verify, and query. The earlier
+day-by-day prototype plan below is historical context. The current acceptance
+gates are sequential:
+
+1. **Scale measurement:** a larger local workload across the requested grids and
+   worker counts, retained timings/memory/storage/reuse/failure evidence, a chart,
+   and a single reproduction command. See the
+   [measurement protocol](steps/10-scale-measurement.md).
+2. **Crash recovery:** checkpoints within a numerical trajectory, tested by killing
+   a worker and checking resumed results against an uninterrupted reference.
+3. **Cloud proof:** an approved GCS upload, local-removal, restore, and verification
+   receipt; a viewer container and deployment proposal. Cloud credentials,
+   spending, deletion, and deployment require approval before those actions.
+4. **Trustworthy model:** enough independent training families and seeds, paired
+   baseline comparisons, conservation, rollout behavior, uncertainty, and explicit
+   cases where the model loses.
+5. **Request router:** verified exact reuse, then a compatible model only inside
+   its calibrated uncertainty boundary, otherwise a stored solver result. Measure
+   routing decisions, latency, and error against the solver.
+6. **Provenance and presentation:** actor provenance, concise architecture/readme,
+   a short demo, limitations, and the stepbook as an implementation appendix.
+
+Each phase adds tests and passes lint and the full test suite. Study code must be
+committed on `develop` before measurement; new output directories preserve raw
+evidence outside Git. Retained reports support measured documentation claims.
+Append the phase outcome to `docs/progress.md`, then stop for user review.
+Distributed remote workers, three-dimensional Navier–Stokes, a hosted dashboard,
+and an LLM planner are outside this delivery scope.
+
 Flowstate's contribution is a reproducible scientific investigation system: generate experiments, execute numerical or learned models, preserve fields and provenance, query failures, and use that evidence to choose the next experiment. The first deliverable is a small working CPU engine that makes this loop inspectable.
 
 ## Current prototype boundary
