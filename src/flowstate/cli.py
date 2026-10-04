@@ -77,6 +77,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     scaling.add_argument("--repeats", type=int, default=3)
     scaling.add_argument("--seed", type=int, default=0)
+    large_scaling = commands.add_parser(
+        "scaling-study", help="Run the fixed larger local scaling protocol and generate a chart"
+    )
+    large_scaling.add_argument("output", help="New study directory; requires clean committed code")
     queue = commands.add_parser("queue", help="Durable local jobs with lease recovery")
     queue_commands = queue.add_subparsers(dest="queue_command", required=True)
     submit = queue_commands.add_parser("submit")
@@ -212,7 +216,7 @@ def main(argv: list[str] | None = None) -> int:
                 ]
             )
             return int(any(out.record["status"] == "failed" for out in outcomes))
-        if args.command == "dashboard":
+        if args.command in {"dashboard", "scaling-study"}:
             return _extended_command(args)
         lake = Lake(args.lake)
         if args.command == "query":
@@ -250,6 +254,11 @@ def _extended_command(args) -> int:
         from flowstate.dashboard import export_dashboard
 
         _print(export_dashboard(args.lake, args.output, max_experiments=args.max_experiments))
+    elif args.command == "scaling-study":
+        from flowstate.scaling_study import run_scaling_study
+
+        report = run_scaling_study(args.output)
+        _print({key: report[key] for key in ("status", "output", "totals", "summary")})
     elif args.command == "queue":
         from flowstate.queue import queue_status, submit_sweep, work_queue
 

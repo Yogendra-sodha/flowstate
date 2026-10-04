@@ -21,6 +21,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+benchmark = ["matplotlib>=3.10,<4"]
 ml = ["torch>=2.6,<3"]
 s3 = ["boto3>=1.36,<2"]
 gcs = ["google-cloud-storage>=3,<4"]
