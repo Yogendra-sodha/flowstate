@@ -7,6 +7,11 @@ trusted loop: request, run or verified reuse, store, verify, and query. The earl
 day-by-day prototype plan below is historical context. The current acceptance
 gates are sequential:
 
+Milestone 1 is complete for the documented local protocol; its
+[report](reports/scaling-large.json), [chart](reports/scaling-large.png), and
+[progress entry](progress.md) retain the evidence and limitations. Milestone 2 is
+next. The remaining milestones have not met their full revised acceptance gates.
+
 1. **Scale measurement:** a larger local workload across the requested grids and
    worker counts, retained timings/memory/storage/reuse/failure evidence, a chart,
    and a single reproduction command. See the

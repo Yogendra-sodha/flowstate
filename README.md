@@ -143,6 +143,10 @@ uv run --no-sync flowstate scaling-study outputs/scaling-large-01
 This requires the `benchmark` extra (included by the all-extras setup above),
 clean committed code, and a new output directory with sufficient disk space.
 It uses short Navier–Stokes trajectories and measures local infrastructure.
+The [retained larger study](docs/reports/scaling-large.json) completed 2,592 fresh
+runs and 2,592 verified reuses with no numerical failures. See the
+[chart](docs/reports/scaling-large.png) and
+[measured findings and limits](docs/steps/10-scale-measurement.md#executed-results).
 The smaller configurable comparison remains available:
 
 ```sh

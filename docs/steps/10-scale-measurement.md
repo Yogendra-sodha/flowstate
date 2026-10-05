@@ -103,3 +103,77 @@ repeats describe local variability; they do not establish statistical significan
 The study keeps slowdowns and other negative results. Long trajectories, chunk
 layout tuning, other equations, remote storage, and distributed workers are not
 measured by this protocol.
+
+## Executed results
+
+The [retained report](../reports/scaling-large.json) and
+[validation receipt](../reports/scaling-large-validation.json) record the study
+executed from clean commit `7ce7c07883080d7cf676ed8512727c28bdb19732` on
+4 October 2026. It completed all 36 trials: 2,592 successful fresh executions and
+2,592 verified reuses, with no numerical failures or sampled review flags.
+Scientific array hashes, identities, and flags agree across worker counts and
+repetitions within each grid. This equality checks execution consistency, not
+physical accuracy.
+
+The actual command used an unsynchronized local output directory:
+
+```sh
+uv run --no-sync flowstate scaling-study C:/Users/yuvis/AppData/Local/Flowstate/scaling-large-20261004
+```
+
+That directory is retained and cannot be reused as a fresh destination. The
+generic command above reproduces the protocol in a new directory. Source
+fingerprints hash actual checkout bytes: line-ending policy can change the
+fingerprint and experiment IDs even when program logic is unchanged. The
+validation receipt records the observed checkout/Git line-ending differences.
+Match code, dependencies, hardware, and checkout bytes when comparing identities;
+cross-machine byte-identical experiment IDs are not promised.
+
+Each row below summarizes three trials of 72 runs. Fresh wall time, throughput,
+reuse time, and artifact size are medians. Memory is the maximum sampled
+process-tree RSS across the three trials; failures are summed.
+
+| Grid | Workers | Fresh seconds | Successful runs/hour | Sampled RSS MiB | Reuse seconds | Stored MiB/trial | Failures |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 64 | 1 | 95.32 | 2719 | 101.1 | 19.53 | 21.59 | 0 |
+| 64 | 2 | 52.88 | 4902 | 271.8 | 13.91 | 21.59 | 0 |
+| 64 | 4 | 35.57 | 7286 | 463.3 | 9.44 | 21.59 | 0 |
+| 64 | 8 | 31.48 | 8233 | 805.9 | 9.94 | 21.59 | 0 |
+| 128 | 1 | 199.06 | 1302 | 101.0 | 28.73 | 79.78 | 0 |
+| 128 | 2 | 97.58 | 2656 | 270.9 | 16.52 | 79.78 | 0 |
+| 128 | 4 | 70.53 | 3675 | 456.5 | 13.43 | 79.78 | 0 |
+| 128 | 8 | 60.20 | 4305 | 786.4 | 11.12 | 79.78 | 0 |
+| 256 | 1 | 703.05 | 369 | 106.3 | 60.47 | 310.85 | 0 |
+| 256 | 2 | 362.44 | 715 | 282.4 | 35.64 | 310.85 | 0 |
+| 256 | 4 | 236.65 | 1095 | 485.5 | 19.14 | 310.85 | 0 |
+| 256 | 8 | 194.18 | 1335 | 883.0 | 17.39 | 310.85 | 0 |
+
+![Measured local scaling](../reports/scaling-large.png)
+
+The complete command took 154.23 minutes, including the extra audit, fingerprint,
+and reuse passes. Committed experiment artifacts total 5,187,028,945 logical bytes
+(4.83 GiB); this excludes filesystem allocation overhead and study reports.
+Raw fields remain outside Git. The JSON and PNG in `docs/reports/` are exact copies
+of the generated artifacts, with their hashes retained in the validation receipt.
+Git attributes disable newline conversion for the retained JSON so generated
+bytes and artifact hashes survive subsequent checkouts.
+
+The negative findings matter. Doubling from four to eight workers improved fresh
+throughput by only 13.0%, 17.2%, and 21.9% for the respective grids, while sampled
+peak RSS increased by 74.0%, 72.3%, and 81.9%. On the small grid, median reuse was
+slightly slower with eight workers: 9.94 seconds versus 9.44 seconds with four.
+The ranges overlap, so this is an observed result, not a statistically established
+regression. More workers were not an equally efficient improvement for every
+part of the workflow.
+
+Memory sampling observed 117 process-disappearance errors across 112 partial
+samples out of 153,293 samples; there were no access-denied or unexpected sampler
+errors. Helpers can exit while being sampled, so the result remains a sampled
+estimate rather than an exact memory ceiling. Short trajectories, warm caches,
+one host, and a narrow workload limit extrapolation. Zero observed failures is
+not evidence that arbitrary inputs or long simulations will succeed.
+
+Validation passed 451 tests with four Windows symbolic-link permission skips,
+plus Ruff and the Windows/Linux CI jobs for the measured source commit. A
+post-study DuckDB query also retrieved all 72 completed records from a largest-grid
+trial. The receipt preserves the checks, counts, source identity, and CI links.

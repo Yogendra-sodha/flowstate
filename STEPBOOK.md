@@ -932,3 +932,37 @@ does not run simulations or invent missing memory values. Short trajectories,
 warm-cache reuse, sampled rather than exact peak RSS, and uncontrolled background
 load are explicit limitations. Results and validation are recorded after running
 the committed implementation; no benchmark success is assumed here.
+
+The completed [larger study](docs/reports/scaling-large.json), run from clean
+commit `7ce7c07`, now provides that evidence. It tested 216 distinct configurations
+across the three grids, with 36 initial-condition families. Every worker/grid
+setting received three repeats of 72 configurations, yielding 2,592 fresh
+executions and 2,592 verified reuses. All completed, with zero numerical failures
+and matching scientific-array hashes within each grid. A later SQL query found
+all 72 completed records in a largest-grid trial; query results and checks are
+retained in the [validation receipt](docs/reports/scaling-large-validation.json).
+
+The complete study took 154.23 minutes and retained 4.83 GiB of experiment
+artifacts outside Git. The report and [chart](docs/reports/scaling-large.png) are
+exact retained copies. Eight workers achieved 3.03–3.62 times the single-worker
+throughput across the measured grids. The increase from four to eight workers
+was smaller: 13.0–21.9% more throughput, with 72.3–81.9% more sampled peak RSS.
+Small-grid verified reuse was slightly slower with eight workers, and overlapping
+timing ranges prevent a significance claim. These limits remain visible in the
+[results chapter](docs/steps/10-scale-measurement.md#executed-results).
+
+The code added failure-aware counters, larger explicit bounds, thread-setting
+records, retained child diagnostics, the fixed study command, and chart tests.
+Ruff and the full suite passed: 451 tests passed with four Windows symbolic-link
+permission skips. The measured source commit also passed Windows and Linux CI.
+An independent report audit found matching per-trial evidence, recomputed totals
+and summaries, and a matching committed dependency lockfile. Memory sampling
+recorded 117 process-disappearance errors, so the sampled RSS figures remain
+estimates. Source fingerprints reflect checkout bytes; line-ending changes can
+change identities even when program logic stays the same.
+
+The phase used local computation and no cloud credentials. The earlier unfinished
+cloud-worker draft remains preserved in Git stash
+`84b667b6307a8971aeb3ed8d75e10aa90c3be664`; it was excluded from the measured source.
+The milestone is complete, and work stops here for review before adding
+mid-trajectory crash recovery.
