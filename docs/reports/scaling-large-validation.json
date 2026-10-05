@@ -1,0 +1,278 @@
+{
+  "schema_version": 1,
+  "validated_at": "2026-10-05T03:48:42.177183+00:00",
+  "source_commit": "7ce7c07883080d7cf676ed8512727c28bdb19732",
+  "source_sha256": "8c2ff1574a054b2c324aa0e625bc39dff804906d60a87c6d0ebe137133af4c7b",
+  "raw_study_directory": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\scaling-large-20261004",
+  "study_command": "uv run --no-sync flowstate scaling-study C:/Users/yuvis/AppData/Local/Flowstate/scaling-large-20261004",
+  "retained_artifacts": [
+    {
+      "path": "docs/reports/scaling-large.json",
+      "bytes": 1265967,
+      "sha256": "e33b30df5c1687af1881313596ce460c09721a98ccb99ada742cd0b4dea26b01"
+    },
+    {
+      "path": "docs/reports/scaling-large.png",
+      "bytes": 216551,
+      "sha256": "1167b4b0886893a5a5c9b299e87f6912cae2aa523bb1a166accacbc26830fdbb"
+    }
+  ],
+  "consistency_checks": {
+    "raw_trial_reports_equal_retained_trials": true,
+    "summary_recomputed_from_trials": true,
+    "totals_recomputed_from_trials": true,
+    "scientific_results_identical_within_each_grid": true,
+    "all_trials_clean_same_source_and_thread_settings": true,
+    "all_finalized_runs_verified_and_reused_by_study": true,
+    "scope": "Report consistency audit; artifact verification occurred in every study trial.",
+    "committed_lockfile_hash_matches": true
+  },
+  "post_study_query": {
+    "lake": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\scaling-large-20261004\\trial-003-n256-w4-r1\\lake",
+    "sql": "SELECT status, COUNT(*) AS runs FROM experiments GROUP BY status",
+    "result": [
+      {
+        "status": "completed",
+        "runs": 72
+      }
+    ]
+  },
+  "validation": {
+    "pytest": {
+      "command": "uv run --no-sync pytest --junitxml=outputs/phase1-validation/pytest.xml",
+      "tests": 455,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4,
+      "passed": 451,
+      "seconds": 176.603,
+      "skip_reason": "Windows account lacks permission to create symbolic links",
+      "performed_before_source_commit": true,
+      "xml_sha256": "b80e07c12751d60178fa463710c2338462207f14e1f8e0528e16245cf75597c2",
+      "stdout_sha256": "a1e1c52b46cb305b080b570eee1f28deb3758968c202eabffb6f52d31b8f1f2a"
+    },
+    "ruff": {
+      "command": "uv run --no-sync ruff check .",
+      "exit_code": 0,
+      "stdout": "All checks passed!"
+    },
+    "github_actions": {
+      "conclusion": "success",
+      "headSha": "7ce7c07883080d7cf676ed8512727c28bdb19732",
+      "jobs": [
+        {
+          "completedAt": "2026-10-04T19:40:15Z",
+          "conclusion": "success",
+          "databaseId": 111514770965,
+          "name": "test (ubuntu-latest)",
+          "startedAt": "2026-10-04T19:39:14Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-04T19:39:16Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-04T19:39:15Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:17Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v7.0.1",
+              "number": 2,
+              "startedAt": "2026-10-04T19:39:16Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:18Z",
+              "conclusion": "success",
+              "name": "Run astral-sh/setup-uv@v10.2.0",
+              "number": 3,
+              "startedAt": "2026-10-04T19:39:17Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:22Z",
+              "conclusion": "success",
+              "name": "Run uv sync --locked --all-extras --group dev --python 3.12",
+              "number": 4,
+              "startedAt": "2026-10-04T19:39:18Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:22Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync ruff check .",
+              "number": 5,
+              "startedAt": "2026-10-04T19:39:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:40:08Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync pytest",
+              "number": 6,
+              "startedAt": "2026-10-04T19:39:22Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:40:13Z",
+              "conclusion": "success",
+              "name": "Post Run astral-sh/setup-uv@v10.2.0",
+              "number": 11,
+              "startedAt": "2026-10-04T19:40:08Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:40:13Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v7.0.1",
+              "number": 12,
+              "startedAt": "2026-10-04T19:40:13Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:40:13Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "startedAt": "2026-10-04T19:40:13Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37229093768/job/111514770965"
+        },
+        {
+          "completedAt": "2026-10-04T19:41:24Z",
+          "conclusion": "success",
+          "databaseId": 111514771220,
+          "name": "test (windows-latest)",
+          "startedAt": "2026-10-04T19:39:14Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-04T19:39:16Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-04T19:39:15Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:24Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v7.0.1",
+              "number": 2,
+              "startedAt": "2026-10-04T19:39:16Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:28Z",
+              "conclusion": "success",
+              "name": "Run astral-sh/setup-uv@v10.2.0",
+              "number": 3,
+              "startedAt": "2026-10-04T19:39:24Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:35Z",
+              "conclusion": "success",
+              "name": "Run uv sync --locked --all-extras --group dev --python 3.12",
+              "number": 4,
+              "startedAt": "2026-10-04T19:39:28Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:39:35Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync ruff check .",
+              "number": 5,
+              "startedAt": "2026-10-04T19:39:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:41:11Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync pytest",
+              "number": 6,
+              "startedAt": "2026-10-04T19:39:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:41:20Z",
+              "conclusion": "success",
+              "name": "Post Run astral-sh/setup-uv@v10.2.0",
+              "number": 11,
+              "startedAt": "2026-10-04T19:41:11Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:41:21Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v7.0.1",
+              "number": 12,
+              "startedAt": "2026-10-04T19:41:20Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-04T19:41:21Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "startedAt": "2026-10-04T19:41:21Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37229093768/job/111514771220"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37229093768"
+    }
+  },
+  "derived_results": {
+    "elapsed_minutes": 154.23101446999937,
+    "stored_gib": 4.830797151662409,
+    "sampling_errors": 117,
+    "partial_samples": 112,
+    "sample_count": 153293,
+    "sampling_error_counts": {
+      "process_gone": 117,
+      "access_denied": 0
+    },
+    "review_flags": 0,
+    "doubling_four_to_eight_workers": [
+      {
+        "grid_size": 64,
+        "eight_vs_four_throughput_gain_percent": 12.995786270935984,
+        "eight_vs_four_sampled_peak_rss_increase_percent": 73.97129751425007,
+        "eight_vs_four_verified_reuse_change_percent": 5.342763739549272
+      },
+      {
+        "grid_size": 128,
+        "eight_vs_four_throughput_gain_percent": 17.151793170365348,
+        "eight_vs_four_sampled_peak_rss_increase_percent": 72.29044542381584,
+        "eight_vs_four_verified_reuse_change_percent": -17.22790670353318
+      },
+      {
+        "grid_size": 256,
+        "eight_vs_four_throughput_gain_percent": 21.872143630756426,
+        "eight_vs_four_sampled_peak_rss_increase_percent": 81.88723577170353,
+        "eight_vs_four_verified_reuse_change_percent": -9.182293401145014
+      }
+    ]
+  },
+  "cloud_access": "None during this local study and evidence-retention phase.",
+  "preserved_cloud_worker_draft_stash": "84b667b6307a8971aeb3ed8d75e10aa90c3be664",
+  "source_checkout_note": {
+    "current_source_bytes_match_recorded_source_sha256": true,
+    "files_with_line_ending_only_differences_from_git_blobs": [
+      "src/flowstate/__init__.py",
+      "src/flowstate/cli.py",
+      "src/flowstate/dashboard.py",
+      "src/flowstate/object_store.py"
+    ],
+    "limitation": "Source fingerprints hash actual checkout bytes. A fresh checkout with different line endings can change source hashes and experiment IDs without changing program logic."
+  }
+}
