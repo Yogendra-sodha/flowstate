@@ -1,0 +1,549 @@
+{
+  "checks": {
+    "all_completed_reference_and_recovered_artifacts_reverified": true,
+    "clean_committed_study_source": true,
+    "current_package_source_matches_measured_source": true,
+    "full_suite_source_files_match_measured_source": true,
+    "post_study_queries_match_completed_records": true,
+    "retained_report_matches_raw_bytes": true
+  },
+  "independent_audit": {
+    "raw_sha256": "601afa0cd8668b15ebd1a2371d6fba3961fe0477239d7e4583f1cd85ad663b36",
+    "results": {
+      "cases": [
+        {
+          "artifact_verification": {
+            "baseline": [],
+            "resumed": []
+          },
+          "case_report_exactly_reconciled": true,
+          "checkpoint_at_kill": {
+            "manifest_file_sha256": "1d5aff1579ee0f7c456434845631eef144278d69b8ff9aa7bd83218de14c7cf6",
+            "payload_sha256_matches": true,
+            "saved_prefix_times": [
+              0.0,
+              0.008
+            ],
+            "solver_state_validation_passed": true,
+            "state_dtype": "float64",
+            "step": 13,
+            "validated_blob_hashes": [
+              "3690cd43bb0d476882013fbde5c2b438d0bb31a7b8971d1776bef211998fe8a4",
+              "89b973a4201824508ad84ebae90822bdfd7e74248b9a568b08832b97fbe7be73",
+              "6a0fec805c7048771e4a43c21e30939b35cad456926de49aa1bc73e163eb2a5e"
+            ]
+          },
+          "equation": "burgers1d",
+          "experiment_id": "12856d0e7dfdd73938f25635d38c14cf",
+          "interrupted_final_receipt_absent": true,
+          "latest_checkpoint_loaded_step": 37,
+          "observed_rk4_calls": {
+            "baseline": 37,
+            "interrupted": 13,
+            "resumed": 24
+          },
+          "recovery_record_matches_actual_call_count": true,
+          "scientific_arrays": {
+            "coordinates/x": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+              "shape": [
+                32
+              ]
+            },
+            "diagnostics/energy": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "af709371af0ff3848e7938b9b9086183c8c86424107b9fd4de793951add60554",
+              "shape": [
+                6
+              ]
+            },
+            "diagnostics/mass": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "f246b850e145a4a3b0cfcf7b8c9ed9dcd3ecfa393ffa47fa59b9ece38c8cdfa3",
+              "shape": [
+                6
+              ]
+            },
+            "diagnostics/mean_velocity": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "ff6bee7ed24bd7652e3b50c9f7402378a9b9b3c5656a21002b35d599ee7aa8a5",
+              "shape": [
+                6
+              ]
+            },
+            "fields/velocity": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "30c1fc356b18c361cc8ef32d5b3daf01862974802df15b912565800f2b1bfe4d",
+              "shape": [
+                6,
+                32
+              ]
+            },
+            "time": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "5ef5cb65f3d9249ebe87ef9b3d2abe9a7a353fdc681dbf40af194693526b797b",
+              "shape": [
+                6
+              ]
+            }
+          },
+          "stderr_logs_empty": true,
+          "termination": {
+            "launcher_pid": 11392,
+            "receipt_pid_in_terminated_set": true,
+            "returncode": 15,
+            "terminated_pids": [
+              11392,
+              20140
+            ],
+            "terminated_pids_still_present_at_audit": {
+              "11392": false,
+              "20140": false
+            },
+            "worker_pid": 20140
+          },
+          "worker_provenance_matches_clean_plan": true,
+          "worker_receipts_reconciled": {
+            "baseline": true,
+            "interrupted_ready": true,
+            "resumed": true
+          }
+        },
+        {
+          "artifact_verification": {
+            "baseline": [],
+            "resumed": []
+          },
+          "case_report_exactly_reconciled": true,
+          "checkpoint_at_kill": {
+            "manifest_file_sha256": "61e47ebc60f179a67dcc5fd3625e33501b9c7ae19068ecb63903650b1e2e4211",
+            "payload_sha256_matches": true,
+            "saved_prefix_times": [
+              0.0,
+              0.008
+            ],
+            "solver_state_validation_passed": true,
+            "state_dtype": "complex128",
+            "step": 13,
+            "validated_blob_hashes": [
+              "56ae888cf4726186c4105cc4b1ecf2517e23df5f39d39ce07381334aeddb2755",
+              "bebab58d5d7b59615195deb44ecc0696c3708602fedd3cc8f4edb77c66225874",
+              "0ea2cc6a5871272db1aeee3db2a53392e996c86952c5d5efc7659292a2e8745e"
+            ]
+          },
+          "equation": "navier_stokes2d",
+          "experiment_id": "181d00ad9f9c8c6367eab0dcd2b610b7",
+          "interrupted_final_receipt_absent": true,
+          "latest_checkpoint_loaded_step": 37,
+          "observed_rk4_calls": {
+            "baseline": 37,
+            "interrupted": 13,
+            "resumed": 24
+          },
+          "recovery_record_matches_actual_call_count": true,
+          "scientific_arrays": {
+            "coordinates/x": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+              "shape": [
+                32
+              ]
+            },
+            "coordinates/y": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+              "shape": [
+                32
+              ]
+            },
+            "diagnostics/circulation": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "b51eaa8a525862ac480095911b5bb94b228ff9e5f2cc7ae3c8e0f2ee73c60953",
+              "shape": [
+                6
+              ]
+            },
+            "diagnostics/energy": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "cf2f2fdcd9d707aa52f6280d196720c35fadd742128830b14f351e67c195dd60",
+              "shape": [
+                6
+              ]
+            },
+            "diagnostics/enstrophy": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "cdd39f41cc6c53a2554731e9e5dfdbd35da7d874ee758c5bc77844560c3be22b",
+              "shape": [
+                6
+              ]
+            },
+            "diagnostics/max_abs_divergence": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "2d0aa5fe96f5008c589b93cf5206a4d9040e8553eb3c6a85d3753893a537a306",
+              "shape": [
+                6
+              ]
+            },
+            "diagnostics/mean_vorticity": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "0ff4e4a3dd5dbc08b520f1d720c797a22c11aa363fc52eb368b3e183a2a3deb2",
+              "shape": [
+                6
+              ]
+            },
+            "fields/u": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "89d9950b088eb259898ec324bb606c2051ce898adcf97b8f4794abaea10b4d43",
+              "shape": [
+                6,
+                32,
+                32
+              ]
+            },
+            "fields/v": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "b6514bae0a33739ee2f3b96c68c0a9c0c3ee609dc3066185d1981fa679e6f616",
+              "shape": [
+                6,
+                32,
+                32
+              ]
+            },
+            "fields/vorticity": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "80fab9187d583089eeac14b919ff6a9f47dc00c673b72c1dd18719f0e993c373",
+              "shape": [
+                6,
+                32,
+                32
+              ]
+            },
+            "time": {
+              "array_equal": true,
+              "dtype": "float64",
+              "sha256": "5ef5cb65f3d9249ebe87ef9b3d2abe9a7a353fdc681dbf40af194693526b797b",
+              "shape": [
+                6
+              ]
+            }
+          },
+          "stderr_logs_empty": true,
+          "termination": {
+            "launcher_pid": 12072,
+            "receipt_pid_in_terminated_set": true,
+            "returncode": 15,
+            "terminated_pids": [
+              12072,
+              18504
+            ],
+            "terminated_pids_still_present_at_audit": {
+              "12072": false,
+              "18504": false
+            },
+            "worker_pid": 18504
+          },
+          "worker_provenance_matches_clean_plan": true,
+          "worker_receipts_reconciled": {
+            "baseline": true,
+            "interrupted_ready": true,
+            "resumed": true
+          }
+        }
+      ],
+      "created_at": "2026-10-08T02:05:18.627479+00:00",
+      "limits": [
+        "Kill occurred after a fully committed checkpoint; actual mid-write kill is not covered",
+        "Exact equality is established on this local compatible Windows runtime",
+        "Single-observation timing does not establish performance speedup",
+        "Direct PIDs/owned-tree return code are reconciled from the parent kill receipt; PID ownership was validated live by the committed harness"
+      ],
+      "plan_reconciles_with_report": true,
+      "raw_report_sha256": "4032ba5461ced0616679eabd4ccdf6396424af66668eb54130ee19ec40d3d545",
+      "review_findings": [],
+      "schema_version": 1,
+      "scope": "Read-only reconciliation and independently recomputed scientific array equality/checksums; no simulations or performance study run",
+      "source": {
+        "current_source_sha256_matches_measurement": true,
+        "measured_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+        "measured_source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6",
+        "measurement_provenance_git_dirty": false,
+        "measurement_required_clean_source": true
+      },
+      "status": "passed"
+    }
+  },
+  "post_study_queries": [
+    {
+      "equation": "burgers1d",
+      "lake": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\checkpoint-proof-20261007\\burgers1d\\baseline-lake",
+      "result": [
+        {
+          "runs": 1,
+          "status": "completed"
+        }
+      ],
+      "role": "baseline",
+      "sql": "SELECT status, COUNT(*) AS runs FROM experiments GROUP BY status"
+    },
+    {
+      "equation": "burgers1d",
+      "lake": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\checkpoint-proof-20261007\\burgers1d\\recovery-lake",
+      "result": [
+        {
+          "runs": 1,
+          "status": "completed"
+        }
+      ],
+      "role": "resumed",
+      "sql": "SELECT status, COUNT(*) AS runs FROM experiments GROUP BY status"
+    },
+    {
+      "equation": "navier_stokes2d",
+      "lake": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\checkpoint-proof-20261007\\navier_stokes2d\\baseline-lake",
+      "result": [
+        {
+          "runs": 1,
+          "status": "completed"
+        }
+      ],
+      "role": "baseline",
+      "sql": "SELECT status, COUNT(*) AS runs FROM experiments GROUP BY status"
+    },
+    {
+      "equation": "navier_stokes2d",
+      "lake": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\checkpoint-proof-20261007\\navier_stokes2d\\recovery-lake",
+      "result": [
+        {
+          "runs": 1,
+          "status": "completed"
+        }
+      ],
+      "role": "resumed",
+      "sql": "SELECT status, COUNT(*) AS runs FROM experiments GROUP BY status"
+    }
+  ],
+  "raw_study_directory": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\checkpoint-proof-20261007",
+  "retained_artifact": {
+    "bytes": 19877,
+    "path": "docs/reports/checkpoint-recovery.json",
+    "sha256": "4032ba5461ced0616679eabd4ccdf6396424af66668eb54130ee19ec40d3d545"
+  },
+  "schema_version": 1,
+  "scope": "Same-source full local test suite plus measured worker-kill proof, artifact re-verification and SQL checks; Mac validation remains pending",
+  "source_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+  "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6",
+  "study_command": "uv run --no-sync python -m flowstate.recovery_study --output outputs/checkpoint-proof-20261007",
+  "validated_at": "2026-10-08T02:04:39.533160+00:00",
+  "validation": {
+    "full_suite_receipt": "docs/reports/handoff-validation-20261007.json",
+    "github_actions": {
+      "conclusion": "success",
+      "headSha": "d8ef527ea887853a7c1169d194a72925d030691d",
+      "jobs": [
+        {
+          "completedAt": "2026-10-08T02:03:20Z",
+          "conclusion": "success",
+          "databaseId": 113111617144,
+          "name": "test (windows-latest)",
+          "startedAt": "2026-10-08T02:00:32Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-08T02:00:33Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-08T02:00:33Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:00:39Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v7.0.1",
+              "number": 2,
+              "startedAt": "2026-10-08T02:00:33Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:00:58Z",
+              "conclusion": "success",
+              "name": "Run astral-sh/setup-uv@v10.2.0",
+              "number": 3,
+              "startedAt": "2026-10-08T02:00:39Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:01:02Z",
+              "conclusion": "success",
+              "name": "Run uv sync --locked --all-extras --group dev --python 3.12",
+              "number": 4,
+              "startedAt": "2026-10-08T02:00:58Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:01:03Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync ruff check .",
+              "number": 5,
+              "startedAt": "2026-10-08T02:01:02Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:03:15Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync pytest",
+              "number": 6,
+              "startedAt": "2026-10-08T02:01:03Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:03:16Z",
+              "conclusion": "success",
+              "name": "Post Run astral-sh/setup-uv@v10.2.0",
+              "number": 11,
+              "startedAt": "2026-10-08T02:03:15Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:03:18Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v7.0.1",
+              "number": 12,
+              "startedAt": "2026-10-08T02:03:16Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:03:18Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "startedAt": "2026-10-08T02:03:18Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37715726304/job/113111617144"
+        },
+        {
+          "completedAt": "2026-10-08T02:01:30Z",
+          "conclusion": "success",
+          "databaseId": 113111617499,
+          "name": "test (ubuntu-latest)",
+          "startedAt": "2026-10-08T02:00:32Z",
+          "status": "completed",
+          "steps": [
+            {
+              "completedAt": "2026-10-08T02:00:35Z",
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "startedAt": "2026-10-08T02:00:33Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:00:36Z",
+              "conclusion": "success",
+              "name": "Run actions/checkout@v7.0.1",
+              "number": 2,
+              "startedAt": "2026-10-08T02:00:35Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:00:44Z",
+              "conclusion": "success",
+              "name": "Run astral-sh/setup-uv@v10.2.0",
+              "number": 3,
+              "startedAt": "2026-10-08T02:00:36Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:00:46Z",
+              "conclusion": "success",
+              "name": "Run uv sync --locked --all-extras --group dev --python 3.12",
+              "number": 4,
+              "startedAt": "2026-10-08T02:00:44Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:00:46Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync ruff check .",
+              "number": 5,
+              "startedAt": "2026-10-08T02:00:46Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:01:26Z",
+              "conclusion": "success",
+              "name": "Run uv run --no-sync pytest",
+              "number": 6,
+              "startedAt": "2026-10-08T02:00:46Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:01:26Z",
+              "conclusion": "success",
+              "name": "Post Run astral-sh/setup-uv@v10.2.0",
+              "number": 11,
+              "startedAt": "2026-10-08T02:01:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:01:27Z",
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v7.0.1",
+              "number": 12,
+              "startedAt": "2026-10-08T02:01:26Z",
+              "status": "completed"
+            },
+            {
+              "completedAt": "2026-10-08T02:01:27Z",
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 13,
+              "startedAt": "2026-10-08T02:01:27Z",
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37715726304/job/113111617499"
+        }
+      ],
+      "status": "completed",
+      "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37715726304"
+    },
+    "pytest": {
+      "command": "uv run --no-sync pytest --junitxml=outputs/handoff-validation-20261007/pytest.xml",
+      "errors": 0,
+      "failures": 0,
+      "passed": 540,
+      "seconds": 164.118,
+      "skip_reason": "Windows account lacks permission to create symbolic links",
+      "skipped": 4,
+      "stdout_sha256": "c14c88528a18d8c815693ee0108eef14ff0fb7cbe970c1ddc0cd945f2e93f198",
+      "tests": 544,
+      "xml_sha256": "481588e44ded6516b71485f2b07cbe671c2a2e5eead998c66b758bc1124e6148"
+    },
+    "ruff": {
+      "command": "uv run --no-sync ruff check .",
+      "exit_code": 0,
+      "performed_after_study": true,
+      "stdout": "All checks passed!"
+    }
+  }
+}

@@ -1,0 +1,597 @@
+{
+  "all_scientific_arrays_hash_identical": true,
+  "cases": [
+    {
+      "all_scientific_arrays_hash_identical": true,
+      "artifact_verification": {
+        "baseline": [],
+        "resumed": []
+      },
+      "case_seconds": 8.355181700084358,
+      "checkpoint_every": 13,
+      "config": {
+        "amplitude": 0.5,
+        "domain_length": 6.283185307179586,
+        "dt": 0.001,
+        "equation": "burgers1d",
+        "grid_size": 32,
+        "initial_condition": "random",
+        "save_every": 8,
+        "seed": 51,
+        "steps": 37,
+        "viscosity": 0.05
+      },
+      "scientific_arrays": {
+        "baseline": {
+          "coordinates/x": {
+            "dtype": "float64",
+            "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+            "shape": [
+              32
+            ]
+          },
+          "diagnostics/energy": {
+            "dtype": "float64",
+            "sha256": "af709371af0ff3848e7938b9b9086183c8c86424107b9fd4de793951add60554",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/mass": {
+            "dtype": "float64",
+            "sha256": "f246b850e145a4a3b0cfcf7b8c9ed9dcd3ecfa393ffa47fa59b9ece38c8cdfa3",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/mean_velocity": {
+            "dtype": "float64",
+            "sha256": "ff6bee7ed24bd7652e3b50c9f7402378a9b9b3c5656a21002b35d599ee7aa8a5",
+            "shape": [
+              6
+            ]
+          },
+          "fields/velocity": {
+            "dtype": "float64",
+            "sha256": "30c1fc356b18c361cc8ef32d5b3daf01862974802df15b912565800f2b1bfe4d",
+            "shape": [
+              6,
+              32
+            ]
+          },
+          "time": {
+            "dtype": "float64",
+            "sha256": "5ef5cb65f3d9249ebe87ef9b3d2abe9a7a353fdc681dbf40af194693526b797b",
+            "shape": [
+              6
+            ]
+          }
+        },
+        "resumed": {
+          "coordinates/x": {
+            "dtype": "float64",
+            "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+            "shape": [
+              32
+            ]
+          },
+          "diagnostics/energy": {
+            "dtype": "float64",
+            "sha256": "af709371af0ff3848e7938b9b9086183c8c86424107b9fd4de793951add60554",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/mass": {
+            "dtype": "float64",
+            "sha256": "f246b850e145a4a3b0cfcf7b8c9ed9dcd3ecfa393ffa47fa59b9ece38c8cdfa3",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/mean_velocity": {
+            "dtype": "float64",
+            "sha256": "ff6bee7ed24bd7652e3b50c9f7402378a9b9b3c5656a21002b35d599ee7aa8a5",
+            "shape": [
+              6
+            ]
+          },
+          "fields/velocity": {
+            "dtype": "float64",
+            "sha256": "30c1fc356b18c361cc8ef32d5b3daf01862974802df15b912565800f2b1bfe4d",
+            "shape": [
+              6,
+              32
+            ]
+          },
+          "time": {
+            "dtype": "float64",
+            "sha256": "5ef5cb65f3d9249ebe87ef9b3d2abe9a7a353fdc681dbf40af194693526b797b",
+            "shape": [
+              6
+            ]
+          }
+        }
+      },
+      "status": "completed",
+      "workers": {
+        "baseline": {
+          "engine_seconds": 0.884854800067842,
+          "error": null,
+          "experiment_id": "12856d0e7dfdd73938f25635d38c14cf",
+          "experiment_status": "completed",
+          "finalized_result_reused": false,
+          "process_seconds": 2.483053300064057,
+          "provenance": {
+            "dependencies": {
+              "duckdb": "1.5.5",
+              "flowstate-research": "0.6.0",
+              "h5py": "3.16.0",
+              "numpy": "2.5.3",
+              "pyarrow": "23.0.1",
+              "scipy": "1.18.1",
+              "zarr": "3.4.0"
+            },
+            "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+            "git_dirty": false,
+            "hardware": {
+              "logical_cpu_count": 8,
+              "machine": "AMD64",
+              "platform": "Windows-11-10.0.26200-SP0",
+              "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+            },
+            "precision": "float64",
+            "python": "3.12.9",
+            "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+          },
+          "resumed_from_step": null,
+          "rk4_calls": 37,
+          "role": "baseline",
+          "status": "completed"
+        },
+        "interrupted": {
+          "checkpoint_commit_complete": true,
+          "checkpoint_step": 13,
+          "experiment_id": "12856d0e7dfdd73938f25635d38c14cf",
+          "launcher_pid": 11392,
+          "pid": 20140,
+          "process_seconds": 1.5912440998945385,
+          "provenance": {
+            "dependencies": {
+              "duckdb": "1.5.5",
+              "flowstate-research": "0.6.0",
+              "h5py": "3.16.0",
+              "numpy": "2.5.3",
+              "pyarrow": "23.0.1",
+              "scipy": "1.18.1",
+              "zarr": "3.4.0"
+            },
+            "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+            "git_dirty": false,
+            "hardware": {
+              "logical_cpu_count": 8,
+              "machine": "AMD64",
+              "platform": "Windows-11-10.0.26200-SP0",
+              "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+            },
+            "precision": "float64",
+            "python": "3.12.9",
+            "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+          },
+          "rk4_calls": 13,
+          "seconds_until_checkpoint": 0.21932939998805523,
+          "termination": {
+            "returncode": 15,
+            "terminated_pids": [
+              11392,
+              20140
+            ]
+          }
+        },
+        "resumed": {
+          "engine_seconds": 1.8288203000556678,
+          "error": null,
+          "experiment_id": "12856d0e7dfdd73938f25635d38c14cf",
+          "experiment_status": "completed",
+          "finalized_result_reused": false,
+          "process_seconds": 3.873696200083941,
+          "provenance": {
+            "dependencies": {
+              "duckdb": "1.5.5",
+              "flowstate-research": "0.6.0",
+              "h5py": "3.16.0",
+              "numpy": "2.5.3",
+              "pyarrow": "23.0.1",
+              "scipy": "1.18.1",
+              "zarr": "3.4.0"
+            },
+            "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+            "git_dirty": false,
+            "hardware": {
+              "logical_cpu_count": 8,
+              "machine": "AMD64",
+              "platform": "Windows-11-10.0.26200-SP0",
+              "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+            },
+            "precision": "float64",
+            "python": "3.12.9",
+            "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+          },
+          "resumed_from_step": 13,
+          "rk4_calls": 24,
+          "role": "resumed",
+          "status": "completed"
+        }
+      }
+    },
+    {
+      "all_scientific_arrays_hash_identical": true,
+      "artifact_verification": {
+        "baseline": [],
+        "resumed": []
+      },
+      "case_seconds": 11.411435700021684,
+      "checkpoint_every": 13,
+      "config": {
+        "amplitude": 0.5,
+        "domain_length": 6.283185307179586,
+        "dt": 0.001,
+        "equation": "navier_stokes2d",
+        "grid_size": 32,
+        "initial_condition": "random",
+        "save_every": 8,
+        "seed": 51,
+        "steps": 37,
+        "viscosity": 0.05
+      },
+      "scientific_arrays": {
+        "baseline": {
+          "coordinates/x": {
+            "dtype": "float64",
+            "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+            "shape": [
+              32
+            ]
+          },
+          "coordinates/y": {
+            "dtype": "float64",
+            "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+            "shape": [
+              32
+            ]
+          },
+          "diagnostics/circulation": {
+            "dtype": "float64",
+            "sha256": "b51eaa8a525862ac480095911b5bb94b228ff9e5f2cc7ae3c8e0f2ee73c60953",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/energy": {
+            "dtype": "float64",
+            "sha256": "cf2f2fdcd9d707aa52f6280d196720c35fadd742128830b14f351e67c195dd60",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/enstrophy": {
+            "dtype": "float64",
+            "sha256": "cdd39f41cc6c53a2554731e9e5dfdbd35da7d874ee758c5bc77844560c3be22b",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/max_abs_divergence": {
+            "dtype": "float64",
+            "sha256": "2d0aa5fe96f5008c589b93cf5206a4d9040e8553eb3c6a85d3753893a537a306",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/mean_vorticity": {
+            "dtype": "float64",
+            "sha256": "0ff4e4a3dd5dbc08b520f1d720c797a22c11aa363fc52eb368b3e183a2a3deb2",
+            "shape": [
+              6
+            ]
+          },
+          "fields/u": {
+            "dtype": "float64",
+            "sha256": "89d9950b088eb259898ec324bb606c2051ce898adcf97b8f4794abaea10b4d43",
+            "shape": [
+              6,
+              32,
+              32
+            ]
+          },
+          "fields/v": {
+            "dtype": "float64",
+            "sha256": "b6514bae0a33739ee2f3b96c68c0a9c0c3ee609dc3066185d1981fa679e6f616",
+            "shape": [
+              6,
+              32,
+              32
+            ]
+          },
+          "fields/vorticity": {
+            "dtype": "float64",
+            "sha256": "80fab9187d583089eeac14b919ff6a9f47dc00c673b72c1dd18719f0e993c373",
+            "shape": [
+              6,
+              32,
+              32
+            ]
+          },
+          "time": {
+            "dtype": "float64",
+            "sha256": "5ef5cb65f3d9249ebe87ef9b3d2abe9a7a353fdc681dbf40af194693526b797b",
+            "shape": [
+              6
+            ]
+          }
+        },
+        "resumed": {
+          "coordinates/x": {
+            "dtype": "float64",
+            "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+            "shape": [
+              32
+            ]
+          },
+          "coordinates/y": {
+            "dtype": "float64",
+            "sha256": "6d25e94d38926fa48f1c5750d9413fb168fa5f17e53173a434a373defe2c8970",
+            "shape": [
+              32
+            ]
+          },
+          "diagnostics/circulation": {
+            "dtype": "float64",
+            "sha256": "b51eaa8a525862ac480095911b5bb94b228ff9e5f2cc7ae3c8e0f2ee73c60953",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/energy": {
+            "dtype": "float64",
+            "sha256": "cf2f2fdcd9d707aa52f6280d196720c35fadd742128830b14f351e67c195dd60",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/enstrophy": {
+            "dtype": "float64",
+            "sha256": "cdd39f41cc6c53a2554731e9e5dfdbd35da7d874ee758c5bc77844560c3be22b",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/max_abs_divergence": {
+            "dtype": "float64",
+            "sha256": "2d0aa5fe96f5008c589b93cf5206a4d9040e8553eb3c6a85d3753893a537a306",
+            "shape": [
+              6
+            ]
+          },
+          "diagnostics/mean_vorticity": {
+            "dtype": "float64",
+            "sha256": "0ff4e4a3dd5dbc08b520f1d720c797a22c11aa363fc52eb368b3e183a2a3deb2",
+            "shape": [
+              6
+            ]
+          },
+          "fields/u": {
+            "dtype": "float64",
+            "sha256": "89d9950b088eb259898ec324bb606c2051ce898adcf97b8f4794abaea10b4d43",
+            "shape": [
+              6,
+              32,
+              32
+            ]
+          },
+          "fields/v": {
+            "dtype": "float64",
+            "sha256": "b6514bae0a33739ee2f3b96c68c0a9c0c3ee609dc3066185d1981fa679e6f616",
+            "shape": [
+              6,
+              32,
+              32
+            ]
+          },
+          "fields/vorticity": {
+            "dtype": "float64",
+            "sha256": "80fab9187d583089eeac14b919ff6a9f47dc00c673b72c1dd18719f0e993c373",
+            "shape": [
+              6,
+              32,
+              32
+            ]
+          },
+          "time": {
+            "dtype": "float64",
+            "sha256": "5ef5cb65f3d9249ebe87ef9b3d2abe9a7a353fdc681dbf40af194693526b797b",
+            "shape": [
+              6
+            ]
+          }
+        }
+      },
+      "status": "completed",
+      "workers": {
+        "baseline": {
+          "engine_seconds": 2.0345483000855893,
+          "error": null,
+          "experiment_id": "181d00ad9f9c8c6367eab0dcd2b610b7",
+          "experiment_status": "completed",
+          "finalized_result_reused": false,
+          "process_seconds": 4.368275899905711,
+          "provenance": {
+            "dependencies": {
+              "duckdb": "1.5.5",
+              "flowstate-research": "0.6.0",
+              "h5py": "3.16.0",
+              "numpy": "2.5.3",
+              "pyarrow": "23.0.1",
+              "scipy": "1.18.1",
+              "zarr": "3.4.0"
+            },
+            "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+            "git_dirty": false,
+            "hardware": {
+              "logical_cpu_count": 8,
+              "machine": "AMD64",
+              "platform": "Windows-11-10.0.26200-SP0",
+              "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+            },
+            "precision": "float64",
+            "python": "3.12.9",
+            "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+          },
+          "resumed_from_step": null,
+          "rk4_calls": 37,
+          "role": "baseline",
+          "status": "completed"
+        },
+        "interrupted": {
+          "checkpoint_commit_complete": true,
+          "checkpoint_step": 13,
+          "experiment_id": "181d00ad9f9c8c6367eab0dcd2b610b7",
+          "launcher_pid": 12072,
+          "pid": 18504,
+          "process_seconds": 2.491165899904445,
+          "provenance": {
+            "dependencies": {
+              "duckdb": "1.5.5",
+              "flowstate-research": "0.6.0",
+              "h5py": "3.16.0",
+              "numpy": "2.5.3",
+              "pyarrow": "23.0.1",
+              "scipy": "1.18.1",
+              "zarr": "3.4.0"
+            },
+            "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+            "git_dirty": false,
+            "hardware": {
+              "logical_cpu_count": 8,
+              "machine": "AMD64",
+              "platform": "Windows-11-10.0.26200-SP0",
+              "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+            },
+            "precision": "float64",
+            "python": "3.12.9",
+            "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+          },
+          "rk4_calls": 13,
+          "seconds_until_checkpoint": 0.4276673998683691,
+          "termination": {
+            "returncode": 15,
+            "terminated_pids": [
+              12072,
+              18504
+            ]
+          }
+        },
+        "resumed": {
+          "engine_seconds": 1.7121586999855936,
+          "error": null,
+          "experiment_id": "181d00ad9f9c8c6367eab0dcd2b610b7",
+          "experiment_status": "completed",
+          "finalized_result_reused": false,
+          "process_seconds": 3.921438100049272,
+          "provenance": {
+            "dependencies": {
+              "duckdb": "1.5.5",
+              "flowstate-research": "0.6.0",
+              "h5py": "3.16.0",
+              "numpy": "2.5.3",
+              "pyarrow": "23.0.1",
+              "scipy": "1.18.1",
+              "zarr": "3.4.0"
+            },
+            "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+            "git_dirty": false,
+            "hardware": {
+              "logical_cpu_count": 8,
+              "machine": "AMD64",
+              "platform": "Windows-11-10.0.26200-SP0",
+              "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+            },
+            "precision": "float64",
+            "python": "3.12.9",
+            "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+          },
+          "resumed_from_step": 13,
+          "rk4_calls": 24,
+          "role": "resumed",
+          "status": "completed"
+        }
+      }
+    }
+  ],
+  "checkpoint_every": 13,
+  "configs": [
+    {
+      "amplitude": 0.5,
+      "domain_length": 6.283185307179586,
+      "dt": 0.001,
+      "equation": "burgers1d",
+      "grid_size": 32,
+      "initial_condition": "random",
+      "save_every": 8,
+      "seed": 51,
+      "steps": 37,
+      "viscosity": 0.05
+    },
+    {
+      "amplitude": 0.5,
+      "domain_length": 6.283185307179586,
+      "dt": 0.001,
+      "equation": "navier_stokes2d",
+      "grid_size": 32,
+      "initial_condition": "random",
+      "save_every": 8,
+      "seed": 51,
+      "steps": 37,
+      "viscosity": 0.05
+    }
+  ],
+  "created_at": "2026-10-08T02:02:54.393012+00:00",
+  "failure_count": 0,
+  "failures": [],
+  "measurement_scope": {
+    "data_retention": "Reference, checkpoint blobs, recovered artifacts and logs retained",
+    "equality": "All field, time, coordinate and diagnostic dtype/shape/array-byte hashes",
+    "kill": "Owned worker process tree killed after a committed checkpoint receipt",
+    "limits": "Local process-crash recovery only; not power-loss durability, remote storage, mid-write kill coverage, hardware-independent equality or performance scaling",
+    "timing": "Single observation; engine timing includes checkpoint I/O and publication; process timing also includes interpreter startup",
+    "work": "Actual completed _rk4 calls counted independently in each interpreter"
+  },
+  "protocol": "uninterrupted reference; commit checkpoint; kill worker; resume; verify and hash",
+  "provenance": {
+    "dependencies": {
+      "duckdb": "1.5.5",
+      "flowstate-research": "0.6.0",
+      "h5py": "3.16.0",
+      "numpy": "2.5.3",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "zarr": "3.4.0"
+    },
+    "git_commit": "d8ef527ea887853a7c1169d194a72925d030691d",
+    "git_dirty": false,
+    "hardware": {
+      "logical_cpu_count": 8,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+    },
+    "precision": "float64",
+    "python": "3.12.9",
+    "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+  },
+  "require_clean_source": true,
+  "schema_version": 1,
+  "status": "completed",
+  "wall_seconds": 20.0285986000672,
+  "worker_timeout_seconds": 120
+}

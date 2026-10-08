@@ -8,6 +8,12 @@ symbolic-link permission skips. The receipt is
 `docs/reports/handoff-validation-20261007.json`. A fresh Mac validation is still
 required.
 
+Latest Windows continuation: the committed recovery proof has passed for both
+equations. Results are retained in `docs/reports/checkpoint-recovery.json` and
+`docs/reports/checkpoint-recovery-validation.json`. Raw fields and worker logs
+remain in `outputs/checkpoint-proof-20261007/`, outside Git. Source commit:
+`d8ef527ea887853a7c1169d194a72925d030691d`.
+
 ## Purpose
 
 Flowstate is a Python/MIT data engineering project for reproducible numerical
@@ -65,10 +71,12 @@ history. Commit code before generating new measured results on the Mac.
 
 - **Milestone 1 complete:** larger local scale measurement. Evidence is in
   `docs/reports/scaling-large.json`, its chart, and its validation receipt.
-- **Milestone 2 implemented; final evidence pending at handoff preparation:**
-  exact internal solver checkpoints, immutable state/frame blobs, checked prefix
-  replay, CLI and queue options, actual worker-kill proof, and tests. Check
-  `docs/progress.md` for any recovery study completed during final Windows validation.
+- **Milestone 2 recovery proof complete; phase documentation being finalized:**
+  both workers were killed after step 13, then completed only the remaining
+  24 of 37 steps. All scientific-array hashes matched uninterrupted references,
+  with no failed cases. Exact internal state, immutable blobs, checked prefix
+  replay, CLI/queue options, and actual worker-kill tests are implemented.
+  See the retained recovery reports and `docs/progress.md` for the phase boundary.
 - **Milestone 3 remaining:** the revised GCS upload, approved local removal,
   download, verification receipt, viewer container, and deployment proposal.
   An earlier small live round trip is retained in `docs/reports/gcs-20261004.json`;
@@ -89,20 +97,24 @@ complete merely to meet that deadline.
 
 ### First unfinished action on the Mac
 
-After the Mac test suite passes and the checkout is clean, run the committed
-recovery protocol into a new directory:
+Validate the Mac environment using the setup commands above. The Windows
+recovery proof is already retained; a Mac run is optional local confirmation:
 
 ```sh
 uv run --no-sync python -m flowstate.recovery_study --output outputs/mac-recovery-proof-01
 ```
 
-Inspect its aggregate and case reports. A successful result must verify both
-equations, preserve every scientific array hash, and show measured RK4 counts
-that skip earlier completed steps. Retain the report under `docs/reports/`, add
-the validation receipt and measured results to the checkpoint chapter/stepbook,
-update `docs/progress.md`, and commit before marking Milestone 2 complete.
-Keep any failed result visible. Milestone 1 does not need another large run
-merely because the computer changed.
+Use a new directory and commit any code changes before a new measurement. Keep
+any failed result visible. No large scaling rerun is required merely because
+the computer changed. After Mac validation and the phase boundary recorded in
+`docs/progress.md`, the next delivery work is Milestone 3: prepare the viewer
+container and concrete GCS recovery plan locally, then request approval before
+using credentials, spending, local-data removal, or deployment.
+
+The small Windows proof measured recovery correctness, not general performance.
+Burgers recovery was slower than its uninterrupted reference in the retained
+single observation; checkpoint I/O and prefix replay add overhead. Mac
+performance and cross-hardware bitwise equality have not been established.
 
 ## Code map
 
@@ -139,6 +151,12 @@ The larger scaling study's raw lake is currently outside the repository:
 
 ```text
 C:/Users/yuvis/AppData/Local/Flowstate/scaling-large-20261004
+```
+
+The new raw recovery proof is under the Windows checkout:
+
+```text
+C:/Users/yuvis/OneDrive/Documents/ChatGPT/Flowstate/outputs/checkpoint-proof-20261007
 ```
 
 Other earlier studies are in the repository's ignored `outputs/` tree. Locate and
