@@ -1,0 +1,14 @@
+{
+  "base": {
+    "equation": "navier_stokes2d",
+    "grid_size": 32,
+    "steps": 100,
+    "save_every": 10,
+    "initial_condition": "random"
+  },
+  "parameters": {
+    "viscosity": [0.02, 0.05],
+    "grid_size": [24, 32],
+    "seed": [7, 19]
+  }
+}

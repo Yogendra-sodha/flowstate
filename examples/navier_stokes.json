@@ -1,0 +1,10 @@
+{
+  "equation": "navier_stokes2d",
+  "viscosity": 0.05,
+  "grid_size": 32,
+  "dt": 0.002,
+  "steps": 200,
+  "save_every": 10,
+  "initial_condition": "taylor_green",
+  "seed": 42
+}

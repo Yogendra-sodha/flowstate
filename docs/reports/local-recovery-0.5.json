@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "created_at": "2026-09-29T22:11:10.916437+00:00",
+  "provenance": {
+    "git_commit": "eee73e4f4beeb105c9849759d5e8862143ab8715",
+    "git_dirty": false,
+    "source_sha256": "074ab7c875646cca71f97353cf522f152a42ff200573af4c430e15a7db8569aa",
+    "python": "3.12.9",
+    "dependencies": {
+      "numpy": "2.5.3",
+      "zarr": "3.4.0",
+      "duckdb": "1.5.5",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "flowstate-research": "0.5.0"
+    },
+    "hardware": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "machine": "AMD64",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel",
+      "logical_cpu_count": 8
+    },
+    "precision": "float64"
+  },
+  "script_sha256": "f762f0dd27ea8671d739ae4c2afaf20e341ac9c683122699ac6fa44b281ef195",
+  "limitations": [
+    "One Windows machine and a local SQLite database; no cross-machine claim.",
+    "Two concurrent worker processes, not a throughput benchmark.",
+    "Eight small Navier-Stokes runs; no large-scale durability claim.",
+    "Recovery reuses verified completed artifacts; no mid-simulation checkpoint.",
+    "Intentional exit tests crash after publication, not power loss or filesystem damage.",
+    "SQLite file must not be concurrently edited through network/cloud-sync peers."
+  ],
+  "sweep_spec": {
+    "base": {
+      "equation": "navier_stokes2d",
+      "grid_size": 32,
+      "steps": 100,
+      "save_every": 10,
+      "initial_condition": "random"
+    },
+    "parameters": {
+      "viscosity": [
+        0.02,
+        0.05
+      ],
+      "grid_size": [
+        24,
+        32
+      ],
+      "seed": [
+        7,
+        19
+      ]
+    }
+  },
+  "sweep_spec_sha256": "89f86c2c2a58896a92b5ff2978bbf7e09a2245decce10b9e5e99f4d899970d1a",
+  "submission": {
+    "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\queue.sqlite",
+    "submitted": 8,
+    "existing": 0,
+    "job_ids": [
+      "f75a81350ea1763688439aa44511fdd389b63794e755a94207d6e09f92a80585",
+      "611f26a331a451dcbc078fa574757a8ae182560d3739d738e142705ea763f3d7",
+      "0625deedea1afca3b9fd016e1c757429d348eab6e402be73e4de443c99c5acaf",
+      "1d1c3d8f16672270d8d076258687aa2417adc192e37ac04cae120e1c9af5115b",
+      "0c960015703d135e7525b505acfadac52d21dfb4e1ffd53c654a4128e34f5b08",
+      "f8c4ae2e8ced7eedbc47ba349c307939832f3e4356b0e9f87d391903118e2b78",
+      "3961d4f77ccf32d7f1d28c4c4931c208424569631455eb340eaf6e6a1c3f02e2",
+      "1cb05e2e2b1d898242c4f0793b3f3c3927050492cdd6bac3604e678f242b4e2d"
+    ]
+  },
+  "workers": {
+    "wall_seconds": 13.545999999972992,
+    "process_ids": [
+      4508,
+      24128
+    ],
+    "outcomes": [
+      {
+        "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\queue.sqlite",
+        "processed": 4,
+        "completed": 4,
+        "failed": 0,
+        "lost_claim": 0,
+        "jobs": [
+          {
+            "job_id": "0c960015703d135e7525b505acfadac52d21dfb4e1ffd53c654a4128e34f5b08",
+            "status": "completed",
+            "result_id": "c6e016aa6e4ea698ec25a30855bc28da",
+            "resumed": false,
+            "error": null
+          },
+          {
+            "job_id": "1cb05e2e2b1d898242c4f0793b3f3c3927050492cdd6bac3604e678f242b4e2d",
+            "status": "completed",
+            "result_id": "29318c9e92fbb3e5f7f448c0e5649c07",
+            "resumed": false,
+            "error": null
+          },
+          {
+            "job_id": "611f26a331a451dcbc078fa574757a8ae182560d3739d738e142705ea763f3d7",
+            "status": "completed",
+            "result_id": "772b09f98c304cd898ed22a197213ae3",
+            "resumed": false,
+            "error": null
+          },
+          {
+            "job_id": "f8c4ae2e8ced7eedbc47ba349c307939832f3e4356b0e9f87d391903118e2b78",
+            "status": "completed",
+            "result_id": "df899cba102de7bffeaecfa60ef2f154",
+            "resumed": false,
+            "error": null
+          }
+        ]
+      },
+      {
+        "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\queue.sqlite",
+        "processed": 4,
+        "completed": 4,
+        "failed": 0,
+        "lost_claim": 0,
+        "jobs": [
+          {
+            "job_id": "0625deedea1afca3b9fd016e1c757429d348eab6e402be73e4de443c99c5acaf",
+            "status": "completed",
+            "result_id": "76e04aa7708d5cc0fe41e84e2d2b07c5",
+            "resumed": false,
+            "error": null
+          },
+          {
+            "job_id": "1d1c3d8f16672270d8d076258687aa2417adc192e37ac04cae120e1c9af5115b",
+            "status": "completed",
+            "result_id": "c0cefeedb099ce178d170907bacedbc1",
+            "resumed": false,
+            "error": null
+          },
+          {
+            "job_id": "3961d4f77ccf32d7f1d28c4c4931c208424569631455eb340eaf6e6a1c3f02e2",
+            "status": "completed",
+            "result_id": "25f91d9f8084d2a2463d5acdc5a5ee7f",
+            "resumed": false,
+            "error": null
+          },
+          {
+            "job_id": "f75a81350ea1763688439aa44511fdd389b63794e755a94207d6e09f92a80585",
+            "status": "completed",
+            "result_id": "604fd321b3c1d6539206336342643969",
+            "resumed": false,
+            "error": null
+          }
+        ]
+      }
+    ]
+  },
+  "counts": {
+    "queued": 0,
+    "running": 0,
+    "completed": 8,
+    "failed": 0
+  },
+  "run_ids": [
+    "25f91d9f8084d2a2463d5acdc5a5ee7f",
+    "29318c9e92fbb3e5f7f448c0e5649c07",
+    "604fd321b3c1d6539206336342643969",
+    "76e04aa7708d5cc0fe41e84e2d2b07c5",
+    "772b09f98c304cd898ed22a197213ae3",
+    "c0cefeedb099ce178d170907bacedbc1",
+    "c6e016aa6e4ea698ec25a30855bc28da",
+    "df899cba102de7bffeaecfa60ef2f154"
+  ],
+  "artifact_verification": {
+    "25f91d9f8084d2a2463d5acdc5a5ee7f": [],
+    "29318c9e92fbb3e5f7f448c0e5649c07": [],
+    "604fd321b3c1d6539206336342643969": [],
+    "76e04aa7708d5cc0fe41e84e2d2b07c5": [],
+    "772b09f98c304cd898ed22a197213ae3": [],
+    "c0cefeedb099ce178d170907bacedbc1": [],
+    "c6e016aa6e4ea698ec25a30855bc28da": [],
+    "df899cba102de7bffeaecfa60ef2f154": []
+  },
+  "repeat_submission": {
+    "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\queue.sqlite",
+    "submitted": 0,
+    "existing": 8,
+    "job_ids": [
+      "f75a81350ea1763688439aa44511fdd389b63794e755a94207d6e09f92a80585",
+      "611f26a331a451dcbc078fa574757a8ae182560d3739d738e142705ea763f3d7",
+      "0625deedea1afca3b9fd016e1c757429d348eab6e402be73e4de443c99c5acaf",
+      "1d1c3d8f16672270d8d076258687aa2417adc192e37ac04cae120e1c9af5115b",
+      "0c960015703d135e7525b505acfadac52d21dfb4e1ffd53c654a4128e34f5b08",
+      "f8c4ae2e8ced7eedbc47ba349c307939832f3e4356b0e9f87d391903118e2b78",
+      "3961d4f77ccf32d7f1d28c4c4931c208424569631455eb340eaf6e6a1c3f02e2",
+      "1cb05e2e2b1d898242c4f0793b3f3c3927050492cdd6bac3604e678f242b4e2d"
+    ]
+  },
+  "repeat_worker": {
+    "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\queue.sqlite",
+    "processed": 0,
+    "completed": 0,
+    "failed": 0,
+    "lost_claim": 0,
+    "jobs": []
+  },
+  "crash_recovery": {
+    "submission": {
+      "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\crash-after-publication\\queue.sqlite",
+      "submitted": 1,
+      "existing": 0,
+      "job_ids": [
+        "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e"
+      ]
+    },
+    "intentional_exit_code": 23,
+    "published_result_id": "c2b3b03a7162d7ee73ac41f5d089706e",
+    "recovery": {
+      "queue_path": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\queue-20260929\\crash-after-publication\\queue.sqlite",
+      "processed": 1,
+      "completed": 1,
+      "failed": 0,
+      "lost_claim": 0,
+      "jobs": [
+        {
+          "job_id": "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e",
+          "status": "completed",
+          "result_id": "c2b3b03a7162d7ee73ac41f5d089706e",
+          "resumed": true,
+          "error": null
+        }
+      ]
+    },
+    "claim_count": 2,
+    "counts": {
+      "queued": 0,
+      "running": 0,
+      "completed": 1,
+      "failed": 0
+    },
+    "artifact_verification": [],
+    "events": [
+      {
+        "sequence": 1,
+        "job_id": "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e",
+        "kind": "submitted",
+        "at": 1790719886.7323189,
+        "detail": {
+          "expected_result_id": "c2b3b03a7162d7ee73ac41f5d089706e"
+        }
+      },
+      {
+        "sequence": 2,
+        "job_id": "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e",
+        "kind": "claimed",
+        "at": 1790719888.6151674,
+        "detail": {
+          "claim_number": 1
+        }
+      },
+      {
+        "sequence": 3,
+        "job_id": "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e",
+        "kind": "lease_expired",
+        "at": 1790719891.404779,
+        "detail": {}
+      },
+      {
+        "sequence": 4,
+        "job_id": "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e",
+        "kind": "claimed",
+        "at": 1790719891.404779,
+        "detail": {
+          "claim_number": 2
+        }
+      },
+      {
+        "sequence": 5,
+        "job_id": "bc57cbbea484ce77b75722cef8b2b1ad386f9b01502983e94bd856ec2eb4177e",
+        "kind": "completed",
+        "at": 1790719891.9766645,
+        "detail": {
+          "error": null,
+          "result_id": "c2b3b03a7162d7ee73ac41f5d089706e",
+          "resumed": true,
+          "status": "completed"
+        }
+      }
+    ]
+  },
+  "runtime_unchanged": true
+}

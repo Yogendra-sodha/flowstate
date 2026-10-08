@@ -1,0 +1,6 @@
+{
+  "equation": "darcy2d",
+  "grid_size": 33,
+  "domain_length": 1.0,
+  "contrast": 0.5
+}

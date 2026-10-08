@@ -1,0 +1,10 @@
+{
+  "equation": "burgers1d",
+  "viscosity": 0.05,
+  "grid_size": 64,
+  "dt": 0.002,
+  "steps": 200,
+  "save_every": 10,
+  "initial_condition": "sine",
+  "seed": 42
+}

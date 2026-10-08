@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "verified_at_utc": "2026-10-04T05:58:35.524626+00:00",
+  "project": "flowstate-510320",
+  "bucket": "flowstate-codex",
+  "prefix": "flowstate/",
+  "authentication": "local ADC impersonation",
+  "service_account": "flowstate@flowstate-510320.iam.gserviceaccount.com",
+  "experiment_id": "186ee23716212de6260e3be2838b668a",
+  "config": {
+    "amplitude": 1.0,
+    "domain_length": 6.283185307179586,
+    "dt": 0.002,
+    "equation": "burgers1d",
+    "grid_size": 64,
+    "initial_condition": "sine",
+    "save_every": 10,
+    "seed": 42,
+    "steps": 200,
+    "viscosity": 0.05
+  },
+  "provenance": {
+    "dependencies": {
+      "duckdb": "1.5.5",
+      "flowstate-research": "0.6.0",
+      "h5py": "3.16.0",
+      "numpy": "2.5.3",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "zarr": "3.4.0"
+    },
+    "git_commit": "9e6fee06ed4b8c801f3307f92519e9887e3de785",
+    "git_dirty": false,
+    "hardware": {
+      "logical_cpu_count": 8,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+    },
+    "precision": "float64",
+    "python": "3.12.9",
+    "source_sha256": "b07035a75b685b76d55f48374cb15e5b9b04c20e2bc7fb122d370e5fc1f3fcac"
+  },
+  "storage_libraries": {
+    "google-cloud-storage": "3.16.0",
+    "google-auth": "2.59.1",
+    "google-crc32c": "1.8.0"
+  },
+  "upload": {
+    "id": "186ee23716212de6260e3be2838b668a",
+    "bucket": "flowstate-codex",
+    "prefix": "flowstate",
+    "manifest_key": "flowstate/experiments/186ee23716212de6260e3be2838b668a/manifest.json",
+    "manifest_sha256": "e557eb8dd820bb03d52e36062a35a70ce055d4c2231ebce31b8c57f5da7b1bf2",
+    "uploaded_objects": 38,
+    "reused_objects": 0,
+    "committed": true,
+    "resumed": false
+  },
+  "repeated_upload": {
+    "id": "186ee23716212de6260e3be2838b668a",
+    "bucket": "flowstate-codex",
+    "prefix": "flowstate",
+    "manifest_key": "flowstate/experiments/186ee23716212de6260e3be2838b668a/manifest.json",
+    "manifest_sha256": "e557eb8dd820bb03d52e36062a35a70ce055d4c2231ebce31b8c57f5da7b1bf2",
+    "uploaded_objects": 0,
+    "reused_objects": 38,
+    "committed": true,
+    "resumed": true
+  },
+  "download": {
+    "id": "186ee23716212de6260e3be2838b668a",
+    "path": "outputs\\gcs-20261004\\restored\\experiments\\186ee23716212de6260e3be2838b668a",
+    "resumed": false
+  },
+  "repeated_download": {
+    "id": "186ee23716212de6260e3be2838b668a",
+    "path": "outputs\\gcs-20261004\\restored\\experiments\\186ee23716212de6260e3be2838b668a",
+    "resumed": true
+  },
+  "verification": {
+    "id": "186ee23716212de6260e3be2838b668a",
+    "valid": true,
+    "problems": []
+  },
+  "all_files_byte_identical": true,
+  "file_count_including_manifest": 39,
+  "local_bytes_including_manifest": 36507,
+  "manifest_sha256": "e557eb8dd820bb03d52e36062a35a70ce055d4c2231ebce31b8c57f5da7b1bf2",
+  "query_rows": [
+    {
+      "id": "186ee23716212de6260e3be2838b668a",
+      "equation": "burgers1d",
+      "status": "completed"
+    }
+  ],
+  "dashboard": {
+    "output_html": "C:\\Users\\yuvis\\OneDrive\\Documents\\ChatGPT\\Flowstate\\outputs\\gcs-20261004\\research.html",
+    "html_sha256": "653b478162eed44c5e29026564a237527581e2f036fc131f8ac62bd4515d0ca0",
+    "displayed": 1,
+    "total": 1,
+    "truncated": false,
+    "max_experiments": 50,
+    "selection": "Ascending experiment ID; counts include committed valid-ID directories only"
+  },
+  "stages": [
+    {
+      "stage": "simulate",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\source",
+        "run",
+        "examples/burgers.json",
+        "--stream"
+      ],
+      "seconds": 2.996,
+      "exit_code": 0
+    },
+    {
+      "stage": "upload",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\source",
+        "gcs",
+        "upload",
+        "186ee23716212de6260e3be2838b668a",
+        "flowstate-codex",
+        "--prefix",
+        "flowstate/",
+        "--project",
+        "flowstate-510320"
+      ],
+      "seconds": 15.027,
+      "exit_code": 0
+    },
+    {
+      "stage": "upload_again",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\source",
+        "gcs",
+        "upload",
+        "186ee23716212de6260e3be2838b668a",
+        "flowstate-codex",
+        "--prefix",
+        "flowstate/",
+        "--project",
+        "flowstate-510320"
+      ],
+      "seconds": 22.262,
+      "exit_code": 0
+    },
+    {
+      "stage": "download",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\restored",
+        "gcs",
+        "download",
+        "186ee23716212de6260e3be2838b668a",
+        "flowstate-codex",
+        "--prefix",
+        "flowstate/",
+        "--project",
+        "flowstate-510320"
+      ],
+      "seconds": 12.535,
+      "exit_code": 0
+    },
+    {
+      "stage": "verify",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\restored",
+        "verify",
+        "186ee23716212de6260e3be2838b668a"
+      ],
+      "seconds": 1.122,
+      "exit_code": 0
+    },
+    {
+      "stage": "download_again",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\restored",
+        "gcs",
+        "download",
+        "186ee23716212de6260e3be2838b668a",
+        "flowstate-codex",
+        "--prefix",
+        "flowstate/",
+        "--project",
+        "flowstate-510320"
+      ],
+      "seconds": 4.919,
+      "exit_code": 0
+    },
+    {
+      "stage": "query",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\restored",
+        "query",
+        "SELECT id, equation, status FROM experiments"
+      ],
+      "seconds": 1.273,
+      "exit_code": 0
+    },
+    {
+      "stage": "dashboard",
+      "arguments": [
+        "--lake",
+        "outputs\\gcs-20261004\\restored",
+        "dashboard",
+        "outputs\\gcs-20261004\\research.html"
+      ],
+      "seconds": 1.406,
+      "exit_code": 0
+    }
+  ],
+  "limits": [
+    "One small Burgers experiment; no throughput, scale, or cloud-compute claim.",
+    "Source and restored files verified byte-for-byte; no destructive cloud tests.",
+    "Retries/conflicts/corruption are also tested offline; real network fault injection omitted.",
+    "Only experiment artifacts are mirrored, not training datasets, models, or queue databases."
+  ],
+  "validation": {
+    "gcs_tests_passed": 39,
+    "gcs_and_s3_tests_passed": 48,
+    "full_suite_passed": 427,
+    "full_suite_skipped": 4,
+    "skip_reason": "Windows symbolic-link privilege unavailable",
+    "full_suite_seconds": 267.18,
+    "ruff": "passed",
+    "sdist_and_wheel": "passed",
+    "packaged_python_and_html_match_source": true
+  }
+}

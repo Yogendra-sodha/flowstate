@@ -1,0 +1,4 @@
+# Keep the retained scaling evidence byte-stable across Windows/Linux checkouts.
+docs/reports/scaling-large.json -text
+docs/reports/scaling-large-validation.json -text
+docs/reports/scaling-large.png binary

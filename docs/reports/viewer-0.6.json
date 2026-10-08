@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "kind": "offline_viewer_validation",
+  "package_version": "0.6.0",
+  "numerical_source_commit": "eee73e4f4beeb105c9849759d5e8862143ab8715",
+  "exports": [
+    {
+      "path": "outputs\\viewer-20260929\\research-final.html",
+      "bytes": 82888,
+      "sha256": "cf02535a1d1d5ac4d851b2420b1d2aef312ff59dabdf1602fe21dd42723b8db9",
+      "experiments": 16
+    },
+    {
+      "path": "outputs\\viewer-20260929\\navier-final.html",
+      "bytes": 175231,
+      "sha256": "592a0970830598f0c42465b7cbf8b3f73970f57a827d34e1cee2b7e0620df443",
+      "experiments": 8
+    }
+  ],
+  "local_tests": {
+    "tests": 392,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "reported_seconds": 151.88,
+    "junit_sha256": "c42bd180dca5b9a563bb8b505ff5fa805e434f92edd411d0f83e2b2e4aa687f9",
+    "skip_reason": "Four symbolic-link tests require Windows permission unavailable on this account; Linux CI can exercise them."
+  },
+  "checks": {
+    "ruff": "passed",
+    "sdist_and_wheel_build": "passed",
+    "packaged_python_and_html_match_source": true,
+    "committed_conservation_scalars_match_all_six_raw_runs": true
+  },
+  "browser_checks": {
+    "served_snapshot": "research-v2.html",
+    "verified": [
+      "Rendered Burgers energy and velocity line plots",
+      "Equation filter selected a Darcy pressure heatmap with the steady-state caption",
+      "Status filter selected the recorded failed experiment",
+      "Search and review-flag filters displayed the no-matches state",
+      "No captured browser console errors in these checks"
+    ],
+    "direct_file_check": "Not exercised: browser URL policy disallows file protocol. No workaround attempted.",
+    "final_template_delta": "The final export only changes the missing-energy message to mention steady Darcy only for Darcy records; browser checks used the preceding export."
+  },
+  "limitations": [
+    "Read-only offline experiment snapshot; no hosted service, model-comparison view, or graph navigation.",
+    "Snapshots remain local under ignored outputs; source, tests and report are committed.",
+    "Full-file checksum verification can be expensive even though decoded preview arrays are bounded."
+  ]
+}
