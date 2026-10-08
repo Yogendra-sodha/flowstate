@@ -1,0 +1,706 @@
+diff --git a/.dockerignore b/.dockerignore
+new file mode 100644
+index 0000000..a0da80e
+--- /dev/null
++++ b/.dockerignore
+@@ -0,0 +1,14 @@
++**
++!pyproject.toml
++!uv.lock
++!README.md
++!LICENSE
++!src/
++!src/flowstate/
++!src/flowstate/**
++!examples/
++!examples/burgers.json
++!examples/navier_stokes.json
++!examples/darcy.json
++**/__pycache__/**
++**/*.pyc
+diff --git a/.gcloudignore b/.gcloudignore
+new file mode 100644
+index 0000000..ca31d3f
+--- /dev/null
++++ b/.gcloudignore
+@@ -0,0 +1,17 @@
++# Upload only reviewed build inputs; never local credentials, data, Git, or outputs.
++**
++!Dockerfile
++!cloudbuild.yaml
++!pyproject.toml
++!uv.lock
++!README.md
++!LICENSE
++!src/
++!src/flowstate/
++!src/flowstate/**
++!examples/
++!examples/burgers.json
++!examples/navier_stokes.json
++!examples/darcy.json
++**/__pycache__/**
++**/*.pyc
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..bd1c256
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,23 @@
++FROM python:3.12-slim-bookworm AS build
++COPY --from=ghcr.io/astral-sh/uv:0.8.22 /uv /uvx /bin/
++WORKDIR /app
++ENV UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=never
++COPY pyproject.toml uv.lock README.md LICENSE ./
++COPY src/ ./src/
++RUN uv sync --locked --no-dev --extra gcs --no-editable
++
++FROM python:3.12-slim-bookworm
++ARG FLOWSTATE_BUILD_COMMIT
++RUN python -c "import os,re; assert re.fullmatch('[0-9a-f]{40}', os.environ.get('FLOWSTATE_BUILD_COMMIT', '')), 'A full source commit is required'"
++ENV FLOWSTATE_BUILD_COMMIT=${FLOWSTATE_BUILD_COMMIT} \
++    PATH=/app/.venv/bin:$PATH \
++    PYTHONUNBUFFERED=1 \
++    PYTHONDONTWRITEBYTECODE=1 \
++    OMP_NUM_THREADS=1 \
++    OPENBLAS_NUM_THREADS=1
++LABEL org.opencontainers.image.revision=${FLOWSTATE_BUILD_COMMIT}
++WORKDIR /app
++COPY --from=build /app/.venv /app/.venv
++COPY examples/burgers.json examples/navier_stokes.json examples/darcy.json ./examples/
++USER 65532:65532
++ENTRYPOINT ["flowstate"]
+diff --git a/cloudbuild.yaml b/cloudbuild.yaml
+new file mode 100644
+index 0000000..fbf3ade
+--- /dev/null
++++ b/cloudbuild.yaml
+@@ -0,0 +1,17 @@
++steps:
++  - name: gcr.io/cloud-builders/docker
++    args:
++      - build
++      - --build-arg
++      - FLOWSTATE_BUILD_COMMIT=${_COMMIT}
++      - --tag
++      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/worker:${_COMMIT}
++      - .
++images:
++  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/worker:${_COMMIT}
++timeout: 600s
++options:
++  logging: CLOUD_LOGGING_ONLY
++substitutions:
++  _REGION: us-east1
++  _REPOSITORY: flowstate
+diff --git a/docs/steps/10-cloud-worker.md b/docs/steps/10-cloud-worker.md
+new file mode 100644
+index 0000000..66cdb5f
+--- /dev/null
++++ b/docs/steps/10-cloud-worker.md
+@@ -0,0 +1,201 @@
++# Run one experiment on a cloud worker
++
++The previous step copied locally calculated experiments to Google Cloud Storage.
++This step moves the calculation itself onto a temporary cloud computer. One
++Google Cloud Run Job starts Flowstate, runs one small CPU experiment, saves its
++evidence to the existing bucket, and exits.
++
++For the first example, the input is `examples/burgers.json`: a Burgers simulation
++with 64 spatial points, 200 time steps, viscosity `0.05`, and a sine-shaped
++starting pattern. The output is an experiment record, numerical arrays,
++measurements, and checksums that you can download and inspect locally.
++
++```text
++Local source snapshot + locked Python dependencies
++                  |
++              Cloud Build
++                  | builds a container image
++            Artifact Registry
++                  | stores the runnable image
++             Cloud Run Job
++                  | starts one container
++          read experiment JSON settings
++                  |
++          solver -> temporary local lake
++                  |
++          verify artifacts -> GCS upload
++                  |
++ gs://flowstate-codex/flowstate/experiments/<id>/manifest.json
++                  |
++          download -> verify -> local viewer
++```
++
++Cloud Run supplies the computer. Artifact Registry stores the packaged program.
++GCS stores the experiment evidence after calculation. Cloud Build turns the
++selected source files into that runnable package. These services have different
++jobs; uploading a JSON file to GCS alone does not start a simulation.
++
++## Starting point and implementation choices
++
++The existing engine already knows how to validate a configuration, run a solver,
++capture provenance, and publish an immutable local experiment. The GCS adapter
++already knows how to verify and copy those artifacts. The cloud worker connects
++these two paths instead of implementing another solver or storage format.
++
++The first deployment is intentionally bounded:
++
++| Setting | Value |
++| --- | --- |
++| Project | `flowstate-510320` |
++| Region | `us-east1` |
++| Experiment bucket | `flowstate-codex` |
++| Object prefix | `flowstate/` |
++| Runtime identity | `flowstate@flowstate-510320.iam.gserviceaccount.com` |
++| Build identity | `flowstate-builder@flowstate-510320.iam.gserviceaccount.com` |
++| Tasks per execution / parallel tasks | `1` / `1` |
++| CPU / memory | `1` CPU / `1 GiB` |
++| Task timeout / automatic retries | `300` seconds / `0` |
++| Maximum grid size | `128`, or `65` for Darcy |
++| Maximum time steps | `10,000` |
++
++The worker validates its workload before calculation. The grid and step limits
++are program safeguards, while the memory and timeout limits are enforced by the
++cloud job. The limits do not guarantee that every permitted configuration will
++finish within five minutes. Start with the small Burgers example.
++
++This is a manually started, single-experiment worker. The local SQLite queue
++remains a local queue. There is no distributed scheduler, GPU training, or
++automatic parameter sweep in this milestone. Cloud Run Jobs execute their tasks
++and exit rather than serving an HTTP endpoint. [Cloud Run Jobs documentation](https://docs.cloud.google.com/run/docs/create-jobs).
++
++## What happens to the data
++
++1. **Extract settings:** The worker reads one JSON configuration included in the
++   image. Configuration validation fills in supported defaults and rejects
++   invalid settings. The worker applies its additional resource limits.
++2. **Calculate:** `engine.run_experiment()` selects the equation's solver. For
++   Burgers, the solver repeatedly calculates the next state from the current
++   state and the configured time step. It keeps the requested saved frames.
++3. **Transform:** The engine derives summary measurements from numerical
++   diagnostics. `Lake.write()` publishes the detailed `record.json`, a flattened
++   `metadata.parquet` row, chunked `fields.zarr` arrays where available, and a
++   `manifest.json` containing artifact checksums.
++4. **Load:** `gcs_store.upload_experiment()` passes the verified local experiment
++   to the shared artifact mirror. Its upload loop copies the artifact files to
++   GCS and publishes the completion manifest last.
++5. **Retrieve:** The existing `flowstate gcs download` command restores the same
++   bytes into a local lake. The local catalog queries its Parquet metadata, and
++   the dashboard can display the restored experiment.
++
++The calculation's temporary lake lives inside the running container. It is not
++durable storage. Once the container disappears, the GCS objects are the durable
++copy. A container stopped before the completion manifest is uploaded may leave
++no complete remote experiment.
++
++The source build also produces an image, build logs, and a deployment report.
++Those are deployment evidence; they are separate from the numerical arrays and
++experiment metadata.
++
++## Functions and loops to read
++
++| Code | What it does |
++| --- | --- |
++| `src/flowstate/cli.py` | Parses the `cloud-worker` command and its configuration/storage arguments. |
++| `src/flowstate/cloud_worker.py` | Validates the bounded job, calls the existing engine, uploads its evidence, and reports the outcome. |
++| `src/flowstate/engine.py`, `run_experiment()` | Normalizes settings, creates the experiment identity, runs the solver, and publishes success or failure evidence. |
++| `src/flowstate/numerics.py`, `solve()` | Selects Burgers, Navier–Stokes, or Darcy calculations. |
++| `src/flowstate/streaming.py`, `ZarrFrameSink` | Writes saved time-dependent fields incrementally instead of keeping every field in memory. |
++| `src/flowstate/lake.py`, `Lake.write()` | Converts the result and record into the local experiment's files. |
++| `src/flowstate/artifact_mirror.py`, `upload()` | Loops over the artifact list, checks each file, and publishes the remote completion manifest last. |
++| `src/flowstate/gcs_store.py`, `_client()` | Uses Application Default Credentials to obtain the attached runtime identity. |
++
++There are two main kinds of repetition. The solver's time-step loop generates
++numerical data. The artifact mirror's file loop transfers the already generated
++data. Darcy is a steady-state calculation, so it produces one solved state
++rather than a time-step history. The worker does not loop forever waiting for
++more experiments: one invocation handles one configuration and exits.
++
++## Authentication and provenance
++
++Cloud Run uses the attached `flowstate` service account. The Python Google SDK
++obtains short-lived credentials through Application Default Credentials (ADC).
++No browser login runs inside the container, and no private key is copied into
++the image. The runtime account retains the bucket's Object Creator and Object
++Viewer access used in the previous step.
++
++Building is a separate operation performed by `flowstate-builder`. The build
++identity needs access to build inputs, image publication, and build logs. The
++runtime identity needs access to experiment objects. Keeping these identities
++separate makes their permissions understandable and independently adjustable.
++
++The image contains a snapshot of local source selected for the build. It does
++not automatically pull the latest GitHub branch whenever the job runs. Code or
++example changes require a new build and deployment before a later execution
++uses them.
++
++An experiment's `source_sha256` hashes the installed Python source. It identifies
++the actual program files used by the worker. The container may not contain Git
++metadata, so `git_commit` can be `null`. `FLOWSTATE_BUILD_COMMIT` is a declared
++source commit supplied when building the image; it is not an independent proof
++that the local source had no uncommitted changes. The deployment report records
++the built image digest, which identifies the deployed container image. Read
++these records together when reproducing a cloud run.
++
++## Failures and repetition
++
++A recorded numerical failure is useful evidence. If the engine records one,
++the worker still uploads its failure record and checksums, then exits with a
++nonzero status so the cloud execution is visibly failed. Failed calculations
++may have no field arrays. An upload failure also fails the worker; it must not
++be reported as a successful archived experiment or as a physical anomaly.
++
++The job is configured with zero automatic retries. If a process is terminated
++by its time limit or memory limit, its temporary lake may be lost. There is no
++mid-simulation checkpoint recovery. A new execution starts the calculation
++again; matching immutable artifacts can be reused by the mirror only when their
++bytes agree. An incomplete upload is not complete until its manifest exists.
++
++Do not treat a cloud execution name as an experiment ID. Execution names locate
++the job and logs. The worker's output supplies the experiment ID used to restore
++the scientific evidence.
++
++## Inspect an execution and retrieve the evidence
++
++After deployment, use the Cloud Run Jobs page in project `flowstate-510320` to
++open the job, select its execution, and read the logs. The logs show the worker's
++structured output and experiment ID. A green cloud execution alone does not
++replace verification of the downloaded artifacts.
++
++For a command-line log view, replace `JOB_NAME` with the deployed job name:
++
++```powershell
++gcloud run jobs logs read JOB_NAME --project=flowstate-510320 --region=us-east1 --limit=50
++```
++
++This command reads job logs and does not start a new calculation. [Google Cloud CLI reference](https://docs.cloud.google.com/sdk/gcloud/reference/run/jobs/logs/read).
++
++Copy the reported experiment ID into the following commands. Run them from the
++repository root with the existing local GCS authentication:
++
++```powershell
++uv run --no-sync flowstate --lake data/cloud-restored gcs download EXPERIMENT_ID flowstate-codex --prefix flowstate/ --project flowstate-510320
++uv run --no-sync flowstate --lake data/cloud-restored verify EXPERIMENT_ID
++uv run --no-sync flowstate --lake data/cloud-restored show EXPERIMENT_ID
++uv run --no-sync flowstate --lake data/cloud-restored dashboard outputs/cloud-worker.html
++Start-Process outputs/cloud-worker.html
++```
++
++Choose a new dashboard filename if that export already exists. Downloading and
++viewing evidence does not rerun the simulation.
++
++## What verifies this milestone
++
++Local tests should cover workload validation, engine-to-upload handoff, storage
++errors, and preservation of failed numerical evidence. Those checks exercise
++the program behavior without proving that a cloud deployment works.
++
++A live validation requires a successful image build, a completed cloud
++execution, a remote completion manifest, and a download whose files pass
++`flowstate verify`. Record the build/image, execution name, experiment ID, and
++verification result after those steps occur. This chapter does not itself claim
++that a live execution has succeeded.
+diff --git a/src/flowstate/cli.py b/src/flowstate/cli.py
+index 636b66d..b1a7e41 100644
+--- a/src/flowstate/cli.py
++++ b/src/flowstate/cli.py
+@@ -175,6 +175,13 @@ def main(argv: list[str] | None = None) -> int:
+     gcs.add_argument("bucket", help="Bucket name without gs://")
+     gcs.add_argument("--prefix", default="")
+     gcs.add_argument("--project", help="Google Cloud project ID (or use the ADC default)")
++    cloud_worker = commands.add_parser(
++        "cloud-worker", help="Run one bounded experiment and publish its evidence to GCS"
++    )
++    cloud_worker.add_argument("config", help="JSON configuration file")
++    cloud_worker.add_argument("bucket", help="Bucket name without gs://")
++    cloud_worker.add_argument("--prefix", default="")
++    cloud_worker.add_argument("--project", help="Google Cloud project ID (or use the ADC default)")
+     demo = commands.add_parser("demo", help="Run a small reproducible end-to-end research study")
+     demo.add_argument("output")
+     demo.add_argument("--epochs", type=int, default=20)
+@@ -212,7 +219,7 @@ def main(argv: list[str] | None = None) -> int:
+                 ]
+             )
+             return int(any(out.record["status"] == "failed" for out in outcomes))
+-        if args.command == "dashboard":
++        if args.command in {"dashboard", "cloud-worker"}:
+             return _extended_command(args)
+         lake = Lake(args.lake)
+         if args.command == "query":
+@@ -246,7 +253,19 @@ def main(argv: list[str] | None = None) -> int:
+ 
+ 
+ def _extended_command(args) -> int:
+-    if args.command == "dashboard":
++    if args.command == "cloud-worker":
++        from flowstate.cloud_worker import run_cloud_experiment
++
++        report = run_cloud_experiment(
++            _read_json(args.config),
++            args.lake,
++            args.bucket,
++            prefix=args.prefix,
++            project=args.project,
++        )
++        _print(report)
++        return int(report["status"] == "failed")
++    elif args.command == "dashboard":
+         from flowstate.dashboard import export_dashboard
+ 
+         _print(export_dashboard(args.lake, args.output, max_experiments=args.max_experiments))
+diff --git a/src/flowstate/cloud_worker.py b/src/flowstate/cloud_worker.py
+new file mode 100644
+index 0000000..290cbde
+--- /dev/null
++++ b/src/flowstate/cloud_worker.py
+@@ -0,0 +1,97 @@
++"""One bounded numerical experiment followed by a verified GCS publication.
++
++The local lake may be ephemeral. A successful worker exit requires a committed
++remote manifest; a recorded numerical failure is published too. This worker
++does not claim distributed deduplication or recovery after container loss.
++"""
++
++from __future__ import annotations
++
++import os
++import re
++from pathlib import Path
++
++from flowstate import gcs_store
++from flowstate.artifact_mirror import _prefix
++from flowstate.engine import run_experiment
++from flowstate.numerics import normalize_config
++
++MAX_GRID_SIZE = 128
++MAX_DARCY_GRID_SIZE = 65
++MAX_STEPS = 10_000
++_CLOUD_RUN_CONTEXT = (
++    "CLOUD_RUN_JOB",
++    "CLOUD_RUN_EXECUTION",
++    "CLOUD_RUN_TASK_INDEX",
++    "CLOUD_RUN_TASK_ATTEMPT",
++)
++
++
++def run_cloud_experiment(
++    config: dict,
++    lake_root: str | Path,
++    bucket: str,
++    *,
++    prefix: str = "",
++    project: str | None = None,
++) -> dict:
++    """Run once and publish evidence, returning only after remote commit.
++
++    Invalid configuration/runtime settings raise ValueError before numerical
++    work or authentication. Numerical failures return ``status='failed'`` after
++    publication. Transfer failures raise RuntimeError even when computation
++    completed successfully; the local result remains available for diagnosis.
++    Runtime context is included only in this report, never read wholesale from
++    the environment or added to immutable scientific artifacts.
++    """
++    canonical = normalize_config(config)
++    max_grid = MAX_DARCY_GRID_SIZE if canonical["equation"] == "darcy2d" else MAX_GRID_SIZE
++    if canonical["grid_size"] > max_grid:
++        raise ValueError(f"Cloud worker grid_size must be <= {max_grid}")
++    if canonical.get("steps", 0) > MAX_STEPS:
++        raise ValueError(f"Cloud worker steps must be <= {MAX_STEPS}")
++    if os.environ.get("CLOUD_RUN_TASK_COUNT", "1") != "1":
++        raise ValueError("Cloud worker requires CLOUD_RUN_TASK_COUNT=1")
++    if os.environ.get("CLOUD_RUN_TASK_INDEX", "0") != "0":
++        raise ValueError("Cloud worker requires CLOUD_RUN_TASK_INDEX=0")
++    build_commit = os.environ.get("FLOWSTATE_BUILD_COMMIT")
++    if build_commit is not None and re.fullmatch(r"[0-9a-f]{40}", build_commit) is None:
++        raise ValueError("FLOWSTATE_BUILD_COMMIT must be exactly 40 lowercase hexadecimal digits")
++    if (
++        not isinstance(bucket, str)
++        or not bucket
++        or bucket != bucket.strip()
++        or any(character in bucket for character in ("/", "\\", ":"))
++    ):
++        raise ValueError("Cloud worker bucket must be a bucket name without gs://")
++    if not isinstance(prefix, str):
++        raise ValueError("Cloud worker prefix must be a string")
++    prefix = _prefix(prefix)
++    context = {key: os.environ[key] for key in _CLOUD_RUN_CONTEXT if key in os.environ}
++
++    outcome = run_experiment(canonical, lake_root, stream=True)
++    record = outcome.record
++    if record["status"] not in {"completed", "failed"}:
++        raise RuntimeError("Cloud worker experiment did not produce a finalized result")
++    try:
++        uploaded = gcs_store.upload_experiment(
++            lake_root, record["id"], bucket, prefix=prefix, project=project
++        )
++    except Exception as exc:
++        # Publication is an infrastructure boundary. SDK authentication, retry,
++        # transport and integrity failures all prevent a successful worker exit.
++        raise RuntimeError(f"GCS upload failed for experiment {record['id']}: {exc}") from exc
++    if uploaded.get("committed") is not True:
++        raise RuntimeError(f"GCS upload did not commit experiment {record['id']}")
++    report = {
++        "experiment_id": record["id"],
++        "status": record["status"],
++        "metrics": record["metrics"],
++        "error": record["error"],
++        "upload": uploaded,
++        "local_resumed": outcome.resumed,
++        "cloud_run": context,
++    }
++    if build_commit is not None:
++        report["build_commit"] = build_commit
++    return report
+diff --git a/tests/test_cloud_worker.py b/tests/test_cloud_worker.py
+new file mode 100644
+index 0000000..b6adb2a
+--- /dev/null
++++ b/tests/test_cloud_worker.py
+@@ -0,0 +1,247 @@
++"""Bounded cloud-worker execution and exit contracts without live GCS requests."""
++
++import json
++from unittest.mock import Mock
++
++import pytest
++
++from flowstate import cloud_worker, gcs_store
++from flowstate.cli import main
++from flowstate.engine import RunOutcome
++from flowstate.lake import Lake
++
++
++@pytest.fixture(autouse=True)
++def local_runtime(monkeypatch):
++    for name in (
++        "CLOUD_RUN_JOB",
++        "CLOUD_RUN_EXECUTION",
++        "CLOUD_RUN_TASK_COUNT",
++        "CLOUD_RUN_TASK_INDEX",
++        "CLOUD_RUN_TASK_ATTEMPT",
++        "FLOWSTATE_BUILD_COMMIT",
++    ):
++        monkeypatch.delenv(name, raising=False)
++
++
++@pytest.fixture
++def config():
++    return {"equation": "burgers1d", "grid_size": 8, "steps": 2, "save_every": 1}
++
++
++@pytest.fixture
++def published(monkeypatch):
++    calls = []
++
++    def upload(lake_root, experiment_id, bucket, prefix="", project=None):
++        lake = Lake(lake_root)
++        # Upload must only receive a finalized, verifiable result.
++        assert not lake.verify(experiment_id)
++        record = lake.load_record(experiment_id)
++        assert record["status"] in {"completed", "failed"}
++        calls.append((lake_root, experiment_id, bucket, prefix, project, record))
++        return {"id": experiment_id, "committed": True, "bucket": bucket, "prefix": prefix}
++
++    monkeypatch.setattr(gcs_store, "upload_experiment", upload)
++    return calls
++
++
++@pytest.mark.parametrize("equation", ["burgers1d", "navier_stokes2d", "darcy2d"])
++def test_worker_runs_one_verified_experiment_and_publishes_it(tmp_path, equation, published):
++    config = {"equation": equation, "grid_size": 8}
++    if equation != "darcy2d":
++        config.update(steps=2, save_every=1)
++    report = cloud_worker.run_cloud_experiment(
++        config, tmp_path, "flowstate-test", prefix="flowstate/", project="test-project"
++    )
++    assert report["status"] == "completed" and report["error"] is None
++    assert report["upload"]["committed"] is True
++    assert report["local_resumed"] is False
++    assert len(published) == 1
++    root, experiment_id, bucket, prefix, project, record = published[0]
++    assert root == tmp_path and experiment_id == report["experiment_id"]
++    assert (bucket, prefix.rstrip("/"), project) == ("flowstate-test", "flowstate", "test-project")
++    assert record["equation"] == equation and record["metrics"] == report["metrics"]
++    assert record["storage_mode"] == ("buffered" if equation == "darcy2d" else "streamed")
++    assert len(Lake(tmp_path).records()) == 1
++
++
++def test_numerical_failure_is_published_as_failure_evidence(tmp_path, config, published):
++    report = cloud_worker.run_cloud_experiment({**config, "dt": 100}, tmp_path, "flowstate-test")
++    assert report["status"] == "failed"
++    assert "stability" in report["error"]["message"].lower()
++    assert report["upload"]["committed"] is True and len(published) == 1
++    assert published[0][-1]["status"] == "failed"
++    assert not (tmp_path / "experiments" / report["experiment_id"] / "fields.zarr").exists()
++
++
++def test_local_resume_still_retries_cloud_publication(tmp_path, config, published, monkeypatch):
++    from flowstate import engine
++
++    provenance = engine.capture_provenance()
++    monkeypatch.setattr(engine, "capture_provenance", lambda: provenance)
++    first = cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")
++    second = cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")
++    assert first["experiment_id"] == second["experiment_id"]
++    assert first["local_resumed"] is False and second["local_resumed"] is True
++    assert len(published) == 2 and len(Lake(tmp_path).records()) == 1
++
++
++@pytest.mark.parametrize("failure", [OSError("upload unavailable"), RuntimeError("upload denied")])
++def test_upload_failure_keeps_local_evidence_and_cannot_return_success(
++    tmp_path, config, monkeypatch, failure
++):
++    monkeypatch.setattr(gcs_store, "upload_experiment", Mock(side_effect=failure))
++    with pytest.raises((OSError, RuntimeError), match="upload"):
++        cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")
++    records = Lake(tmp_path).records()
++    assert len(records) == 1 and records[0]["status"] == "completed"
++    assert not Lake(tmp_path).verify(records[0]["id"])
++
++
++def test_uncommitted_upload_is_not_reported_as_success(tmp_path, config, monkeypatch):
++    monkeypatch.setattr(gcs_store, "upload_experiment", lambda *a, **kw: {"committed": False})
++    with pytest.raises(RuntimeError):
++        cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")
++
++
++@pytest.mark.parametrize(
++    "config",
++    [
++        {"equation": "burgers1d", "grid_size": 129, "steps": 1},
++        {"equation": "navier_stokes2d", "grid_size": 129, "steps": 1},
++        {"equation": "darcy2d", "grid_size": 66},
++        {"grid_size": 8, "steps": 10001, "save_every": 10001},
++        {"grid_size": True},
++        {"equation": "unknown"},
++    ],
++)
++def test_invalid_work_is_rejected_before_computation_or_cloud_use(tmp_path, config, monkeypatch):
++    compute, upload = Mock(), Mock()
++    monkeypatch.setattr(cloud_worker, "run_experiment", compute)
++    monkeypatch.setattr(gcs_store, "upload_experiment", upload)
++    lake = tmp_path / "unused"
++    with pytest.raises(ValueError):
++        cloud_worker.run_cloud_experiment(config, lake, "flowstate-test")
++    compute.assert_not_called()
++    upload.assert_not_called()
++    assert not lake.exists()
++
++
++@pytest.mark.parametrize(
++    "config",
++    [
++        {"equation": "burgers1d", "grid_size": 128, "steps": 10000, "save_every": 10000},
++        {"equation": "navier_stokes2d", "grid_size": 128, "steps": 10000, "save_every": 10000},
++        {"equation": "darcy2d", "grid_size": 65},
++    ],
++)
++def test_work_caps_are_inclusive_and_execution_requests_streaming(tmp_path, config, monkeypatch):
++    outcome = RunOutcome(
++        {"id": "bounded", "status": "completed", "metrics": {}, "error": None}, resumed=False
++    )
++    compute = Mock(return_value=outcome)
++    monkeypatch.setattr(cloud_worker, "run_experiment", compute)
++    monkeypatch.setattr(gcs_store, "upload_experiment", lambda *a, **kw: {"committed": True})
++    assert cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")["status"] == (
++        "completed"
++    )
++    compute.assert_called_once()
++    assert compute.call_args.kwargs["stream"] is True
++    assert compute.call_args.args[0]["grid_size"] == config["grid_size"]
++
++
++@pytest.mark.parametrize(
++    "name,value",
++    [
++        ("CLOUD_RUN_TASK_COUNT", "2"),
++        ("CLOUD_RUN_TASK_COUNT", "0"),
++        ("CLOUD_RUN_TASK_COUNT", "invalid"),
++        ("CLOUD_RUN_TASK_INDEX", "1"),
++        ("CLOUD_RUN_TASK_INDEX", "-1"),
++        ("FLOWSTATE_BUILD_COMMIT", "a" * 39),
++        ("FLOWSTATE_BUILD_COMMIT", "g" * 40),
++        ("FLOWSTATE_BUILD_COMMIT", "a" * 40 + "\n"),
++    ],
++)
++def test_invalid_runtime_is_rejected_before_computation_or_cloud_use(
++    tmp_path, config, monkeypatch, name, value
++):
++    monkeypatch.setenv(name, value)
++    compute, upload = Mock(), Mock()
++    monkeypatch.setattr(cloud_worker, "run_experiment", compute)
++    monkeypatch.setattr(gcs_store, "upload_experiment", upload)
++    with pytest.raises(ValueError):
++        cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")
++    compute.assert_not_called()
++    upload.assert_not_called()
++
++
++def test_runtime_report_has_only_allowlisted_context(tmp_path, config, monkeypatch, published):
++    context = {
++        "CLOUD_RUN_JOB": "flowstate-smoke",
++        "CLOUD_RUN_EXECUTION": "flowstate-smoke-abcde",
++        "CLOUD_RUN_TASK_INDEX": "0",
++        "CLOUD_RUN_TASK_ATTEMPT": "0",
++    }
++    for name, value in {
++        **context,
++        "CLOUD_RUN_TASK_COUNT": "1",
++        "FLOWSTATE_BUILD_COMMIT": "abcdef0123" * 4,
++        "GOOGLE_APPLICATION_CREDENTIALS": "do-not-record-credentials.json",
++        "FLOWSTATE_PRIVATE_TOKEN": "do-not-record-private-token",
++        "CLOUD_RUN_PRIVATE_TOKEN": "do-not-record-cloud-token",
++    }.items():
++        monkeypatch.setenv(name, value)
++    report = cloud_worker.run_cloud_experiment(config, tmp_path, "flowstate-test")
++    assert report["cloud_run"] == context
++    assert report["build_commit"] == "abcdef0123" * 4
++    serialized = json.dumps({"report": report, "record": published[0][-1]})
++    assert "do-not-record" not in serialized
++    assert "GOOGLE_APPLICATION_CREDENTIALS" not in serialized
++
++
++@pytest.mark.parametrize("dt,exit_code,status", [(0.001, 0, "completed"), (100, 1, "failed")])
++def test_cli_runs_and_publishes_then_returns_numerical_status(
++    tmp_path, config, published, capsys, dt, exit_code, status
++):
++    path = tmp_path / "config.json"
++    path.write_text(json.dumps({**config, "dt": dt}), encoding="utf-8")
++    assert main(
++        [
++            "--lake", str(tmp_path / "lake"), "cloud-worker", str(path), "flowstate-test",
++            "--prefix", "flowstate/", "--project", "test-project",
++        ]
++    ) == exit_code
++    output = capsys.readouterr()
++    report = json.loads(output.out)
++    assert report["status"] == status and report["upload"]["committed"] is True
++    assert output.err == ""
++    assert published[0][2:5] == ("flowstate-test", "flowstate/", "test-project")
++
++
++def test_cli_upload_error_returns_infrastructure_failure_without_success_output(
++    tmp_path, config, monkeypatch, capsys
++):
++    path = tmp_path / "config.json"
++    path.write_text(json.dumps(config), encoding="utf-8")
++    monkeypatch.setattr(
++        gcs_store, "upload_experiment", Mock(side_effect=RuntimeError("GCS unavailable"))
++    )
++    assert main(
++        ["--lake", str(tmp_path / "lake"), "cloud-worker", str(path), "flowstate-test"]
++    ) == 2
++    output = capsys.readouterr()
++    assert output.out == "" and "GCS unavailable" in output.err
++
++
++def test_cli_invalid_json_fails_before_computation_or_cloud_use(tmp_path, monkeypatch, capsys):
++    path = tmp_path / "invalid.json"
++    path.write_text("[]", encoding="utf-8")
++    compute, upload = Mock(), Mock()
++    monkeypatch.setattr(cloud_worker, "run_experiment", compute)
++    monkeypatch.setattr(gcs_store, "upload_experiment", upload)
++    assert main(["cloud-worker", str(path), "flowstate-test"]) == 2
++    compute.assert_not_called()
++    upload.assert_not_called()
++    assert "JSON object" in capsys.readouterr().err

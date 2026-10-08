@@ -966,3 +966,61 @@ cloud-worker draft remains preserved in Git stash
 `84b667b6307a8971aeb3ed8d75e10aa90c3be664`; it was excluded from the measured source.
 The milestone is complete, and work stops here for review before adding
 mid-trajectory crash recovery.
+
+## 22. Exact solver checkpoints and recovery
+
+The next change extends recovery inside an unfinished simulation. Previously the
+queue could reclaim a job and reuse a finalized result, but an unfinished solver
+started at its initial condition again. The optional `--checkpoint-every` argument
+now flows from CLI parsing through `run_experiment`, or through queue request JSON
+and `work_queue`, into the numerical step loop. It remains an execution option,
+outside the scientific configuration and final experiment identity.
+
+The implementation begins at the numerical state, because saved physical fields
+alone do not fully represent the spectral integrator. Burgers copies its velocity
+vector; Navier–Stokes copies complex spectral vorticity after each completed RK4
+step's filtering. Both snapshots include the completed step, saved times, and
+diagnostic prefix. On restoration, the loop begins at the following step without
+regenerating the initial condition or repeating earlier RK4 work.
+
+The data path has separate extraction, transformation, and loading operations.
+`solve` extracts fields and checkpoint snapshots through callbacks.
+`CheckpointStore.append_frame` and `save` transform those arrays into deterministic
+NPZ blobs and a JSON reference graph. SHA-256 names deduplicate equal blobs.
+Private file writes are flushed before an exclusive hard link publishes a blob;
+the commit marker is published after its dependencies. Competing workers can
+share identical committed evidence without mutating each other's partial stores.
+
+Recovery loads the latest marker, checks provenance and every referenced hash,
+validates array shapes/types and the saved-time schedule, and replays earlier
+physical frames into a new streamed Zarr sink. The resumed solver emits later
+frames into that sink. Final publication follows the existing JSON/Parquet/Zarr
+and checksum-manifest path, so the recovered result uses the same query and
+verification interfaces. Checkpoint I/O errors propagate as infrastructure
+failures; only numerical errors produce numerical failure records.
+
+Tests cover exact restored arrays, off-schedule and final-step snapshots,
+corruption, competing checkpoint writers, pending files, queue lease expiry,
+and invalid requests before filesystem creation. The separate recovery-study
+module launches real workers, counts their RK4 calls, kills an owned worker after
+commit, and compares all scientific-array hashes after recovery. The
+[checkpoint chapter](docs/steps/11-checkpoint-recovery.md) explains the command,
+storage layout, functions, loops, and limitations. Measured evidence will be
+recorded after committing and running this implementation.
+
+## 23. Preserve work when changing computers
+
+The user is moving from Windows to a MacBook Pro. `HANDOFF.md` records the actual
+code state, unfinished milestone gates, Mac environment commands, and a prompt
+for a new Codex chat. Source and the dependency lockfile transfer through Git;
+the virtual environment is recreated on the Mac. Raw experiment fields, model
+outputs, credentials, and caches stay outside Git and require separate transfer
+if the user wants them. A changed hardware/platform identity means new experiment
+identities; old provenance is preserved rather than rewritten to claim reuse.
+
+An older inactive cloud-worker draft existed only in a Git stash. A full binary
+patch including its untracked files is now retained under `docs/handoff/`, with
+its original base recorded in the handoff. This preserves the draft across a
+normal clone without applying it to the current engine or activating remote
+workers. The final recovery study remains an explicit next action on committed
+source, and the migration validation receipt records what was checked on Windows.

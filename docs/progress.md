@@ -43,3 +43,45 @@ draft is preserved in stash `84b667b6307a8971aeb3ed8d75e10aa90c3be664`.
 **Next:** Milestone 2, mid-trajectory checkpoint recovery. Stopped at this phase
 boundary for user review; no cloud credentials, spending, or data deletion were
 used for this phase.
+
+## Computer handoff — Milestone 2 implementation preserved
+
+On 7 October 2026 the user requested migration from Windows to a MacBook Pro.
+The current checkpoint implementation and tests are being committed on `develop`
+with `HANDOFF.md`, rather than left only in the Windows workspace.
+
+**Changed:** added exact Burgers/NS solver checkpoints, immutable state/frame
+blobs and commit markers, verified prefix replay, engine/CLI/queue integration,
+and a reproducible process-kill proof harness. Tests cover real killed workers,
+skipped integration work, exact array equality, corruption, concurrent publication,
+queue recovery, and validation before filesystem effects. The stepbook and
+checkpoint walkthrough describe the functions, loops, and storage pipeline.
+
+**Migration:** `HANDOFF.md` records Mac setup, the code map, milestone status,
+required permissions, raw-data locations, and a continuation prompt. The old
+cloud-worker stash is preserved in `docs/handoff/cloud-worker-draft.patch`, so a
+Git clone retains that inactive draft. No dataset, credentials, or environment
+is added to Git; ignored raw data needs a separate user-managed transfer.
+
+**Validation commands:**
+
+```sh
+uv run --no-sync ruff check .
+uv run --no-sync pytest --junitxml=outputs/handoff-validation-20261007/pytest.xml
+```
+
+Ruff passed; the full suite passed 540 tests with four Windows symbolic-link
+permission skips. Evidence is retained in
+`docs/reports/handoff-validation-20261007.json`. The worker-kill protocol has
+automated test coverage, but the final
+clean-source measured recovery study/report has not been run for this milestone.
+
+**Remaining limits:** Mac dependencies and execution need validation on the new
+computer; hardware and checkout bytes change provenance/identities. Recovery is
+local and assumes a compatible recorded runtime. No power-loss, remote-worker,
+or cross-hardware equality guarantee is established. Milestone 2 remains open
+until its committed-source study is retained and documented. The next chat should
+run that protocol after Mac checks pass, then stop at the phase boundary.
+
+No cloud credentials, cloud spending, deployment, or user-data deletion occurred
+during this handoff.

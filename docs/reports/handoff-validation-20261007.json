@@ -1,0 +1,90 @@
+{
+  "limits": {
+    "actual_worker_kill_resume": "covered by automated tests for both supported transient equations",
+    "clean_committed_recovery_measurement": "pending",
+    "cloud_credentials_used": false,
+    "cloud_spending": false,
+    "mac_validated": false,
+    "milestone2_complete": false,
+    "user_data_deleted": false
+  },
+  "preserved_draft": {
+    "active": false,
+    "base_commit": "57cc0fad6d2cb4ba1572523f93018ce5349b109c",
+    "path": "docs/handoff/cloud-worker-draft.patch",
+    "sha256": "b7335c66ed4bb3fde91ffaca6263a71fff27abaeeeac54f1d64f03177423db4a",
+    "stash_commit": "84b667b6307a8971aeb3ed8d75e10aa90c3be664"
+  },
+  "provenance": {
+    "dependencies": {
+      "duckdb": "1.5.5",
+      "flowstate-research": "0.6.0",
+      "h5py": "3.16.0",
+      "numpy": "2.5.3",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "zarr": "3.4.0"
+    },
+    "git_commit": "4f26e6d67f24d11afe64974152391e5cca845e60",
+    "git_dirty": true,
+    "hardware": {
+      "logical_cpu_count": 8,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+    },
+    "precision": "float64",
+    "python": "3.12.9",
+    "source_sha256": "57a98cfd9dd98e0773a304366f504d1b5e4bd84e0202f73d648688523a5565c6"
+  },
+  "pytest": {
+    "command": "uv run --no-sync pytest --junitxml=outputs/handoff-validation-20261007/pytest.xml",
+    "errors": 0,
+    "failures": 0,
+    "passed": 540,
+    "seconds": 164.118,
+    "skip_reason": "Windows account lacks permission to create symbolic links",
+    "skipped": 4,
+    "stdout_sha256": "c14c88528a18d8c815693ee0108eef14ff0fb7cbe970c1ddc0cd945f2e93f198",
+    "tests": 544,
+    "xml_sha256": "481588e44ded6516b71485f2b07cbe671c2a2e5eead998c66b758bc1124e6148"
+  },
+  "ruff": {
+    "command": "uv run --no-sync ruff check .",
+    "exit_code": 0,
+    "stdout": "All checks passed!"
+  },
+  "schema_version": 1,
+  "scope": "Windows pre-commit validation of checkpoint implementation and computer handoff",
+  "source_files": {
+    "src/flowstate/__init__.py": "3ebdcd83836ecb9155106008636afa6e65db56032c515c997224261d240159e4",
+    "src/flowstate/__main__.py": "f4c84ba335e159f22ff7b8f6e9f697c8aa6ad343af70f9d0426b39e2c885caae",
+    "src/flowstate/artifact_mirror.py": "8ce2b93a1b435d45902ac9a16579e74f9876dd95e4849cf9565e4f358a2ff898",
+    "src/flowstate/checkpoints.py": "5cb5bd721d59343210ac29feb5139529266aa78d7a6fff69b810d3070e2642b3",
+    "src/flowstate/cli.py": "855c5cf7076081854cf9584157a33881bb13d5faf9f4fb81fc5a8ada38e7246c",
+    "src/flowstate/conservation_study.py": "fe0ac96f3cda67b808078e6e07471f7ad42b7d9d10651c514253ad9388e0a7b8",
+    "src/flowstate/darcy.py": "83ddb2e11312e17418b51449fa135bb233a469083191923e09a424c0a9b3cd3f",
+    "src/flowstate/dashboard.py": "238fdb02f597af84211f0af441754ddc482789932ffa8fc3ff4ca46dda1e06fb",
+    "src/flowstate/datasets.py": "053936b82291d59f8a79b947c13ce324c59d137440c412e8fbce25de111f20a8",
+    "src/flowstate/demo.py": "faec4c1ec6776dffcfa61656343ce4bc6ffc9e3286905555146985e6d992f036",
+    "src/flowstate/engine.py": "acdfa827a29ad790e437019a063e69a189175ab00af500afc9a30e609a1d2ebd",
+    "src/flowstate/gcs_store.py": "0fe9e6f877429ab8af8fed214a5a1c71cda98730c0da1effef494b36da917762",
+    "src/flowstate/http_ranges.py": "ae13b7a001d49ee173ca0b4fe4aa802f4df7b621aef935eb1c1ee5fa7259f17e",
+    "src/flowstate/lake.py": "be476740681dc4aef15cc4bca26109a856788d650b5430ccc23284b959daf5b0",
+    "src/flowstate/ml.py": "dffc855bd08fe687ae3bb6cdb86e769f0b4e2062c6f86f4c760744f0f3078d84",
+    "src/flowstate/numerics.py": "57b8530da89ae36a13f1bd1c6533456ad19aa9baa2061043dd6518b7868d66e2",
+    "src/flowstate/object_store.py": "26b41448d66a5db7401bde842b0894eb0f0b45b741d80a22692db109a657425b",
+    "src/flowstate/public_data.py": "4e6abfa0eeccfaa881dc61ba597bb641d7863f9c858eed94d0e8b673e05fde53",
+    "src/flowstate/public_study.py": "3aad6ee49f00507e8096b03eefe9372948e7a23e168c69e506e465bcd3a64a10",
+    "src/flowstate/queue.py": "a8f034878c8c92891f6b2dcde6676786c38bd85854bb767b74d80b72ee96dda6",
+    "src/flowstate/recovery_study.py": "2a9113bc485a91332c89b7546b109d9feda7d243ec452460db147d2875ca6950",
+    "src/flowstate/research.py": "edf36c76c1e9563e804daeb90aeb064248b3e238a6597544ce2996b5a22887e8",
+    "src/flowstate/resources.py": "6e36b96814ca03e32158ec0bc17fa96d0fcd3195bc9ee9e28ee53bc4ffd79841",
+    "src/flowstate/scaling.py": "940dfb51e4c9a82693998ef80a3ad94ce7567591a5963cf045b4ba3aecc2f0b1",
+    "src/flowstate/scaling_chart.py": "74e868440153461cf019023b449e3f70169c6c63f2414599bde6e96f82e771f0",
+    "src/flowstate/scaling_study.py": "b6b53ec6bd3dfdf5f52fce664577c5b1521e36dbf21069061490caaafa2c6eaf",
+    "src/flowstate/streaming.py": "0f292da5e304629ef21c84f086c4992dbf785f0843d520c991e744661893790f",
+    "src/flowstate/validation.py": "42f376783d7bc6fb94418e02bd22856371001d7b4685100690321e33d54923ba"
+  },
+  "validated_at": "2026-10-08T02:00:18.023026+00:00"
+}

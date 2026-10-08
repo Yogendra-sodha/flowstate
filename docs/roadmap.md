@@ -10,7 +10,9 @@ gates are sequential:
 Milestone 1 is complete for the documented local protocol; its
 [report](reports/scaling-large.json), [chart](reports/scaling-large.png), and
 [progress entry](progress.md) retain the evidence and limitations. Milestone 2 is
-next. The remaining milestones have not met their full revised acceptance gates.
+in validation; its [checkpoint protocol](steps/11-checkpoint-recovery.md) describes
+the implementation. The remaining milestones have not met their full revised
+acceptance gates.
 
 1. **Scale measurement:** a larger local workload across the requested grids and
    worker counts, retained timings/memory/storage/reuse/failure evidence, a chart,
@@ -107,7 +109,7 @@ This object-and-link approach is inspired by the documented [Palantir Ontology c
 
 Start by measuring one run. For example, 10,000 runs × 1,000 saved frames × 512² cells × one float32 scalar is approximately 10.49 TB before compression and overhead. Three scalar fields need approximately 31.46 TB. Saving fewer frames, choosing chunks around access patterns, streaming output, and retaining selected derived quantities are experimental-design decisions, not substitutes for validation. Integrator timesteps and saved frames are separate counts.
 
-The S3 and native GCS mirrors implement conditional immutable publication and verified download. A [live GCS round trip](reports/gcs-20261004.json) uploaded one small Burgers experiment, verified reuse, restored every file byte for byte, and queried the restored metadata. S3 remains tested with an emulator. Representative cloud throughput/cost measurements, remote workers, mid-trajectory solver checkpoints, distributed scheduling, a graph database, a hosted multi-user dashboard, and an LLM research planner remain future work. Model training already supports optimizer/RNG checkpoint resumption. A local directory and process pool do not establish distributed support. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
+The S3 and native GCS mirrors implement conditional immutable publication and verified download. A [live GCS round trip](reports/gcs-20261004.json) uploaded one small Burgers experiment, verified reuse, restored every file byte for byte, and queried the restored metadata. S3 remains tested with an emulator. Optional local mid-trajectory solver checkpoints are now implemented and undergoing the revised recovery acceptance checks. Representative cloud throughput/cost measurements, remote workers, distributed scheduling, a graph database, a hosted multi-user dashboard, and an LLM research planner remain future work. Model training already supports optimizer/RNG checkpoint resumption. A local directory and process pool do not establish distributed support. Local prototype data should stay outside Git; commit source, schemas, configurations, documentation, and small deliberate fixtures.
 
 The implemented researcher uses an auditable policy: prioritize failures and flags, propose timestep or grid refinement, preserve comparison conditions, and attach the supporting experiments. Its budgets bound run count and integration steps, not elapsed time or cloud spend. A later language-model planner can formulate hypotheses and explanations, while execution remains constrained by explicit budgets and validation gates. Repeated observations should earn confidence through independently reproducible evidence.
 

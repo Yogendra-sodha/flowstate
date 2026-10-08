@@ -32,9 +32,11 @@ incorrectly labeled using a newer fingerprint from disk.
 
 SQLite coordinates processes on **one machine and local disk**. Do not put the
 queue on a network share or operate the same synced copy from multiple machines.
-This provides local recovery, not distributed scheduling. Solver runs still
-restart from time zero when no finalized artifact exists. Model training has its
-own optimizer/RNG checkpoint mechanism.
+This provides local recovery, not distributed scheduling. The original queue
+restarted an unfinished solver from time zero. Optional
+[mid-trajectory checkpoints](11-checkpoint-recovery.md) now allow continuation
+when submission includes `--checkpoint-every`. Model training has its own
+optimizer/RNG checkpoint mechanism.
 
 ## Preserve the quantity the PDE preserves
 

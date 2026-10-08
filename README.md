@@ -20,6 +20,7 @@ problem.
 - **Execution:** parameter grids, process-based parallel workers, verified reuse of
   finalized runs, immutable failure records, explicit retries, and parent lineage.
   A durable local SQLite queue adds leased claims and recovery after worker exit.
+  Optional solver checkpoints continue interrupted Burgers and Navier–Stokes runs.
 - **Data engineering:** streamed saved fields, trajectory-family dataset splits,
   training-only normalization, provenance-aware PDEBench Burgers HDF5 import,
   bounded public PDEBench acquisition, and checksum-verified S3/GCS upload/download
@@ -37,6 +38,7 @@ problem.
 
 New to the project? Start with [the plain-English guide](docs/start-here.md),
 which follows one run through the code and gives you a one-hour practice route.
+Moving computers or starting a new Codex chat? Read [HANDOFF.md](HANDOFF.md).
 Read [the implementation stepbook](STEPBOOK.md) for the design decisions, functions,
 loops, setup, extraction/transformation/loading logic, and measured validation.
 The [roadmap](docs/roadmap.md) distinguishes the implemented local prototype from
@@ -77,6 +79,21 @@ Multiple worker processes may share a queue on one machine's local disk. Restart
 workers after code edits; their imported runtime is pinned. See the
 [recovery and conservation guide](docs/steps/07-recovery-conservation.md) for lease
 recovery, mean-preserving FNO training, and the fresh-data paired comparison.
+
+Save progress inside a numerical run with `--checkpoint-every`:
+
+```sh
+uv run --no-sync flowstate run examples/burgers.json --checkpoint-every 20
+uv run --no-sync flowstate sweep examples/sweep.json --workers 2 --checkpoint-every 20
+```
+
+Repeat the same command after interruption, using the same code and environment.
+The engine verifies a committed checkpoint, restores earlier saved fields, and
+continues the remaining steps. This mode streams fields automatically. The JSON
+field `checkpoint_resumed_from` identifies the restored step; `resumed` identifies
+verified reuse of an already finalized result. The option also works on `queue
+submit`. See the [checkpoint walkthrough](docs/steps/11-checkpoint-recovery.md)
+for storage, limits, and the reproducible worker-kill protocol.
 
 View an existing lake in your browser:
 
@@ -272,9 +289,12 @@ promised.
 An identical run under the same recorded code and environment reuses its immutable
 result after checksum verification. This includes recorded failures. Use a new
 `--attempt` or change the configuration for another attempt; use `--parent` to link
-it to earlier evidence. A process interrupted before publication restarts from time
-zero. Mid-trajectory checkpoints are not implemented. Numerical failures retain an
-error record, but no partial field trajectory or structured last-valid time.
+it to earlier evidence. With `--checkpoint-every`, a process interrupted before
+publication resumes from its latest verified committed solver checkpoint.
+Without that option, or before the first committed checkpoint, it restarts from
+time zero. Numerical failures retain an error record and no published partial
+trajectory; any previously committed checkpoints remain as local recovery data.
+Checkpoint corruption is an infrastructure error and stops recovery.
 
 `completed` means integration finished. Check `metrics.needs_review` and the recorded
 tolerances before interpreting the result. Unforced viscous energy should dissipate;

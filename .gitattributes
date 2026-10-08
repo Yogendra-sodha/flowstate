@@ -2,3 +2,6 @@
 docs/reports/scaling-large.json -text
 docs/reports/scaling-large-validation.json -text
 docs/reports/scaling-large.png binary
+# Preserve the migration draft's original patch bytes.
+docs/handoff/cloud-worker-draft.patch -text
+docs/reports/handoff-validation-20261007.json -text
