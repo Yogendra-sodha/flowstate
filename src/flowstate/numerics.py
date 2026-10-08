@@ -46,6 +46,20 @@ class SimulationResult:
     metadata: dict[str, Any]
 
 
+@dataclass
+class SolverCheckpoint:
+    """Exact post-step integrator state and the saved diagnostic prefix.
+
+    Navier--Stokes stores complex spectral vorticity, avoiding a lossy round trip
+    through physical fields. Saved field frames belong to the caller's storage.
+    """
+
+    step: int
+    state: np.ndarray
+    times: np.ndarray
+    diagnostics: np.ndarray
+
+
 def _real(name: str, value: Any, *, positive: bool = False) -> float:
     if isinstance(value, (bool, np.bool_)) or not isinstance(value, Real):
         raise ValueError(f"{name} must be a finite number")
@@ -173,47 +187,148 @@ def _base_metadata(config: dict, solver: str, axes: list[str]) -> dict:
     }
 
 
-def solve(config: dict, *, frame_callback=None, retain_fields: bool = True) -> SimulationResult:
+def validate_checkpoint(config: dict, checkpoint: SolverCheckpoint) -> None:
+    """Reject an incomplete or incompatible numerical-state representation.
+
+    The storage layer separately authenticates configuration and provenance.
+    These checks establish array structure and the exact saved-time schedule;
+    they cannot establish that supplied values came from a particular run.
+    """
+    canonical = normalize_config(config)
+    if canonical["equation"] == "darcy2d":
+        raise ValueError("Darcy has no time-dependent solver checkpoints")
+    if not isinstance(checkpoint, SolverCheckpoint):
+        raise ValueError("checkpoint must be a SolverCheckpoint")
+    step = _integer("checkpoint step", checkpoint.step, 1)
+    if step > canonical["steps"]:
+        raise ValueError("checkpoint step exceeds configured steps")
+    burgers = canonical["equation"] == "burgers1d"
+    n = canonical["grid_size"]
+    shape = (n,) if burgers else (n, n)
+    dtype = np.dtype(np.float64 if burgers else np.complex128)
+    if (
+        not isinstance(checkpoint.state, np.ndarray)
+        or checkpoint.state.shape != shape
+        or checkpoint.state.dtype != dtype
+        or not np.all(np.isfinite(checkpoint.state))
+    ):
+        raise ValueError(f"checkpoint state must be finite {dtype} with shape {shape}")
+    saved_steps = list(range(0, step + 1, canonical["save_every"]))
+    if step == canonical["steps"] and saved_steps[-1] != step:
+        saved_steps.append(step)
+    expected_times = np.asarray(saved_steps, dtype=np.float64) * canonical["dt"]
+    if (
+        not isinstance(checkpoint.times, np.ndarray)
+        or checkpoint.times.dtype != np.dtype(np.float64)
+        or checkpoint.times.shape != expected_times.shape
+        or not np.array_equal(checkpoint.times, expected_times)
+    ):
+        raise ValueError("checkpoint times do not match the saved-frame schedule")
+    diagnostic_shape = (len(expected_times), 3 if burgers else 5)
+    if (
+        not isinstance(checkpoint.diagnostics, np.ndarray)
+        or checkpoint.diagnostics.dtype != np.dtype(np.float64)
+        or checkpoint.diagnostics.shape != diagnostic_shape
+        or not np.all(np.isfinite(checkpoint.diagnostics))
+    ):
+        raise ValueError(
+            f"checkpoint diagnostics must be finite float64 with shape {diagnostic_shape}"
+        )
+
+
+def _checkpoint_snapshot(step, state, times, diagnostic_rows) -> SolverCheckpoint:
+    return SolverCheckpoint(
+        step=step,
+        state=state.copy(),
+        times=np.array(times, dtype=np.float64, copy=True),
+        diagnostics=np.array(diagnostic_rows, dtype=np.float64, copy=True),
+    )
+
+
+def solve(
+    config: dict,
+    *,
+    frame_callback=None,
+    retain_fields: bool = True,
+    checkpoint: SolverCheckpoint | None = None,
+    checkpoint_every: int | None = None,
+    checkpoint_callback=None,
+) -> SimulationResult:
     """Run a validated config, including initial/final frames and finite checks.
 
     Explicit conservative stability bounds are checked at every RK stage.
     Passing them does not establish convergence; refine space and time
     and compare diagnostics before drawing scientific conclusions.
+
+    Checkpoints are emitted after complete RK4 steps and any scheduled frame,
+    at the requested interval and the final step. Resume restores the exact
+    integrator state and diagnostic prefix; the caller restores preceding
+    field frames separately, so resume requires streamed field callbacks.
     """
     canonical = normalize_config(config)
+    if checkpoint_every is not None:
+        checkpoint_every = _integer("checkpoint_every", checkpoint_every, 1)
+    if (checkpoint_every is None) != (checkpoint_callback is None):
+        raise ValueError("checkpoint_every and checkpoint_callback must be supplied together")
+    if checkpoint_callback is not None and not callable(checkpoint_callback):
+        raise ValueError("checkpoint_callback must be callable")
     if canonical["equation"] == "darcy2d":
+        if checkpoint is not None or checkpoint_every is not None:
+            raise ValueError("Darcy has no time-dependent solver checkpoints")
         from flowstate.darcy import solve_darcy
 
         return solve_darcy(canonical)
     if not retain_fields and frame_callback is None:
         raise ValueError("A frame_callback is required when fields are not retained")
+    if checkpoint is not None:
+        validate_checkpoint(canonical, checkpoint)
+        if retain_fields or frame_callback is None:
+            raise ValueError("Checkpoint resume requires retain_fields=False and a frame_callback")
     with np.errstate(over="raise", invalid="raise", divide="raise"):
         try:
+            arguments = (
+                canonical,
+                frame_callback,
+                retain_fields,
+                checkpoint,
+                checkpoint_every,
+                checkpoint_callback,
+            )
             if canonical["equation"] == "burgers1d":
-                return _burgers(canonical, frame_callback, retain_fields)
-            return _navier_stokes(canonical, frame_callback, retain_fields)
+                return _burgers(*arguments)
+            return _navier_stokes(*arguments)
         except FloatingPointError as exc:
             raise ValueError(
                 "Non-finite numerical state; reduce dt/amplitude or rescale domain"
             ) from exc
 
 
-def _burgers(config: dict, frame_callback=None, retain_fields=True) -> SimulationResult:
+def _burgers(
+    config: dict,
+    frame_callback=None,
+    retain_fields=True,
+    checkpoint=None,
+    checkpoint_every=None,
+    checkpoint_callback=None,
+) -> SimulationResult:
     n, length, dt = config["grid_size"], config["domain_length"], config["dt"]
     viscosity = config["viscosity"]
     dx = length / n
     x = np.arange(n, dtype=np.float64) * dx
-    phase = 2 * math.pi * (x / length)
-    velocity = np.sin(phase)
-    if config["initial_condition"] == "random":
-        rng = np.random.default_rng(config["seed"])
-        velocity = np.zeros(n, dtype=np.float64)
-        for mode in range(1, min(4, (n - 1) // 3) + 1):
-            velocity += (
-                rng.normal() * np.sin(mode * phase) + rng.normal() * np.cos(mode * phase)
-            ) / mode**2
-        velocity /= np.max(np.abs(velocity))
-    velocity *= config["amplitude"]
+    if checkpoint is None:
+        phase = 2 * math.pi * (x / length)
+        velocity = np.sin(phase)
+        if config["initial_condition"] == "random":
+            rng = np.random.default_rng(config["seed"])
+            velocity = np.zeros(n, dtype=np.float64)
+            for mode in range(1, min(4, (n - 1) // 3) + 1):
+                velocity += (
+                    rng.normal() * np.sin(mode * phase) + rng.normal() * np.cos(mode * phase)
+                ) / mode**2
+            velocity /= np.max(np.abs(velocity))
+        velocity *= config["amplitude"]
+    else:
+        velocity = checkpoint.state.copy()
 
     def rhs(u):
         rate = float(np.max(np.abs(u))) / dx + 2 * viscosity / dx**2
@@ -226,6 +341,11 @@ def _burgers(config: dict, frame_callback=None, retain_fields=True) -> Simulatio
 
     frames, times = [], []
     diagnostic_rows = []
+    start_step = 0
+    if checkpoint is not None:
+        times = checkpoint.times.tolist()
+        diagnostic_rows = checkpoint.diagnostics.tolist()
+        start_step = checkpoint.step
 
     def save(step):
         if retain_fields:
@@ -236,13 +356,18 @@ def _burgers(config: dict, frame_callback=None, retain_fields=True) -> Simulatio
         mean = float(np.mean(velocity))
         diagnostic_rows.append((mean, mean * length, float(0.5 * np.mean(velocity**2))))
 
-    save(0)
-    for step in range(1, config["steps"] + 1):
+    if checkpoint is None:
+        save(0)
+    for step in range(start_step + 1, config["steps"] + 1):
         velocity = _rk4(velocity, dt, rhs)
         if not np.all(np.isfinite(velocity)):
             raise ValueError(f"Non-finite velocity at step {step}; reduce dt")
         if step % config["save_every"] == 0 or step == config["steps"]:
             save(step)
+        if checkpoint_callback is not None and (
+            step % checkpoint_every == 0 or step == config["steps"]
+        ):
+            checkpoint_callback(_checkpoint_snapshot(step, velocity, times, diagnostic_rows))
     diagnostics = np.asarray(diagnostic_rows, dtype=np.float64)
     metadata = _base_metadata(config, "conservative_centered_finite_difference_rk4", ["time", "x"])
     metadata["spatial_order"] = 2
@@ -261,7 +386,14 @@ def _burgers(config: dict, frame_callback=None, retain_fields=True) -> Simulatio
     )
 
 
-def _navier_stokes(config: dict, frame_callback=None, retain_fields=True) -> SimulationResult:
+def _navier_stokes(
+    config: dict,
+    frame_callback=None,
+    retain_fields=True,
+    checkpoint=None,
+    checkpoint_every=None,
+    checkpoint_callback=None,
+) -> SimulationResult:
     n, length, dt = config["grid_size"], config["domain_length"], config["dt"]
     viscosity = config["viscosity"]
     x = np.arange(n, dtype=np.float64) * (length / n)
@@ -282,7 +414,9 @@ def _navier_stokes(config: dict, frame_callback=None, retain_fields=True) -> Sim
         u_hat, v_hat = 1j * ky * psi_hat, -1j * kx * psi_hat
         return np.fft.ifft2(u_hat).real, np.fft.ifft2(v_hat).real, u_hat, v_hat
 
-    if config["initial_condition"] == "taylor_green":
+    if checkpoint is not None:
+        omega_hat = checkpoint.state.copy()
+    elif config["initial_condition"] == "taylor_green":
         omega = 2 * config["amplitude"] * (2 * math.pi / length) * np.sin(xx) * np.sin(yy)
         omega_hat = np.fft.fft2(omega) * dealias
     else:
@@ -299,7 +433,8 @@ def _navier_stokes(config: dict, frame_callback=None, retain_fields=True) -> Sim
         omega_hat = np.fft.fft2(psi) * k2 * dealias
         u, v, _, _ = velocity_from(omega_hat)
         omega_hat *= config["amplitude"] / np.max(np.hypot(u, v))
-    omega_hat[0, 0] = 0
+    if checkpoint is None:
+        omega_hat[0, 0] = 0
 
     def rhs(w_hat):
         w_hat = w_hat * dealias
@@ -315,6 +450,11 @@ def _navier_stokes(config: dict, frame_callback=None, retain_fields=True) -> Sim
 
     frames = {"u": [], "v": [], "vorticity": []}
     times, diagnostic_rows = [], []
+    start_step = 0
+    if checkpoint is not None:
+        times = checkpoint.times.tolist()
+        diagnostic_rows = checkpoint.diagnostics.tolist()
+        start_step = checkpoint.step
 
     def save(step):
         u, v, u_hat, v_hat = velocity_from(omega_hat)
@@ -337,16 +477,21 @@ def _navier_stokes(config: dict, frame_callback=None, retain_fields=True) -> Sim
             )
         )
 
-    save(0)
+    if checkpoint is None:
+        save(0)
     max_k = float(np.max(np.abs(kx[dealias])))
     max_k2 = float(np.max(k2[dealias]))
-    for step in range(1, config["steps"] + 1):
+    for step in range(start_step + 1, config["steps"] + 1):
         omega_hat = _rk4(omega_hat, dt, rhs) * dealias
         omega_hat[0, 0] = 0
         if not np.all(np.isfinite(omega_hat)):
             raise ValueError(f"Non-finite vorticity at step {step}; reduce dt")
         if step % config["save_every"] == 0 or step == config["steps"]:
             save(step)
+        if checkpoint_callback is not None and (
+            step % checkpoint_every == 0 or step == config["steps"]
+        ):
+            checkpoint_callback(_checkpoint_snapshot(step, omega_hat, times, diagnostic_rows))
     diagnostics = np.asarray(diagnostic_rows, dtype=np.float64)
     metadata = _base_metadata(config, "vorticity_pseudospectral_rk4", ["time", "y", "x"])
     metadata.update(
