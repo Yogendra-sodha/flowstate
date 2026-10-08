@@ -21,6 +21,7 @@ from typing import Any
 
 import numpy as np
 
+from flowstate.checkpoints import CheckpointStore, validate_checkpoint_options
 from flowstate.lake import Lake
 from flowstate.numerics import normalize_config, solve
 
@@ -159,6 +160,7 @@ def summarize(result: Any, config: dict) -> dict:
 class RunOutcome:
     record: dict
     resumed: bool
+    checkpoint_step: int | None = None
 
 
 def run_experiment(
@@ -168,13 +170,15 @@ def run_experiment(
     parent_id: str | None = None,
     attempt: int = 0,
     stream: bool = False,
+    checkpoint_every: int | None = None,
 ) -> RunOutcome:
     """Execute once, or reuse a verified immutable result including a recorded failure.
 
     A new attempt number creates a distinct record; failed results are never overwritten.
-    A crash before atomic publication is rerun from t=0, not from a solver checkpoint.
+    Opt-in checkpoints recover exact solver state before final atomic publication.
     """
     config = normalize_config(config)
+    validate_checkpoint_options(config, checkpoint_every)
     if isinstance(attempt, bool) or not isinstance(attempt, int) or attempt < 0:
         raise ValueError("attempt must be a nonnegative integer")
     lake = Lake(lake_root)
@@ -208,26 +212,54 @@ def run_experiment(
         "status": "running",
         "metrics": {},
         "error": None,
-        "storage_mode": "streamed" if stream and config["equation"] != "darcy2d" else "buffered",
+        "storage_mode": (
+            "streamed" if (stream or checkpoint_every is not None)
+            and config["equation"] != "darcy2d" else "buffered"
+        ),
     }
     start = time.perf_counter()
     result, field_store = None, None
+    store, checkpoint = None, None
+    if checkpoint_every is not None:
+        store = CheckpointStore(lake_root, run_id, config, provenance)
+        checkpoint = store.load_latest()
+        record["recovery"] = {
+            "checkpoint_every": checkpoint_every,
+            "resumed_from_step": store.loaded_step,
+            "checkpoint_manifest_sha256": store.loaded_manifest_sha256,
+            "steps_executed": None,
+        }
     with tempfile.TemporaryDirectory(prefix=".stream-", dir=lake.experiments) as scratch:
         sink = None
         if record["storage_mode"] == "streamed":
             from flowstate.streaming import ZarrFrameSink
 
             sink = ZarrFrameSink(Path(scratch) / "fields.zarr", config)
+        if checkpoint is not None:
+            store.replay(checkpoint, sink)
+
+        def save_frame(time_value, fields):
+            sink(time_value, fields)
+            store.append_frame(time_value, fields)
+
         try:
             with np.errstate(over="raise", invalid="raise", divide="raise"):
-                result = (
-                    solve(config, frame_callback=sink, retain_fields=False)
-                    if sink
-                    else solve(config)
-                )
+                if store is not None:
+                    result = solve(
+                        config, frame_callback=save_frame, retain_fields=False,
+                        checkpoint=checkpoint, checkpoint_every=checkpoint_every,
+                        checkpoint_callback=store.save,
+                    )
+                else:
+                    result = (
+                        solve(config, frame_callback=sink, retain_fields=False)
+                        if sink else solve(config)
+                    )
                 record["metrics"] = summarize(result, config)
             record["solver_metadata"] = result.metadata
             record["status"] = "completed"
+            if store is not None:
+                record["recovery"]["steps_executed"] = config["steps"] - (store.loaded_step or 0)
         except (ValueError, RuntimeError, ArithmeticError) as exc:
             record["status"] = "failed"
             record["error"] = {"type": type(exc).__name__, "message": str(exc)}
@@ -243,7 +275,7 @@ def run_experiment(
             if problems := lake.verify(run_id):
                 raise ValueError(f"Concurrent experiment failed verification: {problems}") from None
             return RunOutcome(lake.load_record(run_id), resumed=True)
-    return RunOutcome(record, resumed=False)
+    return RunOutcome(record, resumed=False, checkpoint_step=store.loaded_step if store else None)
 
 
 def expand_sweep(spec: dict) -> list[dict]:
@@ -273,8 +305,11 @@ def expand_sweep(spec: dict) -> list[dict]:
 
 
 def _worker(args: tuple) -> RunOutcome:
-    config, root, parent, attempt, stream = args
-    return run_experiment(config, root, parent_id=parent, attempt=attempt, stream=stream)
+    config, root, parent, attempt, stream, checkpoint_every = args
+    return run_experiment(
+        config, root, parent_id=parent, attempt=attempt, stream=stream,
+        checkpoint_every=checkpoint_every,
+    )
 
 
 def run_sweep(
@@ -285,10 +320,15 @@ def run_sweep(
     parent_id: str | None = None,
     attempt: int = 0,
     stream: bool = False,
+    checkpoint_every: int | None = None,
 ) -> list[RunOutcome]:
     if isinstance(workers, bool) or not isinstance(workers, int) or not 1 <= workers <= 32:
         raise ValueError("workers must be an integer between 1 and 32")
-    jobs = [(config, str(lake_root), parent_id, attempt, stream) for config in expand_sweep(spec)]
+    configs = expand_sweep(spec)
+    for config in configs:
+        validate_checkpoint_options(config, checkpoint_every)
+    jobs = [(config, str(lake_root), parent_id, attempt, stream, checkpoint_every)
+            for config in configs]
     if workers == 1:
         return [_worker(job) for job in jobs]
     # Spawn avoids inheriting active Zarr/native-library/sampling threads and

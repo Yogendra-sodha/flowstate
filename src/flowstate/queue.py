@@ -1,9 +1,10 @@
 """Durable local-disk experiment queue with leased, fenced worker claims.
 
-Multiple processes on one machine may share this SQLite file. Network filesystems,
-cross-machine scheduling and solver checkpoints are outside this contract. A lost
-lease may cause duplicate computation, but the immutable lake verifies/reuses the
-same experiment identity and a stale worker cannot change the queue's job state.
+Multiple processes on one machine may share this SQLite file. Network filesystems
+and cross-machine scheduling are outside this contract. Optional solver checkpoints
+recover progress after a worker exits. A lost lease may cause duplicate computation,
+but the immutable lake verifies/reuses the same experiment identity and a stale
+worker cannot change the queue's job state.
 """
 
 from __future__ import annotations
@@ -18,6 +19,7 @@ import uuid
 from contextlib import closing, contextmanager
 from pathlib import Path
 
+from flowstate.checkpoints import validate_checkpoint_options
 from flowstate.engine import (
     MAX_SWEEP_RUNS,
     capture_provenance,
@@ -125,6 +127,7 @@ def submit_sweep(
     parent_id: str | None = None,
     attempt: int = 0,
     stream: bool = True,
+    checkpoint_every: int | None = None,
 ) -> dict:
     """Validate the entire sweep, then insert new immutable jobs in one transaction.
 
@@ -138,6 +141,8 @@ def submit_sweep(
         raise ValueError("stream must be a boolean")
     if parent_id is not None and (not isinstance(parent_id, str) or not parent_id):
         raise ValueError("parent_id must be a nonempty experiment ID")
+    for config in configs:
+        validate_checkpoint_options(config, checkpoint_every)
     provenance = capture_provenance()
     root = str(Path(lake_root).resolve())
     requests = []
@@ -146,6 +151,8 @@ def submit_sweep(
             "config": config, "lake_root": root, "parent_id": parent_id,
             "attempt": attempt, "stream": stream, "provenance": provenance,
         }
+        if checkpoint_every is not None:
+            request["checkpoint_every"] = checkpoint_every
         requests.append((_identity(request), request))
     path = Path(queue_path).resolve()
     _initialize(path)
@@ -176,6 +183,10 @@ def queue_status(queue_path: str | Path) -> dict:
         rows = db.execute("SELECT * FROM jobs ORDER BY created_at,id").fetchall()
         events = db.execute("SELECT * FROM events ORDER BY sequence").fetchall()
     jobs, counts = [], dict.fromkeys(_STATES, 0)
+    checkpoint_steps = {
+        row["job_id"]: json.loads(row["detail_json"]).get("checkpoint_resumed_from")
+        for row in events if row["kind"] in {"completed", "failed"}
+    }
     for row in rows:
         request = json.loads(row["request_json"])
         counts[row["status"]] += 1
@@ -187,6 +198,8 @@ def queue_status(queue_path: str | Path) -> dict:
             "config": request["config"], "lake_root": request["lake_root"],
             "parent_id": request["parent_id"], "attempt": request["attempt"],
             "stream": request["stream"], "provenance": request["provenance"],
+            "checkpoint_every": request.get("checkpoint_every"),
+            "checkpoint_resumed_from": checkpoint_steps.get(row["id"]),
             "resumed": bool(row["resumed"]) if row["resumed"] is not None else None,
             "error": json.loads(row["error_json"]) if row["error_json"] else None,
         })
@@ -329,6 +342,7 @@ def work_queue(
                 result = run_experiment(
                     request["config"], request["lake_root"], parent_id=request["parent_id"],
                     attempt=request["attempt"], stream=request["stream"],
+                    checkpoint_every=request.get("checkpoint_every"),
                 )
                 if result.record["id"] != claim["expected_result_id"]:
                     raise ValueError(
@@ -342,6 +356,7 @@ def work_queue(
                 outcome = {
                     "status": result.record["status"], "result_id": result.record["id"],
                     "resumed": result.resumed, "error": result.record.get("error"),
+                    "checkpoint_resumed_from": result.checkpoint_step,
                 }
             except Exception as exc:
                 outcome = {

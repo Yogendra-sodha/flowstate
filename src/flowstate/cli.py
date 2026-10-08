@@ -42,6 +42,10 @@ def main(argv: list[str] | None = None) -> int:
             "--stream", action="store_true", help="Write saved fields incrementally"
         )
         command.add_argument(
+            "--checkpoint-every", type=int,
+            help="Save recoverable solver state every N timesteps (Burgers or Navier–Stokes)",
+        )
+        command.add_argument(
             "--attempt", type=int, default=0, help="New attempt identity (default 0)"
         )
         if name == "sweep":
@@ -89,6 +93,10 @@ def main(argv: list[str] | None = None) -> int:
     submit.add_argument("--parent")
     submit.add_argument("--attempt", type=int, default=0)
     submit.add_argument("--buffered", action="store_true", help="Keep fields in memory")
+    submit.add_argument(
+        "--checkpoint-every", type=int,
+        help="Save recoverable solver state every N timesteps (Burgers or Navier–Stokes)",
+    )
     work = queue_commands.add_parser("work")
     work.add_argument("path")
     work.add_argument("--max-jobs", type=int, default=1)
@@ -196,7 +204,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command in {"run", "sweep"}:
-            common = {"parent_id": args.parent, "attempt": args.attempt, "stream": args.stream}
+            common = {
+                "parent_id": args.parent, "attempt": args.attempt, "stream": args.stream,
+                "checkpoint_every": args.checkpoint_every,
+            }
             if args.command == "run":
                 outcomes = [run_experiment(_read_json(args.config), args.lake, **common)]
             else:
@@ -209,6 +220,7 @@ def main(argv: list[str] | None = None) -> int:
                         "id": out.record["id"],
                         "status": out.record["status"],
                         "resumed": out.resumed,
+                        "checkpoint_resumed_from": out.checkpoint_step,
                         "metrics": out.record["metrics"],
                         "error": out.record["error"],
                     }
@@ -216,7 +228,7 @@ def main(argv: list[str] | None = None) -> int:
                 ]
             )
             return int(any(out.record["status"] == "failed" for out in outcomes))
-        if args.command in {"dashboard", "scaling-study"}:
+        if args.command in {"dashboard", "scaling-study", "queue"}:
             return _extended_command(args)
         lake = Lake(args.lake)
         if args.command == "query":
@@ -271,6 +283,7 @@ def _extended_command(args) -> int:
                     parent_id=args.parent,
                     attempt=args.attempt,
                     stream=not args.buffered,
+                    checkpoint_every=args.checkpoint_every,
                 )
             )
         elif args.queue_command == "work":
