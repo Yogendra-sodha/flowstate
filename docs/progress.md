@@ -85,3 +85,46 @@ run that protocol after Mac checks pass, then stop at the phase boundary.
 
 No cloud credentials, cloud spending, deployment, or user-data deletion occurred
 during this handoff.
+
+## Milestone 2 — local checkpoint recovery complete
+
+The user resumed Windows work after the handoff on 7 October 2026. The measured
+protocol ran from clean commit `d8ef527ea887853a7c1169d194a72925d030691d`.
+
+**Changed:** completed the recovery proof, retained its raw report and validation
+receipt, independently audited checkpoints/final arrays, and updated the
+checkpoint chapter, roadmap, stepbook, and Mac handoff. Evidence was committed
+and pushed before final phase documentation.
+
+**Commands and validation:**
+
+```sh
+uv run --no-sync python -m flowstate.recovery_study --output outputs/checkpoint-proof-20261007
+uv run --no-sync ruff check .
+```
+
+The same implementation's full suite passed 540 tests with four Windows
+symbolic-link permission skips. The validation receipt confirms those source
+hashes match the measured package. Windows/Linux CI passed the measured commit.
+
+**Measured results:** both workers stopped after committed step 13 and resumed
+with 24 actual RK4 calls, versus 37 for each uninterrupted reference. All 17
+scientific arrays matched; all final manifests verified; zero cases failed.
+The protocol took 20.03 seconds. Independent audit reconciled raw receipts,
+checkpoint blobs/state, final arrays, recovery records, and process ownership.
+Post-study queries found the completed records. Evidence:
+[report](reports/checkpoint-recovery.json),
+[validation/audit](reports/checkpoint-recovery-validation.json), and
+[walkthrough](steps/11-checkpoint-recovery.md).
+
+**Remaining limits:** controlled kill after a committed boundary on one local
+Windows runtime, short trajectories, and single timing observations. Burgers
+recovery took longer than its uninterrupted reference because checkpoint work
+adds overhead. This establishes no general speedup, power-loss durability,
+remote-worker support, or cross-hardware bitwise equality. Mac validation is
+pending; raw arrays/logs remain in ignored `outputs/checkpoint-proof-20261007`.
+
+**Next:** Milestone 3, approved GCS recovery proof plus viewer container and
+deployment proposal. Stopped at this phase boundary for review. No cloud
+credentials, spending, deployment, or user-data deletion were used. `HANDOFF.md`
+now directs the Mac chat to environment validation and the next milestone.

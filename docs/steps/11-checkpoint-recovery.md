@@ -112,6 +112,44 @@ dtype, shape, and SHA-256 of its bytes. Timing fields and creation timestamps
 naturally differ and are excluded from scientific-array equality. Any failed
 case stays in the report and prevents a successful aggregate result.
 
+## Executed results
+
+The [retained report](../reports/checkpoint-recovery.json) comes from clean source
+commit `d8ef527ea887853a7c1169d194a72925d030691d` on Windows. The command above was
+run with output `outputs/checkpoint-proof-20261007`. Both equations used grid 32,
+37 integration steps, and a saved-frame interval of 8. The worker was killed after
+committing step 13, between saved frames, and resumed in a new interpreter.
+
+| Equation | Reference RK4 calls | Before kill | After resume | Arrays with identical hashes |
+| --- | ---: | ---: | ---: | ---: |
+| Burgers | 37 | 13 | 24 | 6 |
+| Navier–Stokes | 37 | 13 | 24 | 11 |
+
+Both cases completed with zero failures. All scientific arrays matched by dtype,
+shape, and byte hash; all finalized manifests passed verification. Each recovered
+record reported the restored step and counted remaining work. The full protocol
+took 20.03 seconds, including separate worker processes and verification.
+
+This is a single correctness observation, not a performance benchmark. Recorded
+engine time for Burgers was 0.885 seconds uninterrupted and 1.829 seconds during
+recovery. Navier–Stokes was 2.035 and 1.712 seconds respectively. The reference
+has no checkpoint writes; recovery includes prefix validation/replay and later
+checkpoint writes while integrating fewer steps. The slower Burgers result
+remains visible, and these timings establish no general speedup.
+
+The [validation receipt](../reports/checkpoint-recovery-validation.json) records
+an independent audit reconciling raw worker/case receipts, re-hashing all 17
+arrays, validating checkpoint state and prefix blobs, checking terminated worker
+ownership, and re-verifying final experiments. Post-study DuckDB queries found
+the completed record in every reference/recovered lake. The retained report is
+an exact byte copy of the raw aggregate report.
+
+The full local test suite passed 540 tests with four Windows symbolic-link
+permission skips; its retained source-file hashes match the measured package.
+Ruff passed after the study, and Windows/Linux CI passed the measured source
+commit. The earlier [handoff validation](../reports/handoff-validation-20261007.json)
+provides the full suite receipt. Mac validation remains a separate migration check.
+
 ## Scope and costs
 
 The implementation bounds the planned checkpoint generations, saved-frame count,

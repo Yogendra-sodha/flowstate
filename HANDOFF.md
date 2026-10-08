@@ -71,11 +71,12 @@ history. Commit code before generating new measured results on the Mac.
 
 - **Milestone 1 complete:** larger local scale measurement. Evidence is in
   `docs/reports/scaling-large.json`, its chart, and its validation receipt.
-- **Milestone 2 recovery proof complete; phase documentation being finalized:**
+- **Milestone 2 complete for the documented local process-crash protocol:**
   both workers were killed after step 13, then completed only the remaining
   24 of 37 steps. All scientific-array hashes matched uninterrupted references,
   with no failed cases. Exact internal state, immutable blobs, checked prefix
   replay, CLI/queue options, and actual worker-kill tests are implemented.
+  The independent audit passed and Windows/Linux CI passed the measured source.
   See the retained recovery reports and `docs/progress.md` for the phase boundary.
 - **Milestone 3 remaining:** the revised GCS upload, approved local removal,
   download, verification receipt, viewer container, and deployment proposal.

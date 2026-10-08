@@ -1024,3 +1024,32 @@ its original base recorded in the handoff. This preserves the draft across a
 normal clone without applying it to the current engine or activating remote
 workers. The final recovery study remains an explicit next action on committed
 source, and the migration validation receipt records what was checked on Windows.
+
+## 24. Execute and audit the committed recovery proof
+
+Windows work continued after the handoff. The recovery protocol was executed from
+clean commit `d8ef527`, using a fresh ignored output directory. Each equation's
+loop launches an uninterrupted reference, a worker paused after checkpoint
+publication, and a new worker after process termination. Instrumentation counts
+actual completed RK4 calls in each interpreter, separately from the engine's
+recovery metadata. The measured counts were 37 reference steps, 13 before the
+kill, and 24 after restoration. Thus the proof checks skipped work as well as
+correct final data.
+
+The report-retention step copies the raw aggregate JSON byte for byte into
+`docs/reports/checkpoint-recovery.json`. Its validation receipt records that
+content hash, source-file equality with the full-suite validation, CI, and
+post-study DuckDB queries. An independent audit separately reconciled raw receipts,
+loaded the exact state and prefix, re-hashed all 17 scientific arrays, verified
+final manifests, and checked the controlled worker/launcher termination receipts.
+Both cases completed with exact arrays and no failures; the complete protocol
+took 20.03 seconds. The [results chapter](docs/steps/11-checkpoint-recovery.md)
+retains measured timings, including slower Burgers recovery, and limitations.
+
+The full local suite passed 540 tests with four Windows symbolic-link skips.
+The recorded package hashes match the measured source, Ruff passed after the
+study, and Windows/Linux CI passed the measured commit. No source edits were
+needed between the successful implementation tests and the measured proof.
+Only evidence and phase documentation were added. `HANDOFF.md` now marks this
+milestone complete and directs the Mac chat to environment validation followed
+by the approved cloud-proof milestone. Work stops at this phase boundary.
