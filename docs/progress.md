@@ -160,3 +160,31 @@ records the local suite: 600 passed, five Windows symlink permission skips, and
 Ruff passed. No cloud client was created by preparation. Requested explicit
 approval for credentials, a US$0.10 spending budget, and removal of only the
 inventoried generated experiment after remote verification. Approval is pending.
+
+Container review found that Unix exports are private files, unreadable by the
+container's separate user. The smoke check stages an independent readable copy
+inside a private temporary directory, preserves the original, and cleans up its
+own copy after stopping its container. Regression tests exercise success and
+failure cleanup. The first CI attempt failed fetching the public base image;
+the next encountered Docker Hub throttling despite bounded retries. CI now uses
+Docker's official public mirror and runs Windows checks independently of Linux
+failures. These changes are committed in `009f58f` and `d50378d`.
+
+**Verified continuation:** the [container and CI receipt](reports/viewer-container-validation-20261009.json)
+retains both failed attempts and the successful run on `d50378d`. Ruff and all
+608 tests passed on Windows and Linux CI, without skips. Linux built and ran the
+viewer as UID 65532 with a read-only filesystem, dropped capabilities, and a
+loopback port. The 20,530-byte exported snapshot was served byte for byte;
+readiness and closed file routes passed. The report records the resolved base
+digest, built image ID, snapshot hash, raw-log hashes, and job URLs.
+
+**Commands:** CI ran `uv run --no-sync ruff check .`, `uv run --no-sync pytest`,
+an actual Burgers run/export, and the Docker build followed by
+`uv run --no-sync python containers/viewer/smoke.py outputs/viewer-ci.html --image flowstate-viewer:ci --base-image <resolved-digest>`.
+Local focused regression tests passed with unchanged source provenance.
+
+**Remaining boundary:** the viewer package and deployment proposal are ready.
+Milestone 3 still needs explicit user approval and the actual GCS/removal/restore
+receipt. No cloud credentials, generated-experiment removal, image publication,
+or deployment occurred. `HANDOFF.md` includes the exact pending Windows plan;
+Mac continuation must generate its own plan. Work pauses at the approval gate.

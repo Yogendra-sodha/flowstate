@@ -24,6 +24,9 @@ acceptance gates.
 3. **Cloud proof:** an approved GCS upload, local-removal, restore, and verification
    receipt; a viewer container and deployment proposal. Cloud credentials,
    spending, deletion, and deployment require approval before those actions.
+   The [viewer container validation](reports/viewer-container-validation-20261009.json)
+   passed on Linux CI; the [prepared GCS plan](reports/gcs-proof-plan-20261009.json)
+   awaits approval and execution. This milestone remains open.
 4. **Trustworthy model:** enough independent training families and seeds, paired
    baseline comparisons, conservation, rollout behavior, uncertainty, and explicit
    cases where the model loses.

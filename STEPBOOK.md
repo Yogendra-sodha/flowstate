@@ -1100,3 +1100,10 @@ that copy readable to the container, and removes that generated copy afterward.
 The original export's permissions and lake remain unchanged. A baked snapshot
 explicitly assigns ownership to the container user. Linux CI exercises the real
 image and retries a failed public base-image pull within a fixed attempt bound.
+Docker Hub still throttled the CI runner, so the workflow now pulls Docker's
+official public mirror and records its resolved digest. The
+[retained container validation](docs/reports/viewer-container-validation-20261009.json)
+preserves those failures alongside the successful build and HTTP check.
+On `d50378d`, Windows and Linux each passed all 608 tests and Ruff; Linux served
+the 20,530-byte exported snapshot exactly from the container. This closes local
+package validation while the approved live GCS recovery receipt remains pending.

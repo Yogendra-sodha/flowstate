@@ -1,0 +1,327 @@
+{
+  "ci": {
+    "conclusion": "success",
+    "createdAt": "2026-10-09T21:31:20Z",
+    "headSha": "d50378db7ba5023aa112544239f56f47ce88ed39",
+    "jobs": [
+      {
+        "completedAt": "2026-10-09T21:33:37Z",
+        "conclusion": "success",
+        "databaseId": 114035031887,
+        "name": "test (windows-latest)",
+        "startedAt": "2026-10-09T21:31:23Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-09T21:31:25Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-09T21:31:23Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:30Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7.0.1",
+            "number": 2,
+            "startedAt": "2026-10-09T21:31:25Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:41Z",
+            "conclusion": "success",
+            "name": "Run astral-sh/setup-uv@v10.2.0",
+            "number": 3,
+            "startedAt": "2026-10-09T21:31:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:48Z",
+            "conclusion": "success",
+            "name": "Run uv sync --locked --all-extras --group dev --python 3.12",
+            "number": 4,
+            "startedAt": "2026-10-09T21:31:41Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:48Z",
+            "conclusion": "success",
+            "name": "Run uv run --no-sync ruff check .",
+            "number": 5,
+            "startedAt": "2026-10-09T21:31:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:33:32Z",
+            "conclusion": "success",
+            "name": "Run uv run --no-sync pytest",
+            "number": 6,
+            "startedAt": "2026-10-09T21:31:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:33:32Z",
+            "conclusion": "skipped",
+            "name": "Build and check the static viewer container",
+            "number": 7,
+            "startedAt": "2026-10-09T21:33:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:33:32Z",
+            "conclusion": "success",
+            "name": "Post Run astral-sh/setup-uv@v10.2.0",
+            "number": 13,
+            "startedAt": "2026-10-09T21:33:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:33:34Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7.0.1",
+            "number": 14,
+            "startedAt": "2026-10-09T21:33:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:33:34Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-10-09T21:33:34Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993953311/job/114035031887"
+      },
+      {
+        "completedAt": "2026-10-09T21:32:57Z",
+        "conclusion": "success",
+        "databaseId": 114035032140,
+        "name": "test (ubuntu-latest)",
+        "startedAt": "2026-10-09T21:31:23Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-09T21:31:25Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-09T21:31:24Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:26Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@v7.0.1",
+            "number": 2,
+            "startedAt": "2026-10-09T21:31:25Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:35Z",
+            "conclusion": "success",
+            "name": "Run astral-sh/setup-uv@v10.2.0",
+            "number": 3,
+            "startedAt": "2026-10-09T21:31:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:40Z",
+            "conclusion": "success",
+            "name": "Run uv sync --locked --all-extras --group dev --python 3.12",
+            "number": 4,
+            "startedAt": "2026-10-09T21:31:35Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:31:40Z",
+            "conclusion": "success",
+            "name": "Run uv run --no-sync ruff check .",
+            "number": 5,
+            "startedAt": "2026-10-09T21:31:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:32:42Z",
+            "conclusion": "success",
+            "name": "Run uv run --no-sync pytest",
+            "number": 6,
+            "startedAt": "2026-10-09T21:31:40Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:32:53Z",
+            "conclusion": "success",
+            "name": "Build and check the static viewer container",
+            "number": 7,
+            "startedAt": "2026-10-09T21:32:42Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:32:54Z",
+            "conclusion": "success",
+            "name": "Post Run astral-sh/setup-uv@v10.2.0",
+            "number": 13,
+            "startedAt": "2026-10-09T21:32:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:32:54Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@v7.0.1",
+            "number": 14,
+            "startedAt": "2026-10-09T21:32:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-09T21:32:54Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-10-09T21:32:54Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993953311/job/114035032140"
+      }
+    ],
+    "status": "completed",
+    "updatedAt": "2026-10-09T21:33:38Z",
+    "url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993953311"
+  },
+  "container_check": {
+    "base_image": "public.ecr.aws/docker/library/python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+    "capabilities_dropped": [
+      "ALL"
+    ],
+    "healthcheck_passed": true,
+    "host_binding": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "32768"
+      }
+    ],
+    "image": "flowstate-viewer:ci",
+    "image_id": "sha256:b81a9930094351b346995f3eb52c96106fafb2cde79eac5a83ddc539d7fb4a03",
+    "read_only_root": true,
+    "security_options": [
+      "no-new-privileges"
+    ],
+    "snapshot_byte_identical": true,
+    "snapshot_bytes": 20530,
+    "snapshot_sha256": "d756d79e7f5b64c58b4b57d06e760ad13072a19e92e3449c3314a833b18f6305",
+    "status": "completed",
+    "uid": "65532"
+  },
+  "failed_attempts": [
+    {
+      "container_started": false,
+      "failure": "Docker Hub authentication endpoint timed out before the build",
+      "linux_pytest": "passed",
+      "raw_log": "outputs\\phase3-container-ci-20261009\\initial-failure.log",
+      "raw_sha256": "f9dac3d0b7c1e75a1b1b145729f1b87b45db705b6adfd6998f77e01924df6272",
+      "relevant_log_lines": [
+        "test (ubuntu-latest)\tBuild and check the static viewer container\t2026-10-09T21:26:05.5850391Z Error response from daemon: Head \"https://registry-1.docker.io/v2/library/python/manifests/3.12-slim\": Get \"https://auth.docker.io/token?account=githubactions&scope=repository%3Alibrary%2Fpython%3Apull&service=registry.docker.io\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)"
+      ],
+      "run_url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993282664",
+      "source_commit": "ec565a1c9edabba9ab2a15775c5f768250e83ae0",
+      "status": "failed",
+      "windows_pytest": "cancelled_by_matrix_fail_fast"
+    },
+    {
+      "container_started": false,
+      "failure": "Docker Hub public pull rate limit and timeout exhausted bounded retries",
+      "linux_pytest": "passed",
+      "raw_log": "outputs\\phase3-container-ci-20261009\\staged-copy-failure.log",
+      "raw_sha256": "7729d637c3646c18d9f89ab18dbd46bd4a44bcf8193c5a913decbaf5f6e9c34d",
+      "relevant_log_lines": [
+        "test (ubuntu-latest)\tBuild and check the static viewer container\t2026-10-09T21:29:33.3476991Z Error response from daemon: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit",
+        "test (ubuntu-latest)\tBuild and check the static viewer container\t2026-10-09T21:29:53.5797042Z Error response from daemon: Head \"https://registry-1.docker.io/v2/library/python/manifests/3.12-slim\": Get \"https://auth.docker.io/token?account=githubactions&scope=repository%3Alibrary%2Fpython%3Apull&service=registry.docker.io\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+        "test (ubuntu-latest)\tBuild and check the static viewer container\t2026-10-09T21:30:04.3348432Z Error response from daemon: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit"
+      ],
+      "run_url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993632352",
+      "source_commit": "009f58fbc884c43f99c48fc2d71d173a0e42ebcf",
+      "status": "failed",
+      "windows_pytest": "cancelled_by_matrix_fail_fast"
+    }
+  ],
+  "limits": [
+    "Linux CI built and ran the container; no successful Windows or Mac Docker build was established.",
+    "The image was not published and no hosted service was deployed.",
+    "No GCS credentials, cloud proof execution, or generated experiment removal occurred.",
+    "The retained GCS plan is pending separate user approval."
+  ],
+  "local_fix_validation": {
+    "pytest": {
+      "errors": "0",
+      "failures": "0",
+      "hostname": "Yogendrasinh",
+      "name": "pytest",
+      "skipped": "0",
+      "tests": "3",
+      "time": "0.188",
+      "timestamp": "2026-10-09T17:28:54.584563-04:00"
+    },
+    "raw_directory": "outputs\\phase3-container-fix-20261009",
+    "raw_sha256": {
+      "provenance.json": "0bec9ac7a081a23f298a5d91be9eb6c0485e57a594dc039977309bd9adb67b74",
+      "pytest.txt": "f54ec76505c99477f49e7c5a9f31178e6bf1111ddc7b0ac747527243a5f7dc5b",
+      "pytest.xml": "10db339a37e561aa2eff0f71123799ac3ded817ae15503222cb162fd57f344bb",
+      "ruff.txt": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "ruff_passed": true,
+    "source_provenance": {
+      "dependencies": {
+        "duckdb": "1.5.5",
+        "flowstate-research": "0.6.0",
+        "h5py": "3.16.0",
+        "numpy": "2.5.3",
+        "pyarrow": "23.0.1",
+        "scipy": "1.18.1",
+        "zarr": "3.4.0"
+      },
+      "git_commit": "009f58fbc884c43f99c48fc2d71d173a0e42ebcf",
+      "git_dirty": false,
+      "hardware": {
+        "logical_cpu_count": 8,
+        "machine": "AMD64",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+      },
+      "precision": "float64",
+      "python": "3.12.9",
+      "source_sha256": "1eeb18d7686d300c7a71eac2ea9a0195d617869c79d660ea6dd945493b1e5991"
+    }
+  },
+  "raw_evidence": {
+    "success-status.json": {
+      "path": "outputs\\phase3-container-ci-20261009\\success-status.json",
+      "sha256": "60b00ef938e26eda1da65ea072c2d0842cc0d2416abf5a21369c319788ae9be8"
+    },
+    "success.log": {
+      "path": "outputs\\phase3-container-ci-20261009\\success.log",
+      "sha256": "25c245b6b12db67d2517f64b602f6a65b7cba4d4dcfa92d72c8f09a8de8fedb8"
+    }
+  },
+  "recorded_at": "2026-10-09T21:35:03.525965+00:00",
+  "run_url": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993953311",
+  "schema_version": 1,
+  "source_commit": "d50378db7ba5023aa112544239f56f47ce88ed39",
+  "status": "passed",
+  "test_suites": {
+    "test (ubuntu-latest)": {
+      "failed": 0,
+      "passed": 608,
+      "seconds": 59.89,
+      "skipped": 0
+    },
+    "test (windows-latest)": {
+      "failed": 0,
+      "passed": 608,
+      "seconds": 98.47,
+      "skipped": 0
+    }
+  }
+}

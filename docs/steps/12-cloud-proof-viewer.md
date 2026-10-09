@@ -1,5 +1,11 @@
 # Approved GCS recovery proof and static viewer package
 
+Current evidence: the [prepared Windows plan](../reports/gcs-proof-plan-20261009.json)
+awaits user approval. The [viewer validation](../reports/viewer-container-validation-20261009.json)
+records a successful Linux container build/run and passing Windows/Linux tests,
+including the earlier failed registry attempts. No live execution or deployment
+is implied by these preparation results.
+
 Milestone 3 prepares a small disposable local experiment, uploads its immutable
 artifacts, verifies the remote bytes, removes that generated local experiment,
 downloads it into a fresh lake, and verifies both the restored files and a metadata

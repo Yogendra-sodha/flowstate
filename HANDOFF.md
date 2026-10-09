@@ -17,13 +17,17 @@ remain in `outputs/checkpoint-proof-20261007/`, outside Git. Source commit:
 Milestone 3 implementation is now prepared locally: `cloud_proof.py` creates a
 reviewable plan without credentials and executes its hash-bound GCS/removal/restore
 sequence only with approval. `containers/viewer/` packages the offline snapshot;
-Linux CI now builds and starts it. The Windows Docker engine did not respond to
+Linux CI successfully built and started it. The Windows Docker engine did not respond to
 the local probe, so do not infer a successful Windows container build. See
 `docs/steps/12-cloud-proof-viewer.md` and the latest progress entry for readiness
 and the retained approval plan. No real phase-3 cloud execution or deployment
-has occurred. Latest local validation passed 600 tests with five Windows symlink
-permission skips; Ruff passed. Evidence:
-`docs/reports/cloud-proof-preparation-validation-20261009.json`.
+has occurred. Before the final container fix, local validation passed 600 tests
+with five Windows symlink permission skips. The final source, `d50378d`, passed
+all 608 tests and Ruff on both Windows and Linux CI, with no skips. The real
+Linux container check also passed. Evidence:
+`docs/reports/cloud-proof-preparation-validation-20261009.json` and
+`docs/reports/viewer-container-validation-20261009.json`. The latter preserves
+the earlier Docker Hub failures and the successful official-mirror build.
 
 The fresh prepared run contains 23 files totaling 28,422 bytes. Its source was
 clean commit `ec565a1c9edabba9ab2a15775c5f768250e83ae0`. The exact plan is
@@ -99,7 +103,7 @@ history. Commit code before generating new measured results on the Mac.
   See the retained recovery reports and `docs/progress.md` for the phase boundary.
 - **Milestone 3 in progress:** the plan/execute proof harness, viewer container
   package, HTTP tests, and private deployment proposal are implemented. Remaining:
-  retain successful container validation, obtain approval, and run the
+  obtain approval and run the
   real GCS upload, generated-local-copy removal, download and verification receipt.
   An earlier small live round trip is retained in `docs/reports/gcs-20261004.json`;
   it does not satisfy every revised phase requirement.
