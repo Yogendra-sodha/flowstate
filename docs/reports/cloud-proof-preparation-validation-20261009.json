@@ -1,0 +1,109 @@
+{
+  "container": {
+    "ci_result": "failed_before_build_docker_hub_auth_timeout",
+    "github_run": "https://github.com/Yogendra-sodha/flowstate/actions/runs/37993282664",
+    "initial_ci_failure": {
+      "error": "Docker Hub auth.docker.io token request exceeded client timeout",
+      "raw_log": "outputs\\phase3-container-ci-20261009\\initial-failure.log",
+      "raw_sha256": "f9dac3d0b7c1e75a1b1b145729f1b87b45db705b6adfd6998f77e01924df6272",
+      "source_commit": "ec565a1c9edabba9ab2a15775c5f768250e83ae0",
+      "stage": "docker pull python:3.12-slim",
+      "ubuntu_pytest": "passed",
+      "windows_pytest": "cancelled_by_matrix_fail_fast"
+    },
+    "local_docker_engine": "unresponsive; no Windows container build established"
+  },
+  "current_provenance": {
+    "dependencies": {
+      "duckdb": "1.5.5",
+      "flowstate-research": "0.6.0",
+      "h5py": "3.16.0",
+      "numpy": "2.5.3",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "zarr": "3.4.0"
+    },
+    "git_commit": "ec565a1c9edabba9ab2a15775c5f768250e83ae0",
+    "git_dirty": false,
+    "hardware": {
+      "logical_cpu_count": 8,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+    },
+    "precision": "float64",
+    "python": "3.12.9",
+    "source_sha256": "1eeb18d7686d300c7a71eac2ea9a0195d617869c79d660ea6dd945493b1e5991"
+  },
+  "local_validation": {
+    "collected": 605,
+    "commands": [
+      "uv run --no-sync ruff check .",
+      "uv run --no-sync pytest -ra --junitxml=outputs/phase3-validation-final-20261008/pytest.xml"
+    ],
+    "errors": 0,
+    "failures": 0,
+    "junit_seconds": 267.529,
+    "passed": 600,
+    "raw_directory": "outputs\\phase3-validation-final-20261008",
+    "raw_sha256": {
+      "pytest.txt": "7633070fd63aeccba756263440c7084b2ddacfaa4cbf932ffe9a4d21e3b86a36",
+      "pytest.xml": "c63e046ba6d3e0bcb433f7e4b5d8fe065d99b875a82416327933ccd7e8f90829",
+      "ruff.txt": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+    },
+    "ruff_passed": true,
+    "skipped": 5,
+    "skips": [
+      {
+        "reason": "Windows account lacks permission to create symbolic links",
+        "test": "tests.test_cloud_proof.test_real_symlink_cannot_remove_outside_file"
+      },
+      {
+        "reason": "Windows account lacks permission to create symbolic links",
+        "test": "tests.test_dashboard.test_output_leaf_symlink_is_not_followed[False]"
+      },
+      {
+        "reason": "Windows account lacks permission to create symbolic links",
+        "test": "tests.test_dashboard.test_output_leaf_symlink_is_not_followed[True]"
+      },
+      {
+        "reason": "Windows account lacks permission to create symbolic links",
+        "test": "tests.test_dashboard.test_symlinked_output_parent_cannot_bypass_lake_boundary"
+      },
+      {
+        "reason": "Windows account lacks permission to create symbolic links",
+        "test": "tests.test_dashboard.test_symlinked_experiments_directory_is_rejected"
+      }
+    ],
+    "timing": "Tests ran before committing on base 898c8f8e6e1b1baa2c31410139cccb38830c50c9; cloud proof/server/tests unchanged before source commit. Docker smoke script is exercised separately by CI."
+  },
+  "preparation": {
+    "cloud_accessed": false,
+    "command": "uv run --no-sync python -m flowstate.cloud_proof prepare C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009",
+    "experiment_id": "842524f5280649c4aa6b4271d25391e3",
+    "file_count": 23,
+    "gcs": {
+      "bucket": "flowstate-codex",
+      "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+      "project": "flowstate-510320"
+    },
+    "local_bytes": 28422,
+    "local_inventory_reverified": true,
+    "local_removal_performed": false,
+    "local_removal_target": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\source\\experiments\\842524f5280649c4aa6b4271d25391e3",
+    "plan": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\plan.json",
+    "plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+    "retained_plan": "docs/reports/gcs-proof-plan-20261009.json",
+    "runtime_matches_prepared_plan": true,
+    "source_clean": true
+  },
+  "prepared_source_commit": "ec565a1c9edabba9ab2a15775c5f768250e83ae0",
+  "recorded_at": "2026-10-09T21:25:49.898208+00:00",
+  "remaining": [
+    "Real GCS proof requires explicit user approval for credentials, spending and exact generated-local removal.",
+    "Viewer Linux container check is pending.",
+    "Mac requires fresh environment validation and a fresh absolute-path proof plan."
+  ],
+  "schema_version": 1,
+  "status": "local_preparation_complete_cloud_execution_pending"
+}

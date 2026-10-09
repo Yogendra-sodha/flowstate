@@ -147,6 +147,16 @@ respond; no successful Windows container build is claimed.
 
 The stepbook, handoff and [phase guide](steps/12-cloud-proof-viewer.md) record the
 implementation, failure recovery, and a private Cloud Run proposal. Full local
-validation and a concrete prepared plan will be retained after source is
-committed. Real GCS execution, billing, removal of the generated proof run, image
-publication, and deployment have not been performed. Milestone 3 remains open.
+validation and a concrete prepared plan are now retained after committing source.
+Real GCS execution, billing, removal of the generated proof run, image publication,
+and deployment have not been performed. Milestone 3 remains open.
+
+On 9 October, committed and pushed the proof harness, viewer package and guide,
+then prepared the local experiment from clean commit `ec565a1`. The command was
+`uv run --no-sync python -m flowstate.cloud_proof prepare C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009`.
+The [retained plan](reports/gcs-proof-plan-20261009.json) inventories 23 files and
+28,422 bytes. Its [validation receipt](reports/cloud-proof-preparation-validation-20261009.json)
+records the local suite: 600 passed, five Windows symlink permission skips, and
+Ruff passed. No cloud client was created by preparation. Requested explicit
+approval for credentials, a US$0.10 spending budget, and removal of only the
+inventoried generated experiment after remote verification. Approval is pending.

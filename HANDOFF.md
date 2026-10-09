@@ -1,6 +1,6 @@
 # Flowstate computer and Codex handoff
 
-Updated 8 October 2026. Continue on branch **develop**.
+Updated 9 October 2026. Continue on branch **develop**.
 Repository: https://github.com/Yogendra-sodha/flowstate
 
 Windows handoff validation: Ruff passed and 540 tests passed, with four
@@ -20,8 +20,18 @@ sequence only with approval. `containers/viewer/` packages the offline snapshot;
 Linux CI now builds and starts it. The Windows Docker engine did not respond to
 the local probe, so do not infer a successful Windows container build. See
 `docs/steps/12-cloud-proof-viewer.md` and the latest progress entry for readiness
-and the exact approval plan once retained. No real phase-3 cloud execution or
-deployment has occurred.
+and the retained approval plan. No real phase-3 cloud execution or deployment
+has occurred. Latest local validation passed 600 tests with five Windows symlink
+permission skips; Ruff passed. Evidence:
+`docs/reports/cloud-proof-preparation-validation-20261009.json`.
+
+The fresh prepared run contains 23 files totaling 28,422 bytes. Its source was
+clean commit `ec565a1c9edabba9ab2a15775c5f768250e83ae0`. The exact plan is
+`docs/reports/gcs-proof-plan-20261009.json`, SHA-256
+`aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d`.
+The Windows root is `C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009`.
+Approval was requested for this single proof with a US$0.10 spending budget;
+there is no approval recorded yet. Do not treat the request as permission.
 
 ## Purpose
 
@@ -89,7 +99,7 @@ history. Commit code before generating new measured results on the Mac.
   See the retained recovery reports and `docs/progress.md` for the phase boundary.
 - **Milestone 3 in progress:** the plan/execute proof harness, viewer container
   package, HTTP tests, and private deployment proposal are implemented. Remaining:
-  retain the prepared plan and container validation, obtain approval, and run the
+  retain successful container validation, obtain approval, and run the
   real GCS upload, generated-local-copy removal, download and verification receipt.
   An earlier small live round trip is retained in `docs/reports/gcs-20261004.json`;
   it does not satisfy every revised phase requirement.
@@ -143,6 +153,8 @@ performance and cross-hardware bitwise equality have not been established.
 | `src/flowstate/lake.py` | Atomic final publication, Parquet catalog, verification and queries. |
 | `src/flowstate/queue.py` | Local SQLite jobs, leases, fenced acknowledgments and recovery options. |
 | `src/flowstate/recovery_study.py` | Independent reference, controlled worker kill, resume, actual RK4 counts and array hashes. |
+| `src/flowstate/cloud_proof.py` | Local approval plan, bounded GCS recovery proof, and exact removal/restore receipts. |
+| `containers/viewer/` | Single-snapshot HTTP server, container, and Linux container check. |
 | `src/flowstate/scaling.py` | Isolated scaling trials, process-tree memory and retained reports. |
 | `docs/steps/` | Detailed workflow and reproduction guides. |
 | `docs/reports/` | Small retained measurement evidence committed to Git. |

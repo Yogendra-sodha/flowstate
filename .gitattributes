@@ -7,3 +7,5 @@ docs/handoff/cloud-worker-draft.patch -text
 docs/reports/handoff-validation-20261007.json -text
 docs/reports/checkpoint-recovery.json -text
 docs/reports/checkpoint-recovery-validation.json -text
+docs/reports/gcs-proof-plan-20261009.json -text
+docs/reports/cloud-proof-preparation-validation-20261009.json -text
