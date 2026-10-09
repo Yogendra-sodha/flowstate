@@ -15,7 +15,10 @@ Only `server.py` and the Dockerfile enter the build context. The base image tag
 must be resolved and its digest retained when an image is actually built; this
 package alone is not evidence that an image was built or deployed.
 
-Linux CI resolves the base tag to its repository digest, builds with
+Linux CI pulls the Python base from Docker's
+[official ECR Public mirror](https://www.docker.com/press-release/docker-official-images-available-amazon-elastic-container-registry/)
+to avoid Docker Hub's shared-runner pull limit. It uses no AWS account or
+credentials. CI resolves the base tag to its repository digest, builds with
 `--build-arg PYTHON_BASE=<resolved-digest>`, and starts the resulting container
 against an actual generated Flowstate export. `smoke.py` checks readiness,
 snapshot byte equality, the unprivileged UID, and the closed file routes, then
