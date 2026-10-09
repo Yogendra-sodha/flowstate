@@ -1053,3 +1053,35 @@ needed between the successful implementation tests and the measured proof.
 Only evidence and phase documentation were added. `HANDOFF.md` now marks this
 milestone complete and directs the Mac chat to environment validation followed
 by the approved cloud-proof milestone. Work stops at this phase boundary.
+
+## 25. Prepare a bounded cloud recovery proof and viewer package
+
+The next phase makes cloud approval concrete. `cloud_proof.prepare_proof` runs a
+small fixed local experiment from committed source and generates a plan, full
+file inventory, and offline viewer. It creates no cloud client. Approval later
+names the plan's SHA-256 and exact generated removal target. Configuration,
+runtime and source checks prevent an old plan from silently authorizing different
+work; documentation-only commits may advance while the package remains identical.
+
+`execute_proof` checks both approval flags before any client can be constructed.
+It uses the existing GCS mirror for upload. A second upload attempts create-only
+writes; the adapter verifies existing remote bytes before reporting reuse. Only
+after the full mirror is verified does removal begin. The loop removes the exact
+inventoried files and then empty directories, deepest first, inside the owned
+generated experiment. Reparse points, links, changed inventory and unexpected
+output files prevent this path. Partial removal is recorded in the final receipt.
+
+The download loads files into a fresh lake through the existing staging and
+manifest-verification protocol. The proof compares every restored file to its
+original hash, queries the completed Parquet record with DuckDB, and exports a
+new viewer. Plan, removal records and failure evidence remain outside the removed
+run. There is no remote delete operation and no retry that hides failed evidence.
+
+The viewer container serves one exported HTML document loaded at startup. Its
+HTTP routes never map request paths onto the filesystem; it has no dataset,
+simulation or credential access. Tests exercise actual HTTP behavior and compare
+an exported snapshot with the response. Linux CI builds and starts the rootless
+container against an actual export, retaining base/image/hash details in logs.
+The [phase guide](docs/steps/12-cloud-proof-viewer.md) documents the data path,
+failure recovery, container commands, and a private Cloud Run proposal. A real
+cloud receipt and deployment are not implied by these local implementations.

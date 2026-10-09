@@ -128,3 +128,25 @@ pending; raw arrays/logs remain in ignored `outputs/checkpoint-proof-20261007`.
 deployment proposal. Stopped at this phase boundary for review. No cloud
 credentials, spending, deployment, or user-data deletion were used. `HANDOFF.md`
 now directs the Mac chat to environment validation and the next milestone.
+
+## Milestone 3 — local preparation, cloud approval pending
+
+On 8 October 2026, implemented a two-stage GCS recovery proof and static viewer
+package. Preparation creates a fixed local experiment and a hash-bound review
+plan without a cloud client. Execution requires explicit approval, verifies the
+remote bytes before enumerated local removal, restores into a fresh lake, and
+retains exact file/query evidence or a failed-stage receipt. Tests exercise the
+full transfer through the in-memory SDK fake, approval and path guards, partial
+removal, corruption, and failures before/after removal.
+
+The viewer serves one preloaded HTML export with no lake or credential access.
+Actual HTTP tests cover routes and unchanged export bytes. Linux CI now includes
+a real rootless container build/start check with its base/image/snapshot details
+logged. The Windows Docker client is installed, but its local engine did not
+respond; no successful Windows container build is claimed.
+
+The stepbook, handoff and [phase guide](steps/12-cloud-proof-viewer.md) record the
+implementation, failure recovery, and a private Cloud Run proposal. Full local
+validation and a concrete prepared plan will be retained after source is
+committed. Real GCS execution, billing, removal of the generated proof run, image
+publication, and deployment have not been performed. Milestone 3 remains open.

@@ -1,6 +1,6 @@
 # Flowstate computer and Codex handoff
 
-Updated 7 October 2026. Continue on branch **develop**.
+Updated 8 October 2026. Continue on branch **develop**.
 Repository: https://github.com/Yogendra-sodha/flowstate
 
 Windows handoff validation: Ruff passed and 540 tests passed, with four
@@ -13,6 +13,15 @@ equations. Results are retained in `docs/reports/checkpoint-recovery.json` and
 `docs/reports/checkpoint-recovery-validation.json`. Raw fields and worker logs
 remain in `outputs/checkpoint-proof-20261007/`, outside Git. Source commit:
 `d8ef527ea887853a7c1169d194a72925d030691d`.
+
+Milestone 3 implementation is now prepared locally: `cloud_proof.py` creates a
+reviewable plan without credentials and executes its hash-bound GCS/removal/restore
+sequence only with approval. `containers/viewer/` packages the offline snapshot;
+Linux CI now builds and starts it. The Windows Docker engine did not respond to
+the local probe, so do not infer a successful Windows container build. See
+`docs/steps/12-cloud-proof-viewer.md` and the latest progress entry for readiness
+and the exact approval plan once retained. No real phase-3 cloud execution or
+deployment has occurred.
 
 ## Purpose
 
@@ -78,8 +87,10 @@ history. Commit code before generating new measured results on the Mac.
   replay, CLI/queue options, and actual worker-kill tests are implemented.
   The independent audit passed and Windows/Linux CI passed the measured source.
   See the retained recovery reports and `docs/progress.md` for the phase boundary.
-- **Milestone 3 remaining:** the revised GCS upload, approved local removal,
-  download, verification receipt, viewer container, and deployment proposal.
+- **Milestone 3 in progress:** the plan/execute proof harness, viewer container
+  package, HTTP tests, and private deployment proposal are implemented. Remaining:
+  retain the prepared plan and container validation, obtain approval, and run the
+  real GCS upload, generated-local-copy removal, download and verification receipt.
   An earlier small live round trip is retained in `docs/reports/gcs-20261004.json`;
   it does not satisfy every revised phase requirement.
 - **Milestone 4 remaining:** larger independent-family and multiple-seed model
@@ -107,10 +118,12 @@ uv run --no-sync python -m flowstate.recovery_study --output outputs/mac-recover
 
 Use a new directory and commit any code changes before a new measurement. Keep
 any failed result visible. No large scaling rerun is required merely because
-the computer changed. After Mac validation and the phase boundary recorded in
-`docs/progress.md`, the next delivery work is Milestone 3: prepare the viewer
-container and concrete GCS recovery plan locally, then request approval before
-using credentials, spending, local-data removal, or deployment.
+the computer changed. After Mac validation, continue Milestone 3 from
+`docs/progress.md`. Its harness, viewer package and deployment proposal are
+already implemented. If moving machines before the GCS proof runs, prepare a
+fresh plan on the Mac: the Windows plan cannot authorize a different local path.
+Request approval for that exact plan before using credentials, spending, local
+data removal, or deployment. Keep the original Windows plan as pending evidence.
 
 The small Windows proof measured recovery correctness, not general performance.
 Burgers recovery was slower than its uninterrupted reference in the retained

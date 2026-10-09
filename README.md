@@ -107,6 +107,11 @@ unchanged. Each export requires a new filename; see the
 sampling rules. It shows numerical experiments; trained-model comparisons remain
 in their evaluation reports.
 
+For the prepared GCS recovery proof and static viewer container, see the
+[cloud proof and viewer guide](docs/steps/12-cloud-proof-viewer.md). Local plan
+preparation needs no credentials; cloud execution and removal of its generated
+local copy require explicit approval.
+
 ## Complete a small research study
 
 ```sh
