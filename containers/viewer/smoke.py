@@ -8,10 +8,12 @@ import argparse
 import hashlib
 import json
 import subprocess
+import tempfile
 import time
 import urllib.error
 import urllib.request
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -20,9 +22,32 @@ def docker(*args):
                           text=True, timeout=45).stdout.strip()
 
 
+@contextmanager
+def readable_snapshot(content: bytes):
+    """Expose only a reviewed copy to the container; preserve the private source."""
+    directory = Path(tempfile.mkdtemp(prefix="flowstate-viewer-snapshot-")).resolve()
+    snapshot = directory / "index.html"
+    try:
+        with snapshot.open("xb") as stream:
+            stream.write(content)
+        # The private temporary parent remains mode 0700 on POSIX. Docker mounts
+        # only this file, which UID 65532 must be able to read inside the container.
+        snapshot.chmod(0o644)
+        yield snapshot
+    finally:
+        # Only our generated file and now-empty directory are removed.
+        snapshot.unlink(missing_ok=True)
+        directory.rmdir()
+
+
 def check(image: str, snapshot: Path, base_image: str) -> dict:
     snapshot = snapshot.resolve(strict=True)
     expected = snapshot.read_bytes()
+    with readable_snapshot(expected) as staged:
+        return check_container(image, staged, expected, base_image)
+
+
+def check_container(image: str, snapshot: Path, expected: bytes, base_image: str) -> dict:
     name = "flowstate-viewer-check-" + uuid.uuid4().hex
     created = False
     try:

@@ -19,7 +19,10 @@ Linux CI resolves the base tag to its repository digest, builds with
 `--build-arg PYTHON_BASE=<resolved-digest>`, and starts the resulting container
 against an actual generated Flowstate export. `smoke.py` checks readiness,
 snapshot byte equality, the unprivileged UID, and the closed file routes, then
-removes only its own temporary container. It prints the built image ID, resolved
+removes only its own temporary container and staged snapshot. The smoke check
+copies the reviewed bytes into a private temporary directory and makes only
+that copy readable by the container user. The original export and its permissions
+remain unchanged. It prints the built image ID, resolved
 base, snapshot hash, and runtime constraints into the job log. CI does not
 publish the image to a registry or deploy a service.
 
@@ -29,10 +32,18 @@ Export a snapshot to a new file first:
 uv run --no-sync flowstate --lake data/lake dashboard outputs/research.html
 ```
 
-Run on macOS/Linux, replacing the mount source if using a different export:
+On macOS/Linux, exports are private files (mode `0600`). Stage a reviewed copy
+with mode `0644` inside a private temporary directory so the container's user can
+read its single-file mount. The subshell cleans up only that copy and directory
+when the container stops; the original export keeps its permissions:
 
 ```sh
-docker run --rm --name flowstate-viewer --read-only --cap-drop ALL --security-opt no-new-privileges --publish 127.0.0.1:8080:8080 --mount "type=bind,source=$(pwd)/outputs/research.html,target=/snapshot/index.html,readonly" flowstate-viewer:local
+(
+  viewer_stage=$(mktemp -d "${TMPDIR:-/tmp}/flowstate-viewer.XXXXXX") || exit 1
+  trap 'rm -f "$viewer_stage/index.html"; rmdir "$viewer_stage"' EXIT
+  install -m 0644 outputs/research.html "$viewer_stage/index.html" || exit 1
+  docker run --rm --name flowstate-viewer --read-only --cap-drop ALL --security-opt no-new-privileges --publish 127.0.0.1:8080:8080 --mount "type=bind,source=$viewer_stage/index.html,target=/snapshot/index.html,readonly" flowstate-viewer:local
+)
 ```
 
 PowerShell uses its own current-directory syntax:
@@ -56,7 +67,15 @@ local source paths; inspect them before sharing.
 
 For a future private Cloud Run deployment, prepare a separate, minimal build
 directory containing a reviewed `index.html` and a derived Dockerfile that copies
-it into this image at `/snapshot/index.html`. Pin the parent by its image digest.
+it into this image at `/snapshot/index.html`. Pin the parent by its image digest
+and give the container user ownership explicitly, including when the source
+export has mode `0600`:
+
+```dockerfile
+FROM <pinned-viewer-image-digest>
+COPY --chown=65532:65532 --chmod=0400 index.html /snapshot/index.html
+```
+
 The resulting image needs no bucket mount, cloud storage roles, or credentials at
 runtime. Cloud Run ingress/IAM and HTTPS must provide access control; this small
 stdlib server has no authentication, TLS, or multi-user features. Use bounded

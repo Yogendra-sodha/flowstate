@@ -106,8 +106,11 @@ container accepts a read-only snapshot mount for local use. See its
 Linux CI resolves the base image to a digest, builds the image, runs it with a
 read-only filesystem and dropped capabilities, and compares served HTML with an
 actual Flowstate export. It checks the runtime user and file-route rejection,
-and logs image/base IDs and the snapshot hash. It then removes only its temporary
-test container. That validates the package without publishing an image or service.
+and logs image/base IDs and the snapshot hash. Because exports are private files
+on POSIX, the smoke check makes a readable copy inside its own private temporary
+directory and mounts only that file. Original bytes and permissions stay intact.
+It then removes only its temporary test container, copy, and empty directory.
+That validates the package without publishing an image or service.
 
 ## Proposed GCP deployment — not executed
 
@@ -117,7 +120,7 @@ snapshot is later approved, use the following bounded Cloud Run proposal:
 | Item | Proposed configuration |
 | --- | --- |
 | Region | `us-east1`, after confirming the intended resource location. |
-| Artifact | Reviewed HTML baked into a derived image with a pinned parent digest. |
+| Artifact | Reviewed HTML baked into a derived image with a pinned parent digest; `COPY --chown=65532:65532 --chmod=0400` makes the snapshot readable by its runtime user. |
 | Registry | A dedicated Artifact Registry Docker repository; retain the pushed digest. |
 | Service | A private Cloud Run service; require authenticated invoker access. |
 | Runtime identity | Dedicated viewer service account with no bucket permissions or application API roles. |

@@ -1085,3 +1085,18 @@ container against an actual export, retaining base/image/hash details in logs.
 The [phase guide](docs/steps/12-cloud-proof-viewer.md) documents the data path,
 failure recovery, container commands, and a private Cloud Run proposal. A real
 cloud receipt and deployment are not implied by these local implementations.
+
+Preparation was then executed from clean commit `ec565a1`. Its retained
+[plan](docs/reports/gcs-proof-plan-20261009.json) describes the exact file hashes,
+source identity, GCS prefix, and local removal target. The
+[validation receipt](docs/reports/cloud-proof-preparation-validation-20261009.json)
+keeps local test results and the initial Docker Hub timeout visible. The plan is
+pending authorization; creating it does not authorize credentials or removal.
+
+Review also found a Unix permission mismatch: the exporter deliberately creates
+private HTML files, while the container runs as a different user. The container
+check now copies reviewed bytes into a private temporary directory, makes only
+that copy readable to the container, and removes that generated copy afterward.
+The original export's permissions and lake remain unchanged. A baked snapshot
+explicitly assigns ownership to the container user. Linux CI exercises the real
+image and retries a failed public base-image pull within a fixed attempt bound.
