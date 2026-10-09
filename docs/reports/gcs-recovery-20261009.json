@@ -1,0 +1,450 @@
+{
+  "execution_provenance": {
+    "dependencies": {
+      "duckdb": "1.5.5",
+      "flowstate-research": "0.6.0",
+      "h5py": "3.16.0",
+      "numpy": "2.5.3",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "zarr": "3.4.0"
+    },
+    "git_commit": "bb8daf2e5de7467ce4b87aaf70dee99b66ffc9a6",
+    "git_dirty": false,
+    "hardware": {
+      "logical_cpu_count": 8,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+    },
+    "precision": "float64",
+    "python": "3.12.9",
+    "source_sha256": "1eeb18d7686d300c7a71eac2ea9a0195d617869c79d660ea6dd945493b1e5991"
+  },
+  "local_removal_completed": true,
+  "local_removal_started": true,
+  "plan": {
+    "actions": [
+      "upload",
+      "repeat upload to hash remote bytes",
+      "remove generated local run",
+      "download into fresh lake",
+      "verify exact files and query restored metadata"
+    ],
+    "approved": false,
+    "bounds": {
+      "max_bytes": 1048576,
+      "max_files_including_manifest": 128
+    },
+    "cloud_accessed": false,
+    "config": {
+      "amplitude": 1.0,
+      "domain_length": 6.283185307179586,
+      "dt": 0.002,
+      "equation": "burgers1d",
+      "grid_size": 64,
+      "initial_condition": "random",
+      "save_every": 5,
+      "seed": 51,
+      "steps": 20,
+      "viscosity": 0.05
+    },
+    "created_at": "2026-10-09T21:25:09.996663+00:00",
+    "experiment_id": "842524f5280649c4aa6b4271d25391e3",
+    "file_count": 23,
+    "gcs": {
+      "bucket": "flowstate-codex",
+      "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+      "project": "flowstate-510320"
+    },
+    "inventory": {
+      "directories": [
+        "fields.zarr",
+        "fields.zarr/coordinates",
+        "fields.zarr/coordinates/x",
+        "fields.zarr/coordinates/x/c",
+        "fields.zarr/diagnostics",
+        "fields.zarr/diagnostics/energy",
+        "fields.zarr/diagnostics/energy/c",
+        "fields.zarr/diagnostics/mass",
+        "fields.zarr/diagnostics/mass/c",
+        "fields.zarr/diagnostics/mean_velocity",
+        "fields.zarr/diagnostics/mean_velocity/c",
+        "fields.zarr/fields",
+        "fields.zarr/fields/velocity",
+        "fields.zarr/fields/velocity/c",
+        "fields.zarr/fields/velocity/c/0",
+        "fields.zarr/fields/velocity/c/1",
+        "fields.zarr/fields/velocity/c/2",
+        "fields.zarr/fields/velocity/c/3",
+        "fields.zarr/fields/velocity/c/4",
+        "fields.zarr/time",
+        "fields.zarr/time/c"
+      ],
+      "files": {
+        "fields.zarr/coordinates/x/c/0": {
+          "bytes": 401,
+          "sha256": "8b16876eaa1e2e98c8a75638cafb26ab8293dc0bc0ce58d46d43ffc3a29d3bcf"
+        },
+        "fields.zarr/coordinates/x/zarr.json": {
+          "bytes": 619,
+          "sha256": "e7ca14341d03cc271d661e0b4e2b0b484cf8ece689386b8d7b968445629736c0"
+        },
+        "fields.zarr/coordinates/zarr.json": {
+          "bytes": 66,
+          "sha256": "36615682d5be9646729635067a75185212eb0c48d708ef06ad34c1f58dd587d2"
+        },
+        "fields.zarr/diagnostics/energy/c/0": {
+          "bytes": 49,
+          "sha256": "66c5cea5a0a116b88281bf3caa54bab33433a0330bf0f1dc6695db3f0845a734"
+        },
+        "fields.zarr/diagnostics/energy/zarr.json": {
+          "bytes": 617,
+          "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+        },
+        "fields.zarr/diagnostics/mass/c/0": {
+          "bytes": 49,
+          "sha256": "9e23e71a6e1ccbfd54a28a73d78d99700702dc6875ad08f4b2cfe01c1962a51f"
+        },
+        "fields.zarr/diagnostics/mass/zarr.json": {
+          "bytes": 617,
+          "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+        },
+        "fields.zarr/diagnostics/mean_velocity/c/0": {
+          "bytes": 39,
+          "sha256": "a71881e5406c8c905132fe1535282bd5c72dab0789b89ec44ea848e7d3dedd4c"
+        },
+        "fields.zarr/diagnostics/mean_velocity/zarr.json": {
+          "bytes": 617,
+          "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+        },
+        "fields.zarr/diagnostics/zarr.json": {
+          "bytes": 66,
+          "sha256": "36615682d5be9646729635067a75185212eb0c48d708ef06ad34c1f58dd587d2"
+        },
+        "fields.zarr/fields/velocity/c/0/0": {
+          "bytes": 522,
+          "sha256": "2144550d20817620388b69e78de43ea64285e1db4e2a88b89781c98a8ef97105"
+        },
+        "fields.zarr/fields/velocity/c/1/0": {
+          "bytes": 522,
+          "sha256": "4a9ce3c15b0003e860ec2dabc4d3739fcce57e87d3cbe00e17b26219d6711fb9"
+        },
+        "fields.zarr/fields/velocity/c/2/0": {
+          "bytes": 522,
+          "sha256": "dd1aa3a30b9c9231746c6f2d36fab67e86e4e8b3c5691652987585ea3312d698"
+        },
+        "fields.zarr/fields/velocity/c/3/0": {
+          "bytes": 522,
+          "sha256": "f089b2d5d39d9f2eb9acc7a3a2e118b8db6e162c392f2809b3711406e13f8505"
+        },
+        "fields.zarr/fields/velocity/c/4/0": {
+          "bytes": 522,
+          "sha256": "1a9a07ad30dfcdfe398b13b685571d712da4cc0df642112ce2fe88b01cbe8fff"
+        },
+        "fields.zarr/fields/velocity/zarr.json": {
+          "bytes": 637,
+          "sha256": "3c186cf211446206599059b0e7d084d287282e1dcf605e6fdb45a519659634dc"
+        },
+        "fields.zarr/fields/zarr.json": {
+          "bytes": 66,
+          "sha256": "36615682d5be9646729635067a75185212eb0c48d708ef06ad34c1f58dd587d2"
+        },
+        "fields.zarr/time/c/0": {
+          "bytes": 40,
+          "sha256": "d90014eda003d3d67dff4148c9cbcc61b583bc962b9ca2bcb36660ebb7fe3e9c"
+        },
+        "fields.zarr/time/zarr.json": {
+          "bytes": 617,
+          "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+        },
+        "fields.zarr/zarr.json": {
+          "bytes": 593,
+          "sha256": "a1ac3bb51980f1dd369d4d3978fbc868112677934759c02b3271a4dd560efcc3"
+        },
+        "manifest.json": {
+          "bytes": 2324,
+          "sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e"
+        },
+        "metadata.parquet": {
+          "bytes": 16271,
+          "sha256": "a54827728bb7bd67f50dc5515a623943d1093ff969964a504ed0427553eb0b70"
+        },
+        "record.json": {
+          "bytes": 2124,
+          "sha256": "8c554da9075c66e74c85eed15d9d6b43132c52e3887b1ca3bc247ae097d4bfd3"
+        }
+      }
+    },
+    "local_bytes": 28422,
+    "local_removal_target": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\source\\experiments\\842524f5280649c4aa6b4271d25391e3",
+    "proof_id": "5ffab66dac614dc486b592b0678b454a",
+    "provenance": {
+      "dependencies": {
+        "duckdb": "1.5.5",
+        "flowstate-research": "0.6.0",
+        "h5py": "3.16.0",
+        "numpy": "2.5.3",
+        "pyarrow": "23.0.1",
+        "scipy": "1.18.1",
+        "zarr": "3.4.0"
+      },
+      "git_commit": "ec565a1c9edabba9ab2a15775c5f768250e83ae0",
+      "git_dirty": false,
+      "hardware": {
+        "logical_cpu_count": 8,
+        "machine": "AMD64",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+      },
+      "precision": "float64",
+      "python": "3.12.9",
+      "source_sha256": "1eeb18d7686d300c7a71eac2ea9a0195d617869c79d660ea6dd945493b1e5991"
+    },
+    "restore_lake": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\restored",
+    "root": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009",
+    "schema_version": 1,
+    "storage_libraries": {
+      "google-auth": "2.59.1",
+      "google-cloud-storage": "3.16.0",
+      "google-crc32c": "1.8.0"
+    },
+    "viewer": {
+      "displayed": 1,
+      "html_sha256": "9f2a856a4834d5727919fe7b254ccfe232cd2e33326ef4ffa180e925e7bf4948",
+      "max_experiments": 50,
+      "output_html": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\viewer.html",
+      "selection": "Ascending experiment ID; counts include committed valid-ID directories only",
+      "total": 1,
+      "truncated": false
+    }
+  },
+  "plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+  "remote_objects_deleted": false,
+  "restored_viewer": {
+    "displayed": 1,
+    "html_sha256": "45e795756842216aa339e2a885e51f4085ab6e3d15872ce3318b7b3aa267d41e",
+    "max_experiments": 50,
+    "output_html": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\restored-viewer.html",
+    "selection": "Ascending experiment ID; counts include committed valid-ID directories only",
+    "total": 1,
+    "truncated": false
+  },
+  "schema_version": 1,
+  "stages": {
+    "download": {
+      "id": "842524f5280649c4aa6b4271d25391e3",
+      "path": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\restored\\experiments\\842524f5280649c4aa6b4271d25391e3",
+      "resumed": false
+    },
+    "local_removal": {
+      "existed_before": true,
+      "exists_after": false,
+      "removed_directories": [
+        "fields.zarr/fields/velocity/c/0",
+        "fields.zarr/fields/velocity/c/1",
+        "fields.zarr/fields/velocity/c/2",
+        "fields.zarr/fields/velocity/c/3",
+        "fields.zarr/fields/velocity/c/4",
+        "fields.zarr/coordinates/x/c",
+        "fields.zarr/diagnostics/energy/c",
+        "fields.zarr/diagnostics/mass/c",
+        "fields.zarr/diagnostics/mean_velocity/c",
+        "fields.zarr/fields/velocity/c",
+        "fields.zarr/coordinates/x",
+        "fields.zarr/diagnostics/energy",
+        "fields.zarr/diagnostics/mass",
+        "fields.zarr/diagnostics/mean_velocity",
+        "fields.zarr/fields/velocity",
+        "fields.zarr/time/c",
+        "fields.zarr/coordinates",
+        "fields.zarr/diagnostics",
+        "fields.zarr/fields",
+        "fields.zarr/time",
+        "fields.zarr"
+      ],
+      "removed_files": [
+        "fields.zarr/coordinates/x/c/0",
+        "fields.zarr/coordinates/x/zarr.json",
+        "fields.zarr/coordinates/zarr.json",
+        "fields.zarr/diagnostics/energy/c/0",
+        "fields.zarr/diagnostics/energy/zarr.json",
+        "fields.zarr/diagnostics/mass/c/0",
+        "fields.zarr/diagnostics/mass/zarr.json",
+        "fields.zarr/diagnostics/mean_velocity/c/0",
+        "fields.zarr/diagnostics/mean_velocity/zarr.json",
+        "fields.zarr/diagnostics/zarr.json",
+        "fields.zarr/fields/velocity/c/0/0",
+        "fields.zarr/fields/velocity/c/1/0",
+        "fields.zarr/fields/velocity/c/2/0",
+        "fields.zarr/fields/velocity/c/3/0",
+        "fields.zarr/fields/velocity/c/4/0",
+        "fields.zarr/fields/velocity/zarr.json",
+        "fields.zarr/fields/zarr.json",
+        "fields.zarr/time/c/0",
+        "fields.zarr/time/zarr.json",
+        "fields.zarr/zarr.json",
+        "manifest.json",
+        "metadata.parquet",
+        "record.json"
+      ],
+      "target": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\source\\experiments\\842524f5280649c4aa6b4271d25391e3"
+    },
+    "remote_verification": {
+      "bucket": "flowstate-codex",
+      "committed": true,
+      "id": "842524f5280649c4aa6b4271d25391e3",
+      "manifest_key": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a/experiments/842524f5280649c4aa6b4271d25391e3/manifest.json",
+      "manifest_sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e",
+      "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+      "resumed": true,
+      "reused_objects": 22,
+      "uploaded_objects": 0
+    },
+    "upload": {
+      "bucket": "flowstate-codex",
+      "committed": true,
+      "id": "842524f5280649c4aa6b4271d25391e3",
+      "manifest_key": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a/experiments/842524f5280649c4aa6b4271d25391e3/manifest.json",
+      "manifest_sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e",
+      "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+      "resumed": false,
+      "reused_objects": 0,
+      "uploaded_objects": 22
+    },
+    "verification": {
+      "all_files_byte_identical": true,
+      "file_count": 23,
+      "inventory": {
+        "directories": [
+          "fields.zarr",
+          "fields.zarr/coordinates",
+          "fields.zarr/coordinates/x",
+          "fields.zarr/coordinates/x/c",
+          "fields.zarr/diagnostics",
+          "fields.zarr/diagnostics/energy",
+          "fields.zarr/diagnostics/energy/c",
+          "fields.zarr/diagnostics/mass",
+          "fields.zarr/diagnostics/mass/c",
+          "fields.zarr/diagnostics/mean_velocity",
+          "fields.zarr/diagnostics/mean_velocity/c",
+          "fields.zarr/fields",
+          "fields.zarr/fields/velocity",
+          "fields.zarr/fields/velocity/c",
+          "fields.zarr/fields/velocity/c/0",
+          "fields.zarr/fields/velocity/c/1",
+          "fields.zarr/fields/velocity/c/2",
+          "fields.zarr/fields/velocity/c/3",
+          "fields.zarr/fields/velocity/c/4",
+          "fields.zarr/time",
+          "fields.zarr/time/c"
+        ],
+        "files": {
+          "fields.zarr/coordinates/x/c/0": {
+            "bytes": 401,
+            "sha256": "8b16876eaa1e2e98c8a75638cafb26ab8293dc0bc0ce58d46d43ffc3a29d3bcf"
+          },
+          "fields.zarr/coordinates/x/zarr.json": {
+            "bytes": 619,
+            "sha256": "e7ca14341d03cc271d661e0b4e2b0b484cf8ece689386b8d7b968445629736c0"
+          },
+          "fields.zarr/coordinates/zarr.json": {
+            "bytes": 66,
+            "sha256": "36615682d5be9646729635067a75185212eb0c48d708ef06ad34c1f58dd587d2"
+          },
+          "fields.zarr/diagnostics/energy/c/0": {
+            "bytes": 49,
+            "sha256": "66c5cea5a0a116b88281bf3caa54bab33433a0330bf0f1dc6695db3f0845a734"
+          },
+          "fields.zarr/diagnostics/energy/zarr.json": {
+            "bytes": 617,
+            "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+          },
+          "fields.zarr/diagnostics/mass/c/0": {
+            "bytes": 49,
+            "sha256": "9e23e71a6e1ccbfd54a28a73d78d99700702dc6875ad08f4b2cfe01c1962a51f"
+          },
+          "fields.zarr/diagnostics/mass/zarr.json": {
+            "bytes": 617,
+            "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+          },
+          "fields.zarr/diagnostics/mean_velocity/c/0": {
+            "bytes": 39,
+            "sha256": "a71881e5406c8c905132fe1535282bd5c72dab0789b89ec44ea848e7d3dedd4c"
+          },
+          "fields.zarr/diagnostics/mean_velocity/zarr.json": {
+            "bytes": 617,
+            "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+          },
+          "fields.zarr/diagnostics/zarr.json": {
+            "bytes": 66,
+            "sha256": "36615682d5be9646729635067a75185212eb0c48d708ef06ad34c1f58dd587d2"
+          },
+          "fields.zarr/fields/velocity/c/0/0": {
+            "bytes": 522,
+            "sha256": "2144550d20817620388b69e78de43ea64285e1db4e2a88b89781c98a8ef97105"
+          },
+          "fields.zarr/fields/velocity/c/1/0": {
+            "bytes": 522,
+            "sha256": "4a9ce3c15b0003e860ec2dabc4d3739fcce57e87d3cbe00e17b26219d6711fb9"
+          },
+          "fields.zarr/fields/velocity/c/2/0": {
+            "bytes": 522,
+            "sha256": "dd1aa3a30b9c9231746c6f2d36fab67e86e4e8b3c5691652987585ea3312d698"
+          },
+          "fields.zarr/fields/velocity/c/3/0": {
+            "bytes": 522,
+            "sha256": "f089b2d5d39d9f2eb9acc7a3a2e118b8db6e162c392f2809b3711406e13f8505"
+          },
+          "fields.zarr/fields/velocity/c/4/0": {
+            "bytes": 522,
+            "sha256": "1a9a07ad30dfcdfe398b13b685571d712da4cc0df642112ce2fe88b01cbe8fff"
+          },
+          "fields.zarr/fields/velocity/zarr.json": {
+            "bytes": 637,
+            "sha256": "3c186cf211446206599059b0e7d084d287282e1dcf605e6fdb45a519659634dc"
+          },
+          "fields.zarr/fields/zarr.json": {
+            "bytes": 66,
+            "sha256": "36615682d5be9646729635067a75185212eb0c48d708ef06ad34c1f58dd587d2"
+          },
+          "fields.zarr/time/c/0": {
+            "bytes": 40,
+            "sha256": "d90014eda003d3d67dff4148c9cbcc61b583bc962b9ca2bcb36660ebb7fe3e9c"
+          },
+          "fields.zarr/time/zarr.json": {
+            "bytes": 617,
+            "sha256": "a49371f5781987f72ac9ff8698fe441a0cbcabece88e855af4876659972388bb"
+          },
+          "fields.zarr/zarr.json": {
+            "bytes": 593,
+            "sha256": "a1ac3bb51980f1dd369d4d3978fbc868112677934759c02b3271a4dd560efcc3"
+          },
+          "manifest.json": {
+            "bytes": 2324,
+            "sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e"
+          },
+          "metadata.parquet": {
+            "bytes": 16271,
+            "sha256": "a54827728bb7bd67f50dc5515a623943d1093ff969964a504ed0427553eb0b70"
+          },
+          "record.json": {
+            "bytes": 2124,
+            "sha256": "8c554da9075c66e74c85eed15d9d6b43132c52e3887b1ca3bc247ae097d4bfd3"
+          }
+        }
+      },
+      "manifest_problems": [],
+      "rows": [
+        {
+          "equation": "burgers1d",
+          "id": "842524f5280649c4aa6b4271d25391e3",
+          "status": "completed"
+        }
+      ],
+      "sql": "SELECT id, equation, status FROM experiments"
+    }
+  },
+  "status": "completed",
+  "wall_seconds": 27.66611440014094
+}

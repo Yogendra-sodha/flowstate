@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-10-09T22:33:58.294007+00:00",
+  "user_message": "Yes do it you have approval to use $50 credit in gcp go ahead do not ask me for that",
+  "gcp_total_authorized_budget_usd": 50,
+  "scope": "Existing Flowstate project work, including this previously described upload/verify/generated-local-removal/restore test; deployment remains outside this milestone.",
+  "prepared_plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+  "credential_preflight": "successful ADC refresh; no tokens retained",
+  "billing_charge_observed_usd": null,
+  "budget_is_provider_enforced": false
+}
