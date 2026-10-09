@@ -1,0 +1,26 @@
+{
+  "authorization_report": "docs/reports/gcp-authorization-20261009.json",
+  "authorized_total_budget": 50,
+  "billing_status": "Not queried or reconciled; unknown does not mean zero. Review actual billing before material new compute or storage commitments.",
+  "confirmed_billed_spend": null,
+  "confirmed_remaining_budget": null,
+  "currency": "USD",
+  "provider_credit_balance": null,
+  "provider_enforced_cap_configured": false,
+  "schema_version": 1,
+  "scope": "GCP use for the existing Flowstate project; the user authorized credential use and spending within this total without repeat approval.",
+  "standing_runtime_resources_created_by_this_phase": [],
+  "updated_at": "2026-10-09T22:36:21.938547+00:00",
+  "usage_receipts": [
+    {
+      "billed_charge": null,
+      "bucket": "flowstate-codex",
+      "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+      "remote_data_retained": true,
+      "report": "docs/reports/gcs-recovery-20261009.json",
+      "retained_experiment_bytes": 28422,
+      "retained_experiment_files": 23,
+      "service": "Cloud Storage"
+    }
+  ]
+}

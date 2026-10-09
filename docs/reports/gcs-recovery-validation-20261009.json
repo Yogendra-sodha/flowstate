@@ -1,0 +1,216 @@
+{
+  "command": "uv run --no-sync python -m flowstate.cloud_proof execute C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009 --plan-sha256 aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d --allow-cloud --allow-local-delete",
+  "independent_local_audit": {
+    "all_restored_hashes_match_prepared_inventory": true,
+    "audit_scope": "Independent agent read local files only; no second cloud client, credential use, edits, or deletion",
+    "before_and_after_removal_evidence_matches_receipt": true,
+    "checks_passed": 26,
+    "execution_commit": "bb8daf2e5de7467ce4b87aaf70dee99b66ffc9a6",
+    "execution_start_marker_consistent": true,
+    "experiment_creation_commit": "ec565a1c9edabba9ab2a15775c5f768250e83ae0",
+    "experiment_id": "842524f5280649c4aa6b4271d25391e3",
+    "fresh_download_recorded": true,
+    "manifest_counted_separately": true,
+    "manifest_sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e",
+    "manifest_verification_problems": [],
+    "original_and_restored_viewer_hashes_match_respective_receipts": true,
+    "original_experiment_absent": true,
+    "original_provenance_preserved": true,
+    "plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+    "proof_id": "5ffab66dac614dc486b592b0678b454a",
+    "query_rows": [
+      {
+        "equation": "burgers1d",
+        "id": "842524f5280649c4aa6b4271d25391e3",
+        "status": "completed"
+      }
+    ],
+    "receipt_sha256": "b4554d266fdf651777d7ffc6da4d7fa0a5a1092dcff81d5c725b1da5314795d7",
+    "receipt_wall_seconds": 27.66611440014094,
+    "remote_deletion_recorded": false,
+    "removed_files_and_directories_exactly_match_plan": true,
+    "restored_bytes": 28422,
+    "restored_directories": 21,
+    "restored_files": 23,
+    "restored_links_present": false,
+    "source_lake_parent_retained": true,
+    "source_sha256": "1eeb18d7686d300c7a71eac2ea9a0195d617869c79d660ea6dd945493b1e5991",
+    "upload_artifacts_created": 22,
+    "upload_artifacts_reused": 0,
+    "verification_artifacts_created": 0,
+    "verification_artifacts_reused": 22
+  },
+  "limits": [
+    "One small Burgers experiment on one Windows runtime; not a cloud performance, availability or durability benchmark.",
+    "Reported time covers this single execute call including transfers, local removal, verification, query and viewer export.",
+    "Independent audit recomputed local evidence but did not independently query GCS or provider billing.",
+    "No billed charge or remaining promotional credit has been measured; file counts are not billed operation counts.",
+    "Viewer container tested in Linux CI; no image published or hosted service deployed."
+  ],
+  "raw_directory": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009",
+  "raw_receipt_sha256": "b4554d266fdf651777d7ffc6da4d7fa0a5a1092dcff81d5c725b1da5314795d7",
+  "recorded_at": "2026-10-09T22:36:21.932546+00:00",
+  "retained_receipt": "docs/reports/gcs-recovery-20261009.json",
+  "retained_receipt_matches_raw": true,
+  "schema_version": 1,
+  "stage_evidence": {
+    "after-removal.json": {
+      "content": {
+        "existed_before": true,
+        "exists_after": false,
+        "removed_directories": [
+          "fields.zarr/fields/velocity/c/0",
+          "fields.zarr/fields/velocity/c/1",
+          "fields.zarr/fields/velocity/c/2",
+          "fields.zarr/fields/velocity/c/3",
+          "fields.zarr/fields/velocity/c/4",
+          "fields.zarr/coordinates/x/c",
+          "fields.zarr/diagnostics/energy/c",
+          "fields.zarr/diagnostics/mass/c",
+          "fields.zarr/diagnostics/mean_velocity/c",
+          "fields.zarr/fields/velocity/c",
+          "fields.zarr/coordinates/x",
+          "fields.zarr/diagnostics/energy",
+          "fields.zarr/diagnostics/mass",
+          "fields.zarr/diagnostics/mean_velocity",
+          "fields.zarr/fields/velocity",
+          "fields.zarr/time/c",
+          "fields.zarr/coordinates",
+          "fields.zarr/diagnostics",
+          "fields.zarr/fields",
+          "fields.zarr/time",
+          "fields.zarr"
+        ],
+        "removed_files": [
+          "fields.zarr/coordinates/x/c/0",
+          "fields.zarr/coordinates/x/zarr.json",
+          "fields.zarr/coordinates/zarr.json",
+          "fields.zarr/diagnostics/energy/c/0",
+          "fields.zarr/diagnostics/energy/zarr.json",
+          "fields.zarr/diagnostics/mass/c/0",
+          "fields.zarr/diagnostics/mass/zarr.json",
+          "fields.zarr/diagnostics/mean_velocity/c/0",
+          "fields.zarr/diagnostics/mean_velocity/zarr.json",
+          "fields.zarr/diagnostics/zarr.json",
+          "fields.zarr/fields/velocity/c/0/0",
+          "fields.zarr/fields/velocity/c/1/0",
+          "fields.zarr/fields/velocity/c/2/0",
+          "fields.zarr/fields/velocity/c/3/0",
+          "fields.zarr/fields/velocity/c/4/0",
+          "fields.zarr/fields/velocity/zarr.json",
+          "fields.zarr/fields/zarr.json",
+          "fields.zarr/time/c/0",
+          "fields.zarr/time/zarr.json",
+          "fields.zarr/zarr.json",
+          "manifest.json",
+          "metadata.parquet",
+          "record.json"
+        ],
+        "target": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\source\\experiments\\842524f5280649c4aa6b4271d25391e3"
+      },
+      "raw_sha256": "927e98ceed49153cf84d45e8ceadf7403ace713e3a3fabfc6f296d4466b3632e"
+    },
+    "authorization.json": {
+      "content": {
+        "billing_charge_observed_usd": null,
+        "budget_is_provider_enforced": false,
+        "credential_preflight": "successful ADC refresh; no tokens retained",
+        "gcp_total_authorized_budget_usd": 50,
+        "prepared_plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+        "recorded_at": "2026-10-09T22:33:58.294007+00:00",
+        "scope": "Existing Flowstate project work, including this previously described upload/verify/generated-local-removal/restore test; deployment remains outside this milestone.",
+        "user_message": "Yes do it you have approval to use $50 credit in gcp go ahead do not ask me for that"
+      },
+      "raw_sha256": "6f1c253ff3fed863ae4523a5ba124e539d48df6382bc4887f3d2622eda7bbb99"
+    },
+    "before-removal.json": {
+      "content": {
+        "plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+        "remote_verification": {
+          "bucket": "flowstate-codex",
+          "committed": true,
+          "id": "842524f5280649c4aa6b4271d25391e3",
+          "manifest_key": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a/experiments/842524f5280649c4aa6b4271d25391e3/manifest.json",
+          "manifest_sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e",
+          "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+          "resumed": true,
+          "reused_objects": 22,
+          "uploaded_objects": 0
+        },
+        "target": "C:\\Users\\yuvis\\AppData\\Local\\Flowstate\\gcs-proof-20261009\\source\\experiments\\842524f5280649c4aa6b4271d25391e3",
+        "upload": {
+          "bucket": "flowstate-codex",
+          "committed": true,
+          "id": "842524f5280649c4aa6b4271d25391e3",
+          "manifest_key": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a/experiments/842524f5280649c4aa6b4271d25391e3/manifest.json",
+          "manifest_sha256": "3f515b1bb27fcfbe5cf727b6d7136f9d15ccdbd587b269ecd8bb1f96e7e3838e",
+          "prefix": "flowstate/proofs/5ffab66dac614dc486b592b0678b454a",
+          "resumed": false,
+          "reused_objects": 0,
+          "uploaded_objects": 22
+        }
+      },
+      "raw_sha256": "1e5b22b93c9ab1b9435bbf0a9c6c92517cfbacae580836b5d7da35ca662ec4f7"
+    },
+    "execution-started.json": {
+      "content": {
+        "cloud_approved": true,
+        "local_delete_approved": true,
+        "plan_sha256": "aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d",
+        "provenance": {
+          "dependencies": {
+            "duckdb": "1.5.5",
+            "flowstate-research": "0.6.0",
+            "h5py": "3.16.0",
+            "numpy": "2.5.3",
+            "pyarrow": "23.0.1",
+            "scipy": "1.18.1",
+            "zarr": "3.4.0"
+          },
+          "git_commit": "bb8daf2e5de7467ce4b87aaf70dee99b66ffc9a6",
+          "git_dirty": false,
+          "hardware": {
+            "logical_cpu_count": 8,
+            "machine": "AMD64",
+            "platform": "Windows-11-10.0.26200-SP0",
+            "processor": "Intel64 Family 6 Model 140 Stepping 2, GenuineIntel"
+          },
+          "precision": "float64",
+          "python": "3.12.9",
+          "source_sha256": "1eeb18d7686d300c7a71eac2ea9a0195d617869c79d660ea6dd945493b1e5991"
+        },
+        "started_at": "2026-10-09T22:34:00.109002+00:00"
+      },
+      "raw_sha256": "48d1401dd9fd505fbe9866e02d4970128493d4e8fe8b24dd9781b208a07853d0"
+    }
+  },
+  "status": "passed",
+  "validation": {
+    "ci_evidence": "docs/reports/viewer-container-validation-20261009.json",
+    "ci_source_commit": "d50378db7ba5023aa112544239f56f47ce88ed39",
+    "ci_test_suites": {
+      "test (ubuntu-latest)": {
+        "failed": 0,
+        "passed": 608,
+        "seconds": 59.89,
+        "skipped": 0
+      },
+      "test (windows-latest)": {
+        "failed": 0,
+        "passed": 608,
+        "seconds": 98.47,
+        "skipped": 0
+      }
+    },
+    "code_and_tests_match_successful_ci_source": true,
+    "post_execution_local_manifest_verification": [],
+    "post_execution_query_rows": [
+      {
+        "equation": "burgers1d",
+        "id": "842524f5280649c4aa6b4271d25391e3",
+        "status": "completed"
+      }
+    ],
+    "ruff_after_execution": "passed"
+  }
+}
