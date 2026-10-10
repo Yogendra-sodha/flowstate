@@ -1203,3 +1203,7 @@ lists family IDs and values; no family field-error losses were invented. No test
 threshold or hyperparameter was repaired. The
 [results chapter](docs/steps/13-trustworthy-model.md) explains interpretation.
 Milestone 4's local evidence is complete; pause for review before the router.
+
+GitHub publication confirmed on 10 October 2026 after Mac authentication
+setup: commits `9f96a94`, `4b18252` and `1e6e22d` are on origin/develop.
+Source and measurements are unchanged. Paused for Milestone 4 review.

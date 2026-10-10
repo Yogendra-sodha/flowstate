@@ -16,7 +16,8 @@ beside it. One-step whole-trajectory coverage missed its nominal target, and
 finer-reference sensitivity is comparable to rollout error. Read
 `docs/steps/13-trustworthy-model.md`; do not tune on this completed test set.
 Raw Mac arrays/weights are in ignored `outputs/model-study-20261010-01/`.
-Stop for review before Milestone 5. GitHub push still needs Mac authentication.
+Stop for review before Milestone 5. GitHub authentication is configured and
+all Mac validation, study code and audited evidence commits are published to develop.
 
 Latest Windows continuation: the committed recovery proof has passed for both
 equations. Results are retained in `docs/reports/checkpoint-recovery.json` and
@@ -304,4 +305,4 @@ Exact report, independent audit and negative cases are in docs/reports/. All
 621 tests and Ruff passed. One-step interval coverage was 30/36, below nominal;
 rollout covered 33/36. Finer-reference sensitivity is comparable to model rollout
 error. No test tuning occurred. Local study evidence is complete; pause before
-Milestone 5. GitHub publication still needs usable Mac credentials.
+Milestone 5. GitHub authentication is configured; all study commits are published to develop.

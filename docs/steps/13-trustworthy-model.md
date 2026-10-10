@@ -139,6 +139,6 @@ than the reference discretization. The audit includes initial sampling differenc
 and does not measure a convergence order. One smooth Fourier generator at one
 viscosity/amplitude, one split and a two-time-unit horizon is a narrow task.
 
-Milestone 4's fixed-study evidence gate is complete locally. GitHub publication
-requires working Mac authentication. Stop for review before Milestone 5; no
+Milestone 4's fixed-study evidence gate is complete, and its code and audited
+evidence are published to develop. Stop for review before Milestone 5; no
 settings were changed after reading test results, and no GCP resource was used.
