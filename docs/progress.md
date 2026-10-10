@@ -241,3 +241,19 @@ All 608 tests passed without skips; Ruff passed.
 [Receipt](reports/mac-validation-20261010.json) retains runtime, lockfile and
 JUnit hashes. No source or lockfile changes were needed. Milestones 1–3 remain
 complete; proceeding to the authorized Milestone 4 study. No cloud use occurred.
+
+## Milestone 4 — study protocol and implementation
+
+Audited existing family splitting, training-only normalization, FNO checkpoint
+selection/resumption, persistence and conservation evaluation. Added the frozen
+[local study](steps/13-trustworthy-model.md): 180 fresh initial-condition draws,
+at least 100 training families, five fixed seeds, validation-only empirical
+ensemble calibration, family-level paired comparisons, physical conservation,
+negative cases and a twelve-trajectory finer-reference audit. Test inference is
+deferred until all models and calibration are frozen. Raw evidence uses fresh
+ignored output directories. GitHub push currently needs Mac Git authentication;
+the validated Mac receipt is committed locally. No measurements are claimed yet.
+
+Implementation validation passed Ruff and all 621 tests with no skips.
+Evidence: `docs/reports/model-study-code-validation-20261010.json` binds
+tested source hashes to the subsequent committed measurement.

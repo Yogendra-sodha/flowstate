@@ -130,6 +130,18 @@ plus one PINN with persistence. The [executed public-data report](docs/reports/p
 records prediction improvements and conservation weaknesses; the
 [walkthrough](docs/steps/06-public-data.md) explains reproduction and limits.
 
+For the frozen larger local Burgers evaluation, see the
+[trustworthy-model protocol](docs/steps/13-trustworthy-model.md). It uses 180
+initial-condition families, five fixed training seeds, paired persistence
+comparisons and validation-calibrated ensemble intervals:
+
+```sh
+uv run --no-sync python -m flowstate.model_study --output outputs/model-study-01
+```
+
+Commit source first and use a fresh output directory. This evaluates a fixed
+synthetic task; calibration is empirical and does not establish broader reliability.
+
 To run individual stages:
 
 ```sh

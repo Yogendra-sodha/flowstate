@@ -1145,3 +1145,29 @@ a native Apple Silicon Python 3.12.15 environment without changing uv.lock.
 Ruff passed; all 608 tests passed with no skips. The retained receipt is
 [Mac validation](docs/reports/mac-validation-20261010.json). This validates
 local execution, not Mac Docker or cross-hardware bitwise equality.
+
+## 28. Freeze a larger trustworthy-model study
+
+The existing dataset exporter already groups initial-condition families and
+checks duplicate initial fields before splitting; its online statistics read
+training trajectories only. FNO training already selects weights on validation
+MSE and saves resumable optimizer/RNG state. Evaluation already separates true
+preceding-frame prediction from feedback rollout and compares persistence.
+Those paths are reused. An optional `evaluate_test=False` now lets a study defer
+test inference without changing existing callers or checkpoint resumption.
+
+`model_study.py` freezes 180 fresh random initial conditions, five training seeds,
+and a fixed mean-preserving FNO budget. It verifies at least 100 independent
+training families. Twelve fixed finer-grid/time runs audit reference sensitivity.
+The training loop completes every model and validation evaluation, then writes
+and hashes ensemble calibration before the test loop. Family-level paired
+bootstrap summaries retain losses and ties. Physical reductions measure mean,
+mass and energy; uncertainty measures empirical held-out coverage and width.
+Validation also selects checkpoints, so calibration has no formal coverage
+guarantee. The [protocol](docs/steps/13-trustworthy-model.md) explains the loops,
+data transformations, scope and limits. Measurement follows committed source;
+no successful study result is asserted by this implementation entry.
+
+Implementation validation passed Ruff and all 621 tests with no skips.
+Evidence: `docs/reports/model-study-code-validation-20261010.json` binds
+tested source hashes to the subsequent committed measurement.

@@ -462,11 +462,14 @@ def train_fno(
     learning_rate: float = 0.001,
     conserve_mean: bool = False,
     resume: str | Path | None = None,
+    evaluate_test: bool = True,
 ) -> dict:
     """Train for additional epochs; publish immutable final/resumable and best-val weights."""
     _integer("epochs", epochs, 1, 2000)
     if not isinstance(conserve_mean, bool):
         raise ValueError("conserve_mean must be a boolean")
+    if not isinstance(evaluate_test, bool):
+        raise ValueError("evaluate_test must be a boolean")
     config = {
         "seed": _integer("seed", seed, 0, 2**32 - 1),
         "width": _integer("width", width, 4, 128),
@@ -533,7 +536,9 @@ def train_fno(
         )
         torch.save(checkpoint, stage / "checkpoint.pt")
         model.load_state_dict(best_state)
-        evaluation, _ = _evaluate(model, data, "test")
+        evaluation = None
+        if evaluate_test:
+            evaluation, _ = _evaluate(model, data, "test")
         report = {
             "kind": "fno1d",
             "dataset_sha256": data["dataset_sha256"],

@@ -72,6 +72,25 @@ def test_spectral_layer_retains_modes_and_has_complex_weight_gradients():
     assert value.grad is not None and torch.isfinite(value.grad).all()
 
 
+def test_study_training_can_defer_test_evaluation(dataset, tmp_path, monkeypatch):
+    import flowstate.ml as ml
+
+    original = ml._evaluate
+    calls = []
+
+    def observe(model, data, split):
+        calls.append(split)
+        return original(model, data, split)
+
+    monkeypatch.setattr(ml, "_evaluate", observe)
+    report = train_fno(dataset, tmp_path / "deferred", epochs=1,
+                       width=4, modes=3, depth=1, evaluate_test=False)
+    assert calls == [] and report["evaluation"] is None
+    assert verify_model(tmp_path / "deferred") == []
+    evaluation = evaluate_fno(dataset, tmp_path / "deferred", split="validation")
+    assert calls == ["validation"] and evaluation["split"] == "validation"
+
+
 def test_fno_can_learn_a_smooth_decay_operator():
     with _cpu_session(7):
         x = torch.arange(32) * (2 * math.pi / 32)

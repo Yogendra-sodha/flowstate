@@ -286,3 +286,12 @@ remains outside the revised scope and needs an explicit deployment instruction.
 The locked Python 3.12.15 Apple Silicon environment passed Ruff and all 608
 tests with no skips. Evidence: `docs/reports/mac-validation-20261010.json`.
 Milestone 4 is next; completed milestones were not rerun.
+
+## Milestone 4 continuation on the Mac
+
+The frozen protocol is `docs/steps/13-trustworthy-model.md` and the harness is
+`python -m flowstate.model_study --output <NEW_DIRECTORY>`. It reuses dataset/FNO
+code, adds deferred test evaluation, and requires clean committed study code.
+All five seeds and validation-calibrated intervals must precede test inference.
+GitHub HTTPS push needs authentication on this Mac; preserve local commits until
+that is available. Study measurements and milestone completion are still pending.
