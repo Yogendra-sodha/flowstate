@@ -1136,3 +1136,12 @@ authorization and observed storage workload; actual billed charges are unknown.
 This completes the cloud recovery, viewer packaging and deployment-proposal gate.
 The Mac continuation should validate its environment and begin the larger model
 study; it should not repeat this completed proof solely because the machine changed.
+
+## 27. Validate the Mac continuation
+
+The clean develop checkout fast-forwarded to `1d6c3d6`. uv was absent and was
+installed from its official installer. The locked all-extras/dev sync created
+a native Apple Silicon Python 3.12.15 environment without changing uv.lock.
+Ruff passed; all 608 tests passed with no skips. The retained receipt is
+[Mac validation](docs/reports/mac-validation-20261010.json). This validates
+local execution, not Mac Docker or cross-hardware bitwise equality.

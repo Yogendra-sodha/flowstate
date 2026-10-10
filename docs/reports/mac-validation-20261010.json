@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "status": "passed",
+  "provenance": {
+    "git_commit": "1d6c3d6d2d0a3e7e2a354a5167abc754905b106e",
+    "git_dirty": false,
+    "source_sha256": "22f9f026a24f2ed64f9ccbec66b0bbdee8723784991c5b6f48a04ba71c1dfaa4",
+    "python": "3.12.15",
+    "dependencies": {
+      "numpy": "2.5.3",
+      "zarr": "3.4.0",
+      "duckdb": "1.5.5",
+      "pyarrow": "23.0.1",
+      "scipy": "1.18.1",
+      "h5py": "3.16.0",
+      "flowstate-research": "0.6.0"
+    },
+    "hardware": {
+      "platform": "macOS-26.6-arm64-arm-64bit",
+      "machine": "arm64",
+      "processor": "arm",
+      "logical_cpu_count": 18
+    },
+    "precision": "float64"
+  },
+  "uv_version": "0.13.0",
+  "commands": [
+    "uv sync --locked --all-extras --group dev --python 3.12",
+    "uv run --no-sync ruff check .",
+    "uv run --no-sync pytest --junitxml=outputs/mac-validation-20261010/pytest.xml"
+  ],
+  "ruff": "passed",
+  "pytest": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "608",
+    "time": "59.645",
+    "timestamp": "2026-10-10T11:50:27.186013-04:00",
+    "hostname": "Yogendrasinhs-MacBook-Pro.local"
+  },
+  "pytest_xml_sha256": "6f61e6ec1d19edca05abe574cf606f3e81ba393ae13efb0aa46f11f1b49d808c",
+  "uv_lock_sha256": "6c3cf6b5505b4d666d8a7b3e5f8548843d2a0eeead8ca89e4d20b2b1482dd22b",
+  "limitations": [
+    "Local Apple Silicon validation; no Mac Docker build or cross-hardware bitwise comparison."
+  ],
+  "setup": [
+    "uv absent initially; installed official uv 0.13.0 in user directory.",
+    "Locked dependency sync succeeded without lockfile changes."
+  ]
+}

@@ -232,3 +232,12 @@ repository on a MacBook Pro; validate that environment first, then audit existin
 dataset/FNO/evaluation code and freeze the study protocol before new measurements.
 Milestones 1–3 are complete for their gates. Stopping at this phase boundary for
 review; the existing GCP authorization persists into the next chat.
+
+## Mac validation complete — 10 October 2026
+
+Clean checkout; safely fast-forwarded develop to `1d6c3d6`. Installed uv and
+ran the locked all-extras/dev Python 3.12 sync, Ruff, and full pytest suite.
+All 608 tests passed without skips; Ruff passed.
+[Receipt](reports/mac-validation-20261010.json) retains runtime, lockfile and
+JUnit hashes. No source or lockfile changes were needed. Milestones 1–3 remain
+complete; proceeding to the authorized Milestone 4 study. No cloud use occurred.

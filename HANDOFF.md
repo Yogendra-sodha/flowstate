@@ -280,3 +280,9 @@ remains outside the revised scope and needs an explicit deployment instruction.
 > retain scientific limits, and do not deploy a hosted service or delete unrelated
 > data. At each phase boundary record progress and stop for review. Do not declare
 > unfinished evidence complete.
+
+## Mac validation — 10 October 2026
+
+The locked Python 3.12.15 Apple Silicon environment passed Ruff and all 608
+tests with no skips. Evidence: `docs/reports/mac-validation-20261010.json`.
+Milestone 4 is next; completed milestones were not rerun.
