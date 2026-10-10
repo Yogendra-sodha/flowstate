@@ -13,8 +13,12 @@ Milestones 1, 2 and 3 are complete for their documented acceptance gates. The
 [live GCS recovery receipt](reports/gcs-recovery-20261009.json), and
 [progress entries](progress.md) retain the evidence and limitations. The
 [checkpoint protocol](steps/11-checkpoint-recovery.md) describes the implementation
-and executed proof. The remaining milestones have not met their full revised
-acceptance gates.
+and executed proof. Milestone 4's fixed local evaluation gate is also complete;
+see the [five-seed report](reports/model-study-20261010.json),
+[audit](reports/model-study-audit-20261010.json), and
+[negative cases and limits](steps/13-trustworthy-model.md#executed-mac-results--10-october-2026).
+Milestones 5 and 6 remain open. This local evidence does not establish broad model
+reliability; one-step empirical interval coverage missed its nominal target.
 
 1. **Scale measurement:** a larger local workload across the requested grids and
    worker counts, retained timings/memory/storage/reuse/failure evidence, a chart,

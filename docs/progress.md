@@ -257,3 +257,55 @@ the validated Mac receipt is committed locally. No measurements are claimed yet.
 Implementation validation passed Ruff and all 621 tests with no skips.
 Evidence: `docs/reports/model-study-code-validation-20261010.json` binds
 tested source hashes to the subsequent committed measurement.
+
+## Milestone 4 — frozen local model study complete
+
+**Changed:** reused and audited the existing numerical lake, family dataset and
+FNO training/evaluation paths. Added deferred test evaluation, a fixed five-seed
+study, paired family comparisons, mean/mass/energy summaries, empirical ensemble
+calibration and a finer-reference sensitivity audit. No hyperparameter or
+threshold changed after test outcomes were read.
+
+**Commands:** locked Mac sync; `uv run --no-sync ruff check .`;
+`uv run --no-sync pytest --junitxml=outputs/model-study-validation-20261010/pytest.xml`;
+then, after committing source, `uv run --no-sync python -m flowstate.model_study
+--output outputs/model-study-20261010-01`. Ruff and all 621 tests passed with no
+skips. Study source was clean `4b18252`; execution took 159.07 seconds.
+
+**Measured evidence:** 180 distinct initial-condition draws, 108 training families,
+36 validation families and 36 held-out test families. Five training seeds, 0–4,
+each used the same 30-epoch budget. Twelve fixed finer-grid/time references,
+all numerical manifests, the dataset, five models and ten prediction bundles
+verified. DuckDB found all 180 original completed experiments. Calibration was
+hashed before test inference. The independent audit verified 248 retained
+artifact hashes and recomputed saved-array comparisons and coverage.
+
+| Physical velocity RMSE | Persistence | Five-seed mean | Seed sample std |
+| --- | ---: | ---: | ---: |
+| One-step | 0.00360433 | 0.0000579654 | 0.00000144430 |
+| 40-step rollout | 0.0857394 | 0.000469861 | 0.0000173970 |
+
+All seeds improved field RMSE on all 36 test families. **Negative evidence:**
+all models have rounding-scale rollout mean drift (aggregate RMS 3.51e-9–4.80e-9)
+versus exactly zero invariant drift for persistence. One-step intervals covered
+only 30/36 whole trajectories (83.33%), below nominal 90%; rollout covered 33/36.
+No seed showed a sampled energy increase above 1e-8. Finer-reference RMSE ranged
+0.00029146–0.00067897, comparable to rollout model error. This is evidence for
+reproducing the coarse solver, not exact physical accuracy or broad reliability.
+
+Evidence: [exact raw report](reports/model-study-20261010.json),
+[audit](reports/model-study-audit-20261010.json),
+[negative cases](reports/model-study-negative-cases-20261010.json),
+[source validation](reports/model-study-code-validation-20261010.json), and
+[protocol/results](steps/13-trustworthy-model.md). Raw datasets, predictions and
+weights remain only in ignored `outputs/model-study-20261010-01/` on this Mac.
+
+**Limits:** one smooth synthetic generator, viscosity, grid and split; five
+optimization seeds are not five datasets. Checkpoint selection and calibration
+share validation, so coverage is empirical with no formal guarantee. Shared bias
+and out-of-domain behavior remain untested. No public-data, shock, other-PDE or
+long-time claim. No GCP credential, resource or spending was used; billed GCP
+spending remains unknown in its existing ledger.
+
+**Review boundary:** Milestone 4's local evidence gate is complete. Stop before
+Milestone 5. Local commits are preserved; GitHub push needs Mac HTTPS credentials.

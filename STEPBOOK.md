@@ -1171,3 +1171,35 @@ no successful study result is asserted by this implementation entry.
 Implementation validation passed Ruff and all 621 tests with no skips.
 Evidence: `docs/reports/model-study-code-validation-20261010.json` binds
 tested source hashes to the subsequent committed measurement.
+
+## 29. Measure and audit the frozen five-seed study
+
+The fixed protocol ran from clean `4b18252` into a new ignored directory,
+`outputs/model-study-20261010-01/`, taking 159.07 seconds. It verified 180 original
+and twelve finer-reference experiments. Export produced 108/36/36 independent
+train/validation/test families. Five model bundles and ten evaluation bundles
+retain weights and predictions locally. The retained report is an exact copy:
+[model study](docs/reports/model-study-20261010.json).
+
+The extraction audit re-hashed 248 recorded evidence files and all numerical,
+dataset, model and prediction manifests. It checked tested-source equality,
+family disjointness, unique initial hashes and event ordering. A separate NumPy
+calculation loaded saved predictions, recalculated validation multipliers, test
+errors, seed spread, family losses, mass drift, coverage and all twelve reference
+comparisons. The [audit receipt](docs/reports/model-study-audit-20261010.json)
+records these checks; it does not claim an independent retraining run.
+
+All seeds beat persistence for every test family's field RMSE. One-step seed
+mean/std were 5.79654e-5/1.44430e-6 versus persistence 0.00360433; rollout
+mean/std were 0.000469861/0.000017397 versus persistence 0.0857394. This measures
+one smooth generator and reproduction of a coarse solver. Finer-reference RMSE
+of 0.00029146–0.00067897 is comparable to rollout model error.
+
+Negative results remain explicit: one-step simultaneous interval coverage was
+30/36 (below nominal 90%); rollout covered 33/36. All models lose to persistence
+on rounding-scale invariant drift, even with mean projection. The
+[negative-case report](docs/reports/model-study-negative-cases-20261010.json)
+lists family IDs and values; no family field-error losses were invented. No test
+threshold or hyperparameter was repaired. The
+[results chapter](docs/steps/13-trustworthy-model.md) explains interpretation.
+Milestone 4's local evidence is complete; pause for review before the router.

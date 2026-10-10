@@ -1,0 +1,990 @@
+{
+  "schema_version": 1,
+  "report_sha256": "5d451fd3153c70def491a89923ccf0802ff9e03c8f8b7b3937ca824e00e5357f",
+  "source": "Saved test predictions and initial fields; no new training or tuning",
+  "field_error_losses": {
+    "one_step": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "rollout": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "conservation_losses": [
+    {
+      "seed": 0,
+      "metric": "rollout mean drift RMS from initial mean",
+      "persistence_drift_rms": 0.0,
+      "losing_family_count": 36,
+      "families": [
+        {
+          "trajectory_id": "0225f4908af6733196ed95ebea688d40",
+          "model_mean_drift_rms": 3.0980994684543615e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0a69de3a6f51177c777c65eb5bc7dbc3",
+          "model_mean_drift_rms": 4.712992639656131e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0cc05a2373671e1954c01a0aa81c08b8",
+          "model_mean_drift_rms": 2.4315211773834364e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "177539cbcc8622256bff1ec7ae943ed8",
+          "model_mean_drift_rms": 5.0112244525785335e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "1f13e7f02755976ef9fda29b7476366d",
+          "model_mean_drift_rms": 2.5719539880123356e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "27bd694e3d7e4835dfb66d541687ac3c",
+          "model_mean_drift_rms": 2.041356787976938e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "3fb73493735864371a542b17752f40f7",
+          "model_mean_drift_rms": 6.11471395444604e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "436a48efe5b8b933a3058002884813c1",
+          "model_mean_drift_rms": 2.495073281656318e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "49aeaf9ca2a0c360dfa09e7759e0ef48",
+          "model_mean_drift_rms": 6.284962046368462e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4b55c4e5e315766ecce39d05f9e06cb9",
+          "model_mean_drift_rms": 5.488596519114197e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4eb1a56b9d19fa9fe456eb19a6f07f74",
+          "model_mean_drift_rms": 5.238853606963949e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6584a248b70df7326690adeef2db93ff",
+          "model_mean_drift_rms": 2.006777012865044e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6d433c7b2f31d15a2d29dbc29a18b846",
+          "model_mean_drift_rms": 1.2378781765701314e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "88bd8b57ec000a004cd67931cb2fa529",
+          "model_mean_drift_rms": 4.173640050643725e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8aaab79872715909a00e36203013ab40",
+          "model_mean_drift_rms": 2.275166736431825e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8d431dd489879541b5b5e919ea75b1e8",
+          "model_mean_drift_rms": 2.958267449247063e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "93539b92c84a5758f8cc3678b54bb894",
+          "model_mean_drift_rms": 2.1365117087800245e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9c4a7825cce6a82c00e17d0d2e4b9e7",
+          "model_mean_drift_rms": 3.0524902829918412e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9f2515d482962edfc81ddde973d7886",
+          "model_mean_drift_rms": 1.7284454381539642e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b1367465490122a0c6078ef48d2081d2",
+          "model_mean_drift_rms": 1.3674010649562704e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b2563bfc5d2074ab768e458aada8665f",
+          "model_mean_drift_rms": 5.005343562343418e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b5e8d5ddb89d7341c85283d375b0093a",
+          "model_mean_drift_rms": 4.947781297206939e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c133598dbb2deef640944d341bd0f0bb",
+          "model_mean_drift_rms": 3.988013365906554e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c804493005310d7d447274af4ebe65b6",
+          "model_mean_drift_rms": 4.278951148348633e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d41e9117cc9b074693bf481798f8cd6e",
+          "model_mean_drift_rms": 4.1265314870998775e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d52e127a522da0838899f3e6085dc3a6",
+          "model_mean_drift_rms": 4.8997857716907225e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "dacc62146e1f3c47d5a165ce6bf830ce",
+          "model_mean_drift_rms": 1.9959811546219845e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e182c95765048971826f789e9aceb3cf",
+          "model_mean_drift_rms": 4.177847358351535e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e24cc4e4b26f64a2ea6c174ebd4fe984",
+          "model_mean_drift_rms": 6.2376349142748465e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e29c9eb68ab01189fff2e5b8be2eef48",
+          "model_mean_drift_rms": 2.9514977405317248e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e3e672fdc95419cdc6b9734c2b75b118",
+          "model_mean_drift_rms": 2.0879234351183688e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "eff14ea51874888f49c00e4e955ff243",
+          "model_mean_drift_rms": 2.300391029228056e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "f915347dfd2431af9017a16bbc792b64",
+          "model_mean_drift_rms": 3.448396684275434e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fb062f7d3f20fdeebcf31d792cbfa045",
+          "model_mean_drift_rms": 2.550370203632419e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fc0cef5b4310433e8f6f22ced0df524e",
+          "model_mean_drift_rms": 4.9384771418764445e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "ff3a99641b2ce3aaaef40eb359f051f3",
+          "model_mean_drift_rms": 5.458245418562016e-09,
+          "persistence_mean_drift_rms": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "metric": "rollout mean drift RMS from initial mean",
+      "persistence_drift_rms": 0.0,
+      "losing_family_count": 36,
+      "families": [
+        {
+          "trajectory_id": "0225f4908af6733196ed95ebea688d40",
+          "model_mean_drift_rms": 6.415326569695698e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0a69de3a6f51177c777c65eb5bc7dbc3",
+          "model_mean_drift_rms": 2.573158125415138e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0cc05a2373671e1954c01a0aa81c08b8",
+          "model_mean_drift_rms": 9.813578415713819e-10,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "177539cbcc8622256bff1ec7ae943ed8",
+          "model_mean_drift_rms": 2.8036991609729126e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "1f13e7f02755976ef9fda29b7476366d",
+          "model_mean_drift_rms": 7.278426570881152e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "27bd694e3d7e4835dfb66d541687ac3c",
+          "model_mean_drift_rms": 1.6033682504903265e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "3fb73493735864371a542b17752f40f7",
+          "model_mean_drift_rms": 8.982907629217997e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "436a48efe5b8b933a3058002884813c1",
+          "model_mean_drift_rms": 4.62130028725689e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "49aeaf9ca2a0c360dfa09e7759e0ef48",
+          "model_mean_drift_rms": 4.498216033133078e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4b55c4e5e315766ecce39d05f9e06cb9",
+          "model_mean_drift_rms": 1.5198412491496004e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4eb1a56b9d19fa9fe456eb19a6f07f74",
+          "model_mean_drift_rms": 7.825675862133218e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6584a248b70df7326690adeef2db93ff",
+          "model_mean_drift_rms": 3.3422799344135e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6d433c7b2f31d15a2d29dbc29a18b846",
+          "model_mean_drift_rms": 2.0980649040389244e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "88bd8b57ec000a004cd67931cb2fa529",
+          "model_mean_drift_rms": 1.6084932052773994e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8aaab79872715909a00e36203013ab40",
+          "model_mean_drift_rms": 7.727465862415717e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8d431dd489879541b5b5e919ea75b1e8",
+          "model_mean_drift_rms": 2.414237197032734e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "93539b92c84a5758f8cc3678b54bb894",
+          "model_mean_drift_rms": 4.102708586921107e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9c4a7825cce6a82c00e17d0d2e4b9e7",
+          "model_mean_drift_rms": 3.092515708138413e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9f2515d482962edfc81ddde973d7886",
+          "model_mean_drift_rms": 2.3774605103060777e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b1367465490122a0c6078ef48d2081d2",
+          "model_mean_drift_rms": 2.458937183378526e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b2563bfc5d2074ab768e458aada8665f",
+          "model_mean_drift_rms": 4.007500008279464e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b5e8d5ddb89d7341c85283d375b0093a",
+          "model_mean_drift_rms": 5.086129276993789e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c133598dbb2deef640944d341bd0f0bb",
+          "model_mean_drift_rms": 2.1017979809241882e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c804493005310d7d447274af4ebe65b6",
+          "model_mean_drift_rms": 2.0270178682246852e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d41e9117cc9b074693bf481798f8cd6e",
+          "model_mean_drift_rms": 3.3767887869031397e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d52e127a522da0838899f3e6085dc3a6",
+          "model_mean_drift_rms": 2.804387429183545e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "dacc62146e1f3c47d5a165ce6bf830ce",
+          "model_mean_drift_rms": 1.2847069140751944e-08,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e182c95765048971826f789e9aceb3cf",
+          "model_mean_drift_rms": 3.005598305034893e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e24cc4e4b26f64a2ea6c174ebd4fe984",
+          "model_mean_drift_rms": 4.562432607856169e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e29c9eb68ab01189fff2e5b8be2eef48",
+          "model_mean_drift_rms": 3.900596167898038e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e3e672fdc95419cdc6b9734c2b75b118",
+          "model_mean_drift_rms": 3.752765627812437e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "eff14ea51874888f49c00e4e955ff243",
+          "model_mean_drift_rms": 2.6068923822828507e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "f915347dfd2431af9017a16bbc792b64",
+          "model_mean_drift_rms": 7.302189960312822e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fb062f7d3f20fdeebcf31d792cbfa045",
+          "model_mean_drift_rms": 5.3665686311316545e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fc0cef5b4310433e8f6f22ced0df524e",
+          "model_mean_drift_rms": 4.5317057158971914e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "ff3a99641b2ce3aaaef40eb359f051f3",
+          "model_mean_drift_rms": 2.1421262952142924e-09,
+          "persistence_mean_drift_rms": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 2,
+      "metric": "rollout mean drift RMS from initial mean",
+      "persistence_drift_rms": 0.0,
+      "losing_family_count": 36,
+      "families": [
+        {
+          "trajectory_id": "0225f4908af6733196ed95ebea688d40",
+          "model_mean_drift_rms": 4.2564197047206205e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0a69de3a6f51177c777c65eb5bc7dbc3",
+          "model_mean_drift_rms": 1.7505876041473236e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0cc05a2373671e1954c01a0aa81c08b8",
+          "model_mean_drift_rms": 4.70844710968108e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "177539cbcc8622256bff1ec7ae943ed8",
+          "model_mean_drift_rms": 2.1903894452141867e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "1f13e7f02755976ef9fda29b7476366d",
+          "model_mean_drift_rms": 3.652182275074577e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "27bd694e3d7e4835dfb66d541687ac3c",
+          "model_mean_drift_rms": 3.0618575927610936e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "3fb73493735864371a542b17752f40f7",
+          "model_mean_drift_rms": 1.827905977959497e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "436a48efe5b8b933a3058002884813c1",
+          "model_mean_drift_rms": 2.9921437274542874e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "49aeaf9ca2a0c360dfa09e7759e0ef48",
+          "model_mean_drift_rms": 7.001646416930013e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4b55c4e5e315766ecce39d05f9e06cb9",
+          "model_mean_drift_rms": 3.556035322505436e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4eb1a56b9d19fa9fe456eb19a6f07f74",
+          "model_mean_drift_rms": 2.5026351506163286e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6584a248b70df7326690adeef2db93ff",
+          "model_mean_drift_rms": 2.172691511634529e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6d433c7b2f31d15a2d29dbc29a18b846",
+          "model_mean_drift_rms": 1.5015478239775762e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "88bd8b57ec000a004cd67931cb2fa529",
+          "model_mean_drift_rms": 1.0582892621279208e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8aaab79872715909a00e36203013ab40",
+          "model_mean_drift_rms": 3.005250751988015e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8d431dd489879541b5b5e919ea75b1e8",
+          "model_mean_drift_rms": 3.3586804398939556e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "93539b92c84a5758f8cc3678b54bb894",
+          "model_mean_drift_rms": 2.8086660742494576e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9c4a7825cce6a82c00e17d0d2e4b9e7",
+          "model_mean_drift_rms": 4.707587039762037e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9f2515d482962edfc81ddde973d7886",
+          "model_mean_drift_rms": 1.8275654585001428e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b1367465490122a0c6078ef48d2081d2",
+          "model_mean_drift_rms": 5.830476392319886e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b2563bfc5d2074ab768e458aada8665f",
+          "model_mean_drift_rms": 1.1630722072745564e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b5e8d5ddb89d7341c85283d375b0093a",
+          "model_mean_drift_rms": 6.509955120986463e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c133598dbb2deef640944d341bd0f0bb",
+          "model_mean_drift_rms": 2.030498526983444e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c804493005310d7d447274af4ebe65b6",
+          "model_mean_drift_rms": 1.6284825940140816e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d41e9117cc9b074693bf481798f8cd6e",
+          "model_mean_drift_rms": 3.062410928802673e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d52e127a522da0838899f3e6085dc3a6",
+          "model_mean_drift_rms": 3.193964849782935e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "dacc62146e1f3c47d5a165ce6bf830ce",
+          "model_mean_drift_rms": 1.8860554170844053e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e182c95765048971826f789e9aceb3cf",
+          "model_mean_drift_rms": 1.6966540156885486e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e24cc4e4b26f64a2ea6c174ebd4fe984",
+          "model_mean_drift_rms": 3.2106083642114053e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e29c9eb68ab01189fff2e5b8be2eef48",
+          "model_mean_drift_rms": 4.529037566271616e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e3e672fdc95419cdc6b9734c2b75b118",
+          "model_mean_drift_rms": 3.0733832207582122e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "eff14ea51874888f49c00e4e955ff243",
+          "model_mean_drift_rms": 5.1429751817686825e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "f915347dfd2431af9017a16bbc792b64",
+          "model_mean_drift_rms": 4.25553068946608e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fb062f7d3f20fdeebcf31d792cbfa045",
+          "model_mean_drift_rms": 2.1519441206622644e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fc0cef5b4310433e8f6f22ced0df524e",
+          "model_mean_drift_rms": 2.605618182280832e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "ff3a99641b2ce3aaaef40eb359f051f3",
+          "model_mean_drift_rms": 4.991507955747774e-09,
+          "persistence_mean_drift_rms": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 3,
+      "metric": "rollout mean drift RMS from initial mean",
+      "persistence_drift_rms": 0.0,
+      "losing_family_count": 36,
+      "families": [
+        {
+          "trajectory_id": "0225f4908af6733196ed95ebea688d40",
+          "model_mean_drift_rms": 4.933446014079648e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0a69de3a6f51177c777c65eb5bc7dbc3",
+          "model_mean_drift_rms": 5.7000932957384115e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0cc05a2373671e1954c01a0aa81c08b8",
+          "model_mean_drift_rms": 1.5980336452893806e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "177539cbcc8622256bff1ec7ae943ed8",
+          "model_mean_drift_rms": 7.461993552543026e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "1f13e7f02755976ef9fda29b7476366d",
+          "model_mean_drift_rms": 2.915121142586504e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "27bd694e3d7e4835dfb66d541687ac3c",
+          "model_mean_drift_rms": 2.3980277822672424e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "3fb73493735864371a542b17752f40f7",
+          "model_mean_drift_rms": 1.8802737434477825e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "436a48efe5b8b933a3058002884813c1",
+          "model_mean_drift_rms": 1.5254245853305523e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "49aeaf9ca2a0c360dfa09e7759e0ef48",
+          "model_mean_drift_rms": 1.9675373335035035e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4b55c4e5e315766ecce39d05f9e06cb9",
+          "model_mean_drift_rms": 2.354147188708308e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4eb1a56b9d19fa9fe456eb19a6f07f74",
+          "model_mean_drift_rms": 7.828526575132196e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6584a248b70df7326690adeef2db93ff",
+          "model_mean_drift_rms": 3.321598625621861e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6d433c7b2f31d15a2d29dbc29a18b846",
+          "model_mean_drift_rms": 6.327047253430547e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "88bd8b57ec000a004cd67931cb2fa529",
+          "model_mean_drift_rms": 1.8044187161391789e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8aaab79872715909a00e36203013ab40",
+          "model_mean_drift_rms": 2.383557735384603e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8d431dd489879541b5b5e919ea75b1e8",
+          "model_mean_drift_rms": 3.0362021128620263e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "93539b92c84a5758f8cc3678b54bb894",
+          "model_mean_drift_rms": 4.707128354548808e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9c4a7825cce6a82c00e17d0d2e4b9e7",
+          "model_mean_drift_rms": 4.263232783397437e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9f2515d482962edfc81ddde973d7886",
+          "model_mean_drift_rms": 1.5140480588221856e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b1367465490122a0c6078ef48d2081d2",
+          "model_mean_drift_rms": 2.7779424234899218e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b2563bfc5d2074ab768e458aada8665f",
+          "model_mean_drift_rms": 1.900361948680261e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b5e8d5ddb89d7341c85283d375b0093a",
+          "model_mean_drift_rms": 2.436713352332629e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c133598dbb2deef640944d341bd0f0bb",
+          "model_mean_drift_rms": 3.925875530477717e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c804493005310d7d447274af4ebe65b6",
+          "model_mean_drift_rms": 2.833863165792378e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d41e9117cc9b074693bf481798f8cd6e",
+          "model_mean_drift_rms": 2.606847307925102e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d52e127a522da0838899f3e6085dc3a6",
+          "model_mean_drift_rms": 2.933811993593958e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "dacc62146e1f3c47d5a165ce6bf830ce",
+          "model_mean_drift_rms": 8.457681704542752e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e182c95765048971826f789e9aceb3cf",
+          "model_mean_drift_rms": 1.059206796923576e-08,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e24cc4e4b26f64a2ea6c174ebd4fe984",
+          "model_mean_drift_rms": 1.474481268630853e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e29c9eb68ab01189fff2e5b8be2eef48",
+          "model_mean_drift_rms": 2.3699334868164477e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e3e672fdc95419cdc6b9734c2b75b118",
+          "model_mean_drift_rms": 2.4016462366361642e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "eff14ea51874888f49c00e4e955ff243",
+          "model_mean_drift_rms": 2.036591873707443e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "f915347dfd2431af9017a16bbc792b64",
+          "model_mean_drift_rms": 4.142875004453525e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fb062f7d3f20fdeebcf31d792cbfa045",
+          "model_mean_drift_rms": 8.608535689319388e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fc0cef5b4310433e8f6f22ced0df524e",
+          "model_mean_drift_rms": 2.179165312173249e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "ff3a99641b2ce3aaaef40eb359f051f3",
+          "model_mean_drift_rms": 2.6927998643365984e-09,
+          "persistence_mean_drift_rms": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 4,
+      "metric": "rollout mean drift RMS from initial mean",
+      "persistence_drift_rms": 0.0,
+      "losing_family_count": 36,
+      "families": [
+        {
+          "trajectory_id": "0225f4908af6733196ed95ebea688d40",
+          "model_mean_drift_rms": 4.20029478766683e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0a69de3a6f51177c777c65eb5bc7dbc3",
+          "model_mean_drift_rms": 3.369785561359653e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "0cc05a2373671e1954c01a0aa81c08b8",
+          "model_mean_drift_rms": 3.4101267585039745e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "177539cbcc8622256bff1ec7ae943ed8",
+          "model_mean_drift_rms": 2.7921955291918157e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "1f13e7f02755976ef9fda29b7476366d",
+          "model_mean_drift_rms": 1.3352152644965437e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "27bd694e3d7e4835dfb66d541687ac3c",
+          "model_mean_drift_rms": 1.7701193653471417e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "3fb73493735864371a542b17752f40f7",
+          "model_mean_drift_rms": 2.177449190101302e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "436a48efe5b8b933a3058002884813c1",
+          "model_mean_drift_rms": 2.3743562816762224e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "49aeaf9ca2a0c360dfa09e7759e0ef48",
+          "model_mean_drift_rms": 5.134419550417132e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4b55c4e5e315766ecce39d05f9e06cb9",
+          "model_mean_drift_rms": 2.7647711761206144e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "4eb1a56b9d19fa9fe456eb19a6f07f74",
+          "model_mean_drift_rms": 1.7660430464877365e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6584a248b70df7326690adeef2db93ff",
+          "model_mean_drift_rms": 4.160749867976399e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "6d433c7b2f31d15a2d29dbc29a18b846",
+          "model_mean_drift_rms": 2.199669006849289e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "88bd8b57ec000a004cd67931cb2fa529",
+          "model_mean_drift_rms": 3.3615278647281293e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8aaab79872715909a00e36203013ab40",
+          "model_mean_drift_rms": 1.7405050582762742e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "8d431dd489879541b5b5e919ea75b1e8",
+          "model_mean_drift_rms": 7.80793782460229e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "93539b92c84a5758f8cc3678b54bb894",
+          "model_mean_drift_rms": 2.3539071473027015e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9c4a7825cce6a82c00e17d0d2e4b9e7",
+          "model_mean_drift_rms": 5.418252240016788e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "a9f2515d482962edfc81ddde973d7886",
+          "model_mean_drift_rms": 2.960458909311509e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b1367465490122a0c6078ef48d2081d2",
+          "model_mean_drift_rms": 2.1898743736497324e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b2563bfc5d2074ab768e458aada8665f",
+          "model_mean_drift_rms": 2.756207493160193e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "b5e8d5ddb89d7341c85283d375b0093a",
+          "model_mean_drift_rms": 2.9101266527971562e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c133598dbb2deef640944d341bd0f0bb",
+          "model_mean_drift_rms": 1.5682946463557266e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "c804493005310d7d447274af4ebe65b6",
+          "model_mean_drift_rms": 3.1116935245616947e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d41e9117cc9b074693bf481798f8cd6e",
+          "model_mean_drift_rms": 3.781011271538292e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "d52e127a522da0838899f3e6085dc3a6",
+          "model_mean_drift_rms": 2.9711940581538965e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "dacc62146e1f3c47d5a165ce6bf830ce",
+          "model_mean_drift_rms": 1.1093996186281684e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e182c95765048971826f789e9aceb3cf",
+          "model_mean_drift_rms": 4.383443030086486e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e24cc4e4b26f64a2ea6c174ebd4fe984",
+          "model_mean_drift_rms": 6.710535644737674e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e29c9eb68ab01189fff2e5b8be2eef48",
+          "model_mean_drift_rms": 4.741985296887274e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "e3e672fdc95419cdc6b9734c2b75b118",
+          "model_mean_drift_rms": 1.5110446289910315e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "eff14ea51874888f49c00e4e955ff243",
+          "model_mean_drift_rms": 2.197650342234998e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "f915347dfd2431af9017a16bbc792b64",
+          "model_mean_drift_rms": 2.4003909278981573e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fb062f7d3f20fdeebcf31d792cbfa045",
+          "model_mean_drift_rms": 1.8752567854169102e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "fc0cef5b4310433e8f6f22ced0df524e",
+          "model_mean_drift_rms": 8.949107335899396e-09,
+          "persistence_mean_drift_rms": 0.0
+        },
+        {
+          "trajectory_id": "ff3a99641b2ce3aaaef40eb359f051f3",
+          "model_mean_drift_rms": 3.771890493131162e-09,
+          "persistence_mean_drift_rms": 0.0
+        }
+      ]
+    }
+  ],
+  "one_step_interval_failure": {
+    "nominal": 0.9,
+    "covered_families": 30,
+    "total_families": 36,
+    "uncovered_trajectory_ids": [
+      "0225f4908af6733196ed95ebea688d40",
+      "27bd694e3d7e4835dfb66d541687ac3c",
+      "8d431dd489879541b5b5e919ea75b1e8",
+      "e182c95765048971826f789e9aceb3cf",
+      "eff14ea51874888f49c00e4e955ff243",
+      "fc0cef5b4310433e8f6f22ced0df524e"
+    ]
+  },
+  "rollout_interval_failure": {
+    "covered_families": 33,
+    "total_families": 36,
+    "uncovered_trajectory_ids": [
+      "0225f4908af6733196ed95ebea688d40",
+      "27bd694e3d7e4835dfb66d541687ac3c",
+      "fc0cef5b4310433e8f6f22ced0df524e"
+    ]
+  },
+  "limits": [
+    "Mean drift losses are at floating-point rounding scale, not evidence of physically large mass failure.",
+    "No family-level field RMSE loss was observed in this fixed smooth cohort; none is fabricated.",
+    "Reference sensitivity is comparable to rollout prediction error; this measures reproduction of the coarse solver."
+  ]
+}

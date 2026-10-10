@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "status": "passed",
+  "measured_commit": "4b18252812a9ca880d475d1720ddd1465bacc57a",
+  "report_sha256": "5d451fd3153c70def491a89923ccf0802ff9e03c8f8b7b3937ca824e00e5357f",
+  "raw_report": "outputs/model-study-20261010-01/report.json",
+  "retained_exact_raw_copy": true,
+  "checks": [
+    "Measured source and tests equal the 621-test validation source hashes",
+    "All 248 evidence hashes independently recomputed",
+    "Dataset, five model bundles and ten evaluation manifests verified",
+    "All 192 numerical experiment manifests verified",
+    "108/36/36 disjoint independent families, 180 distinct initial hashes",
+    "Five completed models and hashed calibration precede all test inference",
+    "Validation calibration, test errors/spread, paired losses, mass drift and coverage independently recomputed from saved arrays",
+    "All twelve finer-reference comparisons independently recomputed"
+  ],
+  "source_validation": "docs/reports/model-study-code-validation-20261010.json",
+  "family_counts": {
+    "test": 36,
+    "train": 108,
+    "validation": 36
+  },
+  "elapsed_seconds": 159.06922125000347,
+  "events_sha256": "386979e76045d0de0139f54d749997715637b43f4355643ba537eebfb92f4f50",
+  "limits": [
+    "Audit recomputes saved-array calculations and hashes; it does not independently retrain the five models.",
+    "No independent-source or out-of-domain coverage guarantee."
+  ]
+}

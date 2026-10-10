@@ -1,12 +1,22 @@
 # Flowstate computer and Codex handoff
 
-Updated 10 October 2026 for the Mac continuation. Continue on branch **develop**.
+Updated 10 October 2026 after the Mac model study. Continue on branch **develop**.
 Repository: https://github.com/Yogendra-sodha/flowstate
 
-Windows handoff validation: Ruff passed and 540 tests passed, with four
-symbolic-link permission skips. The receipt is
-`docs/reports/handoff-validation-20261007.json`. A fresh Mac validation is still
-required.
+Mac validation passed Ruff and all 608 existing tests without skips. The expanded
+study implementation passed all 621 tests. Receipts are
+`docs/reports/mac-validation-20261010.json` and
+`docs/reports/model-study-code-validation-20261010.json`.
+
+**Milestone 4's local evidence gate is complete.** The clean `4b18252` protocol
+trained five seeds on 108 independent families and evaluated 36 held-out families,
+with validation-only empirical uncertainty calibration. The raw report is
+`docs/reports/model-study-20261010.json`; audit and negative-case receipts sit
+beside it. One-step whole-trajectory coverage missed its nominal target, and
+finer-reference sensitivity is comparable to rollout error. Read
+`docs/steps/13-trustworthy-model.md`; do not tune on this completed test set.
+Raw Mac arrays/weights are in ignored `outputs/model-study-20261010-01/`.
+Stop for review before Milestone 5. GitHub push still needs Mac authentication.
 
 Latest Windows continuation: the committed recovery proof has passed for both
 equations. Results are retained in `docs/reports/checkpoint-recovery.json` and
@@ -27,7 +37,8 @@ CI, with no skips. The viewer container built and ran successfully in Linux CI;
 `docs/reports/viewer-container-validation-20261009.json` preserves the results
 and earlier registry failures. A private deployment proposal is in
 `docs/steps/12-cloud-proof-viewer.md`. No hosted service was deployed. A successful
-Windows or Mac Docker build has not been established. **Milestone 4 is next.**
+Windows or Mac Docker build has not been established. Milestone 4 results are
+recorded above; Milestone 5 awaits review.
 
 The original run was generated from clean commit
 `ec565a1c9edabba9ab2a15775c5f768250e83ae0`. The exact historical plan is
@@ -86,8 +97,8 @@ uv run --no-sync flowstate --lake outputs/mac-smoke list
 The sync creates a new Mac virtual environment from `uv.lock`. Do not copy the
 Windows `.venv`. All extras prepare the existing numerical, ML, storage, and
 benchmark tooling; optional platform package availability must be verified on
-the Mac. Mac execution has not yet been validated. Existing CI covers Windows
-and Linux. If dependency installation fails, retain the lockfile and diagnose
+the Mac. Mac execution passed the retained validation described above. Existing CI
+covers Windows and Linux. If dependency installation fails, retain the lockfile and diagnose
 the platform-specific dependency before changing it.
 
 Open the cloned folder as a Codex project. Start a new chat with the continuation
@@ -111,10 +122,10 @@ history. Commit code before generating new measured results on the Mac.
   The measured receipt is `docs/reports/gcs-recovery-20261009.json`; its independent
   audit is in the corresponding validation report. Deployment is not required
   for this gate and has not been performed.
-- **Milestone 4 remaining:** train on at least 100 independent trajectory families
-  with at least five training seeds; report mean/spread against persistence,
-  one-step and rollout error, mean/mass conservation, ensemble uncertainty, and
-  explicit cases where the model loses. Calibrate on validation data, never test.
+- **Milestone 4 local evidence complete:** 108 independent training families,
+  five seeds, 36 held-out families, paired persistence, conservation, rollout,
+  empirical uncertainty and explicit negative evidence. This is one fixed
+  synthetic task, not broad scientific reliability. Review results before routing.
 - **Milestone 5 remaining:** `flowstate ask` routing to verified identical reuse,
   a compatible model within a calibrated uncertainty threshold, or the solver.
   Retain routing, latency, error, and speed-versus-accuracy evidence.
@@ -126,30 +137,19 @@ portfolio project promptly. It did not waive tests, evidence, scientific limits,
 or permission requirements, and the full milestone scope must not be declared
 complete merely to meet that deadline.
 
-### First unfinished action on the Mac
+### First unfinished action after review
 
-Validate the Mac environment using the setup commands above. The Windows
-recovery proof is already retained; a Mac run is optional local confirmation:
+Mac validation and the frozen Milestone 4 study have completed. Stop for user
+review now; do not begin Milestone 5 without continuation authorization. After
+review, inspect the existing exact-reuse and model contracts before adding the
+request router. The completed test set must not tune its uncertainty boundary.
+One-step simultaneous coverage was below nominal, and shared ensemble bias/OOD
+behavior is untested. A later router must retain solver fallback and measure its
+own held-out routing, latency, error and speed/accuracy evidence.
 
-```sh
-uv run --no-sync python -m flowstate.recovery_study --output outputs/mac-recovery-proof-01
-```
-
-Use a new directory and commit any code changes before a new measurement. Keep
-any failed result visible. No large scaling rerun is required merely because
-the computer changed. After Mac validation, start **Milestone 4**, using
-`docs/progress.md` and `docs/roadmap.md` for its acceptance gate. Audit the existing
-Burgers dataset splitting, FNO training/evaluation, persistence baseline,
-mean-preserving updates, and training checkpoints before changing them. Freeze
-a study protocol with independent trajectory families, training seeds, held-out
-evaluation, and uncertainty calibration. Commit study code before measurement.
-The GCS proof is already complete; no repeat is needed for migration. Windows
-absolute paths and runtime identity cannot be reused as Mac execution plans.
-
-The small Windows proof measured recovery correctness, not general performance.
-Burgers recovery was slower than its uninterrupted reference in the retained
-single observation; checkpoint I/O and prefix replay add overhead. Mac
-performance and cross-hardware bitwise equality have not been established.
+Completed scaling, recovery and GCS proofs need no repeat on this Mac. Raw Windows
+artifacts are not in Git. Mac weights and datasets are under ignored
+`outputs/model-study-20261010-01/`; retain their original runtime provenance.
 
 ## Code map
 
@@ -274,8 +274,9 @@ remains outside the revised scope and needs an explicit deployment instruction.
 > retained reports. Validate the Mac environment, then resume the first unfinished
 > revised milestone. Keep the trusted request/run-or-reuse/store/verify/query loop
 > central. Add tests and pass Ruff/pytest, commit code before measurements, retain
-> reports, and update the stepbook and handoff. Milestones 1–3 are complete;
-> begin Milestone 4 after validating the Mac environment. GCP use up to US$50
+> reports, and update the stepbook and handoff. Milestones 1–4 local gates are complete;
+> Milestone 4 local study and Mac validation are complete; review before
+> Milestone 5. Do not retune on the completed test set. GCP use up to US$50
 > total is already authorized; do not ask again for that permission. Track costs,
 > retain scientific limits, and do not deploy a hosted service or delete unrelated
 > data. At each phase boundary record progress and stop for review. Do not declare
@@ -295,3 +296,12 @@ code, adds deferred test evaluation, and requires clean committed study code.
 All five seeds and validation-calibrated intervals must precede test inference.
 GitHub HTTPS push needs authentication on this Mac; preserve local commits until
 that is available. Study measurements and milestone completion are still pending.
+
+## Milestone 4 result retained — review boundary
+
+Study completed from clean `4b18252`, with 108/36/36 families and five seeds.
+Exact report, independent audit and negative cases are in docs/reports/. All
+621 tests and Ruff passed. One-step interval coverage was 30/36, below nominal;
+rollout covered 33/36. Finer-reference sensitivity is comparable to model rollout
+error. No test tuning occurred. Local study evidence is complete; pause before
+Milestone 5. GitHub publication still needs usable Mac credentials.

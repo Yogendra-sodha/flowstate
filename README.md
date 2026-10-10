@@ -141,6 +141,8 @@ uv run --no-sync python -m flowstate.model_study --output outputs/model-study-01
 
 Commit source first and use a fresh output directory. This evaluates a fixed
 synthetic task; calibration is empirical and does not establish broader reliability.
+The [executed Mac results](docs/steps/13-trustworthy-model.md#executed-mac-results--10-october-2026)
+retain all five seeds, coverage failures and numerical-reference limits.
 
 To run individual stages:
 

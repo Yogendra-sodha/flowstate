@@ -81,3 +81,64 @@ small measured JSON reports and validation receipts are retained in docs/reports
 
 The study uses local CPU work and no GCP resources. Existing GCP authorization
 remains in force; actual billed spending remains unknown in its budget ledger.
+
+## Executed Mac results — 10 October 2026
+
+The frozen protocol completed from clean commit `4b18252` in 159.07 seconds.
+The [exact raw report](../reports/model-study-20261010.json),
+[independent audit](../reports/model-study-audit-20261010.json),
+[source validation](../reports/model-study-code-validation-20261010.json), and
+[negative cases](../reports/model-study-negative-cases-20261010.json) retain evidence.
+Raw arrays and weights remain in `outputs/model-study-20261010-01/` on this Mac.
+
+All 180 coarse trajectories and twelve finer audits passed their numerical flags
+and final manifests. There are 108 independent training families, 36 validation
+families and 36 test families. DuckDB found all 180 completed original runs.
+All five model and ten prediction bundles verified. The tested source hashes
+match the measured source; Ruff and all 621 Mac tests passed with no skips.
+
+Physical velocity RMSE against the coarse numerical reference:
+
+| Prediction | Persistence | Five-seed mean | Sample standard deviation | Ensemble mean prediction |
+| --- | ---: | ---: | ---: | ---: |
+| One saved step | 0.00360433 | 0.0000579654 | 0.00000144430 | 0.0000540332 |
+| 40-step rollout | 0.0857394 | 0.000469861 | 0.0000173970 | 0.000393172 |
+
+Every seed improved family-level field RMSE on all 36 test families. No family
+field-error losses or ties occurred in this cohort; that absence does not
+establish performance on harder tasks. Selected epochs were 26, 29, 27, 25 and
+30 for seeds 0–4. The paired family-bootstrap 95% intervals for ensemble-minus-
+persistence mean family RMSE were [-0.00370333, -0.00331971] for one-step and
+[-0.0889552, -0.0794891] for rollout. These intervals remain conditional on the
+fixed generator and split.
+
+**Where the model loses:** persistence holds the initial mean exactly during
+rollout, whereas every model has nonzero rounding-scale mean drift on all 36
+families. Aggregate drift RMS ranges from 3.51e-9 to 4.80e-9 velocity units;
+mass drift RMS ranges from 2.21e-8 to 3.01e-8. For example, seed 0 on trajectory
+`0225f4908af6733196ed95ebea688d40` has mean drift RMS 3.10e-9 versus zero for
+persistence. This is a small floating-point weakness, not a large physical
+conservation failure. All cases and their IDs are retained. No model had a
+sampled energy-increase transition above the fixed 1e-8 tolerance; energy and
+mean errors against the numerical reference are retained separately.
+
+**Uncertainty failure:** the nominal 90% one-step intervals covered all cells
+and times for only 30/36 test families (83.33%). Rollout covered 33/36 (91.67%).
+Cell coverage was 99.976% and 99.988%, respectively, which hides the more useful
+whole-trajectory misses. Mean interval widths were 0.00082523 and 0.0103402
+velocity units. The uncovered family IDs are retained; no threshold was adjusted
+using these outcomes. This calibration is empirical, uses the checkpoint-selection
+validation set, and must not be promoted to a formal 90% guarantee or a general
+request-router boundary.
+
+**Reference limit:** the twelve coarse-versus-fine RMSE values range from
+0.00029146 to 0.00067897. This is comparable to model rollout error and larger
+than one-step model error. The models closely reproduce the coarse solver;
+these results cannot establish that their physical predictions are more accurate
+than the reference discretization. The audit includes initial sampling differences
+and does not measure a convergence order. One smooth Fourier generator at one
+viscosity/amplitude, one split and a two-time-unit horizon is a narrow task.
+
+Milestone 4's fixed-study evidence gate is complete locally. GitHub publication
+requires working Mac authentication. Stop for review before Milestone 5; no
+settings were changed after reading test results, and no GCP resource was used.
