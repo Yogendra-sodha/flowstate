@@ -1,10 +1,12 @@
 # Approved GCS recovery proof and static viewer package
 
-Current evidence: the [prepared Windows plan](../reports/gcs-proof-plan-20261009.json)
-awaits user approval. The [viewer validation](../reports/viewer-container-validation-20261009.json)
+Milestone 3 is complete. The approved [Windows GCS recovery receipt](../reports/gcs-recovery-20261009.json)
+and [independent validation](../reports/gcs-recovery-validation-20261009.json)
+confirm exact restoration after the generated local experiment was removed.
+The [viewer validation](../reports/viewer-container-validation-20261009.json)
 records a successful Linux container build/run and passing Windows/Linux tests,
-including the earlier failed registry attempts. No live execution or deployment
-is implied by these preparation results.
+including the earlier failed registry attempts. The deployment proposal below
+remains a proposal; no hosted service was deployed.
 
 Milestone 3 prepares a small disposable local experiment, uploads its immutable
 artifacts, verifies the remote bytes, removes that generated local experiment,
@@ -13,6 +15,10 @@ query. Human approval is required before the cloud/removal sequence. The static
 viewer container and future deployment proposal are separate deliverables.
 
 ## Prepare a concrete plan locally
+
+The retained Windows plan has already executed successfully and is one-shot.
+The following commands reproduce the protocol with a new plan and directory;
+do not reset the completed proof's marker or overwrite its evidence.
 
 Run from clean committed source, using a new plain local directory:
 
@@ -39,8 +45,10 @@ another machine and approve it there. Prepare a fresh plan on the Mac instead.
 
 ## Approval and execution
 
-Review `plan.json` and obtain approval for credential use, potential charges, and
-removal of its exact generated experiment directory. These flags record operator
+Review `plan.json` and confirm authorization for credential use, potential charges,
+and removal of its exact generated experiment directory. The recorded Flowstate
+authorization already covers GCP access and up to US$50 total spending; do not
+request the same permission again. These flags record operator
 intent; their presence does not replace human authorization:
 
 ```sh
@@ -86,8 +94,8 @@ unsafe paths are not acceptable inputs to the deletion proof.
 Execution is deliberately one-shot. Keep the marker and failed receipt; do not
 remove them to retry. Before removal, failures preserve the original local run.
 After removal, the plan retains the experiment ID, prefix, bucket and original
-hash inventory needed for recovery. An independently approved manual restoration
-can use a new directory:
+hash inventory needed for recovery. A manual restoration within the authorized
+project scope can use a new directory:
 
 ```sh
 uv run --no-sync flowstate --lake outputs/manual-restore-new gcs download EXPERIMENT_ID flowstate-codex --prefix EXACT_PREFIX_FROM_PLAN --project flowstate-510320
@@ -118,6 +126,31 @@ directory and mounts only that file. Original bytes and permissions stay intact.
 It then removes only its temporary test container, copy, and empty directory.
 That validates the package without publishing an image or service.
 
+## Executed GCS proof
+
+The user approved the exact recovery test and authorized up to US$50 total GCP
+use for Flowstate without repeating the spending/credential permission request.
+The [authorization](../reports/gcp-authorization-20261009.json) and
+[budget ledger](../reports/gcp-budget-ledger.json) preserve that context.
+
+The plan was generated at `ec565a1`; execution used clean commit `bb8daf2` with
+identical package/runtime identity. The first upload created 22 artifacts plus
+the completion manifest. The verification pass uploaded no new artifacts and
+hashed all 22 existing artifacts; the manifest matched. Only the planned source
+experiment was then removed. A fresh download restored all 23 files and 28,422
+bytes exactly. DuckDB returned the expected completed Burgers record, and the
+restored viewer exported successfully. The complete execute call took 27.67
+seconds; the [receipt](../reports/gcs-recovery-20261009.json) retains full evidence.
+
+An independent local audit re-hashed each file, verified directory and removal
+inventories, reconciled the before/after records, checked provenance, and queried
+the restored metadata. The [validation report](../reports/gcs-recovery-validation-20261009.json)
+also establishes that the executed code matches the source that passed all 608
+tests and Ruff on Windows and Linux CI. This is one small recovery proof; it does
+not establish cloud throughput, long-term durability or a measured billing cost.
+Actual charges remain unknown, rather than being recorded as zero. The mirrored
+objects and restored local result remain available as evidence.
+
 ## Proposed GCP deployment — not executed
 
 The recommended delivery remains a local/offline viewer. If a private hosted
@@ -132,7 +165,7 @@ snapshot is later approved, use the following bounded Cloud Run proposal:
 | Runtime identity | Dedicated viewer service account with no bucket permissions or application API roles. |
 | Container | Unprivileged user, snapshot preloaded, `PORT` honored on `0.0.0.0`. |
 | Initial limits | Request-based billing, minimum instances 0, maximum instances 1, concurrency 8, 1 CPU, 256 MiB memory. |
-| Build | Local or existing CI image build; any Cloud Build use requires separate approval. |
+| Build | Local or existing CI image build; any Cloud Build use belongs to a separately scoped deployment and the recorded total GCP budget. |
 | Data access | Snapshot only; no bucket mount, experiment API, queue, or model execution. |
 | Publication | Review snapshot content and exact image digest before a separate deployment approval. |
 

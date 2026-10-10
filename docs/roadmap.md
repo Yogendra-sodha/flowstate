@@ -7,9 +7,10 @@ trusted loop: request, run or verified reuse, store, verify, and query. The earl
 day-by-day prototype plan below is historical context. The current acceptance
 gates are sequential:
 
-Milestones 1 and 2 are complete for their documented local protocols. The
+Milestones 1, 2 and 3 are complete for their documented acceptance gates. The
 [scaling report](reports/scaling-large.json), [chart](reports/scaling-large.png),
-[recovery report](reports/checkpoint-recovery.json), and
+[recovery report](reports/checkpoint-recovery.json),
+[live GCS recovery receipt](reports/gcs-recovery-20261009.json), and
 [progress entries](progress.md) retain the evidence and limitations. The
 [checkpoint protocol](steps/11-checkpoint-recovery.md) describes the implementation
 and executed proof. The remaining milestones have not met their full revised
@@ -25,8 +26,10 @@ acceptance gates.
    receipt; a viewer container and deployment proposal. Cloud credentials,
    spending, deletion, and deployment require approval before those actions.
    The [viewer container validation](reports/viewer-container-validation-20261009.json)
-   passed on Linux CI; the [prepared GCS plan](reports/gcs-proof-plan-20261009.json)
-   awaits approval and execution. This milestone remains open.
+   passed on Linux CI. The [approved GCS receipt](reports/gcs-recovery-20261009.json)
+   and [independent audit](reports/gcs-recovery-validation-20261009.json) confirm
+   exact restoration after generated-local removal. The private deployment
+   proposal is documented; deployment is not required for this gate.
 4. **Trustworthy model:** enough independent training families and seeds, paired
    baseline comparisons, conservation, rollout behavior, uncertainty, and explicit
    cases where the model loses.

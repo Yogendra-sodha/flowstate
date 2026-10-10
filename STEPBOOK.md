@@ -1107,3 +1107,32 @@ preserves those failures alongside the successful build and HTTP check.
 On `d50378d`, Windows and Linux each passed all 608 tests and Ruff; Linux served
 the 20,530-byte exported snapshot exactly from the container. This closes local
 package validation while the approved live GCS recovery receipt remains pending.
+
+## 26. Complete the approved GCS recovery proof
+
+The user approved the exact prepared test and a total US$50 GCP budget. The
+existing Application Default Credentials refreshed successfully; no token or
+credential file entered the lake or Git. `execute_proof` ran from clean `bb8daf2`,
+while the original experiment kept its `ec565a1` generation provenance.
+
+The upload loop sent 22 artifacts, then published their completion manifest.
+Repeating the upload hit the immutable-create checks and read back existing
+objects for hashing. Once every remote artifact matched, the removal loop
+deleted only the inventoried generated source files and their empty directories.
+The before/after records stayed outside that subtree. The download loop wrote a
+fresh local lake and published it only after artifact verification.
+
+All 23 restored files, totaling 28,422 bytes, matched the prepared inventory.
+DuckDB loaded the restored Parquet metadata and returned the completed Burgers
+record. The viewer exporter read the restored fields and produced a new HTML
+snapshot. The complete execution took 27.67 seconds. These are observed results
+from the [retained raw receipt](docs/reports/gcs-recovery-20261009.json).
+
+An independent audit recomputed local hashes and reconciled provenance, manifest,
+query, and removal evidence. The [validation receipt](docs/reports/gcs-recovery-validation-20261009.json)
+retains that audit and the equality of executed code with the Windows/Linux CI
+source. The [budget ledger](docs/reports/gcp-budget-ledger.json) records the user
+authorization and observed storage workload; actual billed charges are unknown.
+This completes the cloud recovery, viewer packaging and deployment-proposal gate.
+The Mac continuation should validate its environment and begin the larger model
+study; it should not repeat this completed proof solely because the machine changed.

@@ -1,6 +1,6 @@
 # Flowstate computer and Codex handoff
 
-Updated 9 October 2026. Continue on branch **develop**.
+Updated 10 October 2026 for the Mac continuation. Continue on branch **develop**.
 Repository: https://github.com/Yogendra-sodha/flowstate
 
 Windows handoff validation: Ruff passed and 540 tests passed, with four
@@ -14,28 +14,32 @@ equations. Results are retained in `docs/reports/checkpoint-recovery.json` and
 remain in `outputs/checkpoint-proof-20261007/`, outside Git. Source commit:
 `d8ef527ea887853a7c1169d194a72925d030691d`.
 
-Milestone 3 implementation is now prepared locally: `cloud_proof.py` creates a
-reviewable plan without credentials and executes its hash-bound GCS/removal/restore
-sequence only with approval. `containers/viewer/` packages the offline snapshot;
-Linux CI successfully built and started it. The Windows Docker engine did not respond to
-the local probe, so do not infer a successful Windows container build. See
-`docs/steps/12-cloud-proof-viewer.md` and the latest progress entry for readiness
-and the retained approval plan. No real phase-3 cloud execution or deployment
-has occurred. Before the final container fix, local validation passed 600 tests
-with five Windows symlink permission skips. The final source, `d50378d`, passed
-all 608 tests and Ruff on both Windows and Linux CI, with no skips. The real
-Linux container check also passed. Evidence:
-`docs/reports/cloud-proof-preparation-validation-20261009.json` and
-`docs/reports/viewer-container-validation-20261009.json`. The latter preserves
-the earlier Docker Hub failures and the successful official-mirror build.
+**Milestone 3 is complete for its stated gate.** The approved real GCS proof ran
+from clean commit `bb8daf2`: upload, verify remote bytes, remove only the generated
+local experiment, download, verify all hashes, query metadata, and export a viewer.
+All 23 files, totaling 28,422 bytes, were restored exactly. The protocol took
+27.67 seconds. Original experiment provenance was preserved, and the independent
+local audit passed. Evidence: `docs/reports/gcs-recovery-20261009.json` and
+`docs/reports/gcs-recovery-validation-20261009.json`.
 
-The fresh prepared run contains 23 files totaling 28,422 bytes. Its source was
-clean commit `ec565a1c9edabba9ab2a15775c5f768250e83ae0`. The exact plan is
+The same implementation passed Ruff and all 608 tests on both Windows and Linux
+CI, with no skips. The viewer container built and ran successfully in Linux CI;
+`docs/reports/viewer-container-validation-20261009.json` preserves the results
+and earlier registry failures. A private deployment proposal is in
+`docs/steps/12-cloud-proof-viewer.md`. No hosted service was deployed. A successful
+Windows or Mac Docker build has not been established. **Milestone 4 is next.**
+
+The original run was generated from clean commit
+`ec565a1c9edabba9ab2a15775c5f768250e83ae0`. The exact historical plan is
 `docs/reports/gcs-proof-plan-20261009.json`, SHA-256
 `aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d`.
 The Windows root is `C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009`.
-Approval was requested for this single proof with a US$0.10 spending budget;
-there is no approval recorded yet. Do not treat the request as permission.
+The plan is already executed; do not rerun or reset its execution marker.
+The user approved the described recovery test and **up to US$50 total GCP use**
+for Flowstate, explicitly asking not to be asked again for that permission.
+`docs/reports/gcp-authorization-20261009.json` records the authorization;
+`docs/reports/gcp-budget-ledger.json` tracks known usage. Actual billed charges
+and the promotional-credit balance have not been measured.
 
 ## Purpose
 
@@ -59,7 +63,7 @@ prototype rather than treating implemented code as completed scientific evidence
 2. `HANDOFF.md`: this migration and continuation context.
 3. `docs/progress.md` and `docs/roadmap.md`: current milestone gates and evidence.
 4. `STEPBOOK.md`: setup, implementation decisions, functions, loops, and ETL.
-5. `docs/steps/11-checkpoint-recovery.md`: the current recovery implementation.
+5. `docs/steps/12-cloud-proof-viewer.md`: the latest completed proof and limits.
 
 ## Mac setup
 
@@ -101,15 +105,16 @@ history. Commit code before generating new measured results on the Mac.
   replay, CLI/queue options, and actual worker-kill tests are implemented.
   The independent audit passed and Windows/Linux CI passed the measured source.
   See the retained recovery reports and `docs/progress.md` for the phase boundary.
-- **Milestone 3 in progress:** the plan/execute proof harness, viewer container
-  package, HTTP tests, and private deployment proposal are implemented. Remaining:
-  obtain approval and run the
-  real GCS upload, generated-local-copy removal, download and verification receipt.
-  An earlier small live round trip is retained in `docs/reports/gcs-20261004.json`;
-  it does not satisfy every revised phase requirement.
-- **Milestone 4 remaining:** larger independent-family and multiple-seed model
-  evaluation, paired persistence comparisons, mean/mass conservation, rollout
-  error, ensemble uncertainty, and explicit negative results.
+- **Milestone 3 complete:** approved real GCS upload, verified remote reuse,
+  generated-local-copy removal, fresh download, exact hashes and metadata query.
+  Viewer container validation and a private deployment proposal are retained.
+  The measured receipt is `docs/reports/gcs-recovery-20261009.json`; its independent
+  audit is in the corresponding validation report. Deployment is not required
+  for this gate and has not been performed.
+- **Milestone 4 remaining:** train on at least 100 independent trajectory families
+  with at least five training seeds; report mean/spread against persistence,
+  one-step and rollout error, mean/mass conservation, ensemble uncertainty, and
+  explicit cases where the model loses. Calibrate on validation data, never test.
 - **Milestone 5 remaining:** `flowstate ask` routing to verified identical reuse,
   a compatible model within a calibrated uncertainty threshold, or the solver.
   Retain routing, latency, error, and speed-versus-accuracy evidence.
@@ -132,12 +137,14 @@ uv run --no-sync python -m flowstate.recovery_study --output outputs/mac-recover
 
 Use a new directory and commit any code changes before a new measurement. Keep
 any failed result visible. No large scaling rerun is required merely because
-the computer changed. After Mac validation, continue Milestone 3 from
-`docs/progress.md`. Its harness, viewer package and deployment proposal are
-already implemented. If moving machines before the GCS proof runs, prepare a
-fresh plan on the Mac: the Windows plan cannot authorize a different local path.
-Request approval for that exact plan before using credentials, spending, local
-data removal, or deployment. Keep the original Windows plan as pending evidence.
+the computer changed. After Mac validation, start **Milestone 4**, using
+`docs/progress.md` and `docs/roadmap.md` for its acceptance gate. Audit the existing
+Burgers dataset splitting, FNO training/evaluation, persistence baseline,
+mean-preserving updates, and training checkpoints before changing them. Freeze
+a study protocol with independent trajectory families, training seeds, held-out
+evaluation, and uncertainty calibration. Commit study code before measurement.
+The GCS proof is already complete; no repeat is needed for migration. Windows
+absolute paths and runtime identity cannot be reused as Mac execution plans.
 
 The small Windows proof measured recovery correctness, not general performance.
 Burgers recovery was slower than its uninterrupted reference in the retained
@@ -193,6 +200,13 @@ Other earlier studies are in the repository's ignored `outputs/` tree. Locate an
 copy the actual data you need rather than assuming GitHub contains it. Committed
 reports retain the measurements even if the raw fields are not transferred.
 
+The completed cloud proof's restored lake, viewers and raw receipts are in
+`C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009/`. The mirrored experiment
+also remains under `gs://flowstate-codex/flowstate/proofs/5ffab66dac614dc486b592b0678b454a/`.
+Its experiment ID is `842524f5280649c4aa6b4271d25391e3`. Git contains the reports,
+not these raw files. Restoring old artifacts preserves their original provenance;
+it does not make them newly computed Mac experiments.
+
 A Mac has different hardware/platform provenance, and Git checkout line endings
 may differ from Windows. New experiment IDs are therefore expected. Do not edit
 old provenance to force identity reuse or claim cross-machine bitwise equality.
@@ -223,14 +237,18 @@ cloud credentials.
 - Service account: `flowstate@flowstate-510320.iam.gserviceaccount.com`.
 - User-reported region: South Carolina, `us-east1`; verify actual resource
   locations before deployment.
-- User prefers low costs and previously stated a free-credit budget. A budget
-  preference does not itself authorize spending or credential use.
+- The latest user instruction authorizes GCP credentials and spending up to
+  **US$50 total for Flowstate** without repeated permission requests. Consult
+  `docs/reports/gcp-budget-ledger.json`; unknown billed charges do not mean zero.
 
 Cloud authentication was configured on Windows; it is not shipped in Git and
-must be set up separately on the Mac if cloud work is approved. Read
-`docs/steps/09-gcs-storage.md`. **Ask the user before using cloud credentials,
-spending money, deleting data, or deploying.** Do not run authentication or cloud
-commands merely because this document records the account details.
+must be set up separately on the Mac when needed. Read
+`docs/steps/09-gcs-storage.md`. Do not ask again for credential use or GCP spending
+already covered by the authorization. Ask for missing login interaction only if
+needed. Review actual billing before material new resource commitments, and stay
+within the total budget. The approved deletion was the exact generated proof
+copy; unrelated destructive work still needs authorization. Hosted deployment
+remains outside the revised scope and needs an explicit deployment instruction.
 
 ## Rules the next Codex chat must retain
 
@@ -256,6 +274,9 @@ commands merely because this document records the account details.
 > retained reports. Validate the Mac environment, then resume the first unfinished
 > revised milestone. Keep the trusted request/run-or-reuse/store/verify/query loop
 > central. Add tests and pass Ruff/pytest, commit code before measurements, retain
-> reports, and update the stepbook. Ask before cloud credential use, spending,
-> deletion, or deployment. At each phase boundary record progress and stop for
-> review. Do not declare unfinished evidence complete.
+> reports, and update the stepbook and handoff. Milestones 1–3 are complete;
+> begin Milestone 4 after validating the Mac environment. GCP use up to US$50
+> total is already authorized; do not ask again for that permission. Track costs,
+> retain scientific limits, and do not deploy a hosted service or delete unrelated
+> data. At each phase boundary record progress and stop for review. Do not declare
+> unfinished evidence complete.

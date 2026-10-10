@@ -188,3 +188,47 @@ Milestone 3 still needs explicit user approval and the actual GCS/removal/restor
 receipt. No cloud credentials, generated-experiment removal, image publication,
 or deployment occurred. `HANDOFF.md` includes the exact pending Windows plan;
 Mac continuation must generate its own plan. Work pauses at the approval gate.
+
+## Milestone 3 — approved cloud recovery complete
+
+**Changed:** the user approved the prepared GCS/removal/restore test and granted
+up to US$50 total GCP use for Flowstate without repeated permission requests.
+Executed the already committed harness, retained its exact raw receipt and
+authorization, independently audited local evidence, and updated the budget
+ledger, phase guide, roadmap, stepbook and Mac handoff. No source changes were
+needed for the measured run.
+
+**Command:**
+
+```sh
+uv run --no-sync python -m flowstate.cloud_proof execute C:/Users/yuvis/AppData/Local/Flowstate/gcs-proof-20261009 --plan-sha256 aa44f296de41d0d3122aef79c4847d69c9c70ddc235a77f785a1bf3db0bc266d --allow-cloud --allow-local-delete
+uv run --no-sync ruff check .
+```
+
+**Measured results:** clean execution commit `bb8daf2`; 22 artifacts uploaded
+plus their manifest. A repeat verified all existing remote artifacts without
+new uploads. The generated local experiment was removed, then freshly restored:
+all 23 files and 28,422 bytes matched exactly. Manifest verification and the
+completed Burgers metadata query passed. The execute call took 27.67 seconds.
+Evidence: [raw receipt](reports/gcs-recovery-20261009.json),
+[independent validation](reports/gcs-recovery-validation-20261009.json), and
+[authorization](reports/gcp-authorization-20261009.json).
+
+The executed source and tests are unchanged from `d50378d`, which passed Ruff
+and all 608 tests on both Windows and Linux CI. Ruff also passed after the live
+proof. The [viewer container validation](reports/viewer-container-validation-20261009.json)
+and private deployment proposal satisfy the remaining phase deliverables.
+
+**Limits:** a single small Burgers experiment is not a cloud throughput,
+availability, durability, or cost benchmark. The audit independently verified
+local bytes and receipts, not a second cloud read or provider billing. Actual
+charges and remaining promotional credits are unknown in the
+[budget ledger](reports/gcp-budget-ledger.json). No hosted service was deployed.
+Raw restored fields remain outside Git in the Windows proof directory and its
+recorded GCS prefix.
+
+**Next:** Milestone 4, the larger trustworthy-model study. The user has cloned the
+repository on a MacBook Pro; validate that environment first, then audit existing
+dataset/FNO/evaluation code and freeze the study protocol before new measurements.
+Milestones 1–3 are complete for their gates. Stopping at this phase boundary for
+review; the existing GCP authorization persists into the next chat.
